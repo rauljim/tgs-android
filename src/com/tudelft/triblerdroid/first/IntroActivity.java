@@ -37,8 +37,8 @@ public class IntroActivity extends Activity {
 		b_continue = (Button) findViewById(R.id.b_continue);
 		b_continue.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				setContentView(R.layout.pythonautoinstall);
-				Intent intent = new Intent(getBaseContext(), PythonAutoinstallActivity.class);
+				//setContentView(R.layout.pythonautoinstall);
+				Intent intent = new Intent(getBaseContext(), VideoListActivity.class);
 				startActivity(intent);
 			}  	
 		});

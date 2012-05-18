@@ -37,7 +37,7 @@ import java.util.Timer;
 /**
  * @author Alexey Reznichenko (alexey.reznichenko@gmail.com)
  */
-public class VideoPlayerActivity extends Activity implements Pausable {
+public class VideoPlayerActivity extends Activity {
 
 	/*
 	 * Arno: From Riccardo's original SwiftBeta
@@ -54,8 +54,6 @@ public class VideoPlayerActivity extends Activity implements Pausable {
 	String tracker;
 	String destination;
 	boolean inmainloop = false;
-
-	boolean ispaused = false;
 	
 	
   @Override
@@ -63,7 +61,6 @@ public class VideoPlayerActivity extends Activity implements Pausable {
 	
 	  super.onCreate(savedInstanceState);
 
-	  P2PStartActivity.addAct(this);
 	  
 //	  Raul, 2012-03-21: No necessary because of the notitle.fullscreen in Manifest
 //      setTheme(android.R.style.Theme_Light);
@@ -72,12 +69,6 @@ public class VideoPlayerActivity extends Activity implements Pausable {
 //                              WindowManager.LayoutParams.FLAG_FULLSCREEN); 
       setContentView(R.layout.main);
 
-
-////      Raul, 2012-03-09: initialized in P2PStartActivity
-//      ScriptApplication application = (ScriptApplication) getApplication();
-//      if (application.readyToStart()) {
-//        startService(new Intent(this, ScriptService.class));
-//      }
       // Arno, 2012-02-15: Hack to keep this activity alive.
       // finish();
       
@@ -100,53 +91,26 @@ public class VideoPlayerActivity extends Activity implements Pausable {
   protected void onRestart() {
 	  super.onRestart();
 	  // Go back to video list
-	  P2PStartActivity.delAct(this);	
 	  finish();
   }
 
-  
-  // From Pausable interface
-  public boolean isPaused()
-  {
-	  return ispaused;
-  }
- 
-  
-	public void checkAllActPaused()
-	{
-		Log.w("Swift","Checking VideoPlayerActivity" );
-		if (P2PStartActivity.allActPaused() > 0)
-		{
-			Log.w("Swift","Starting timer" );
-			Timer t = new Timer("AllActPausedTimer",true);
-			PauseTimer pt = new PauseTimer();
-			t.schedule(pt, 2000);
-		}
-	}
-  
+    
 	
   public void onPause()
   {
-		super.onPause();
-		ispaused = true;
-
-		checkAllActPaused();
+	  super.onPause();
+	  finish();
   }
 	
   public void onResume()
   {
-		super.onResume();
-		ispaused = false;
+	  super.onResume();
   }
 	
   public void onDestroy()
   {
-		super.onDestroy();
-			
-		P2PStartActivity.delAct(this);	
-		Log.w("SwiftStats", "*** SHUTDOWN SWIFT ***");
-		// Raul, 2012-04-25: Halts swift completely on destroy
-		_statsTask.cancel(true);
+	  super.onDestroy();
+	  _statsTask.cancel(true);
   }
   
   
@@ -296,7 +260,7 @@ public class VideoPlayerActivity extends Activity implements Pausable {
 	  			mVideoView = (VideoView) findViewById(R.id.surface_view);
 	  			boolean play = false, pause=false;
 	  			
-	  			while(P2PStartActivity.globalP2Prunning) {
+	  			while(true) {
 	  				String progstr = nativelib.httpprogress(args[0]);
 	  				String[] elems = progstr.split("/");
 	  				long seqcomp = Long.parseLong(elems[0]);
@@ -322,9 +286,9 @@ public class VideoPlayerActivity extends Activity implements Pausable {
 	  				Thread.sleep( 1000 );
 	  			}
 	  			
-	  			Log.w("SwiftStats", "*** SHUTDOWN SWIFT ***");
-	  			// Arno, 2012-03-22: Halts swift completely
-	  			nativelib.stop();
+//	  			Log.w("SwiftStats", "*** SHUTDOWN SWIFT ***");
+//	  			// Arno, 2012-03-22: Halts swift completely
+//	  			nativelib.stop();
 	  		}
 	  		catch (Exception e ) {
 	  			//System.out.println("Stacktrace "+e.toString());

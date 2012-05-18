@@ -136,7 +136,7 @@ public class P2PStartActivity extends Activity implements Pausable {
 	    }
 	}
 
-  protected void startP2PEngine() {
+  protected void startP2PEngineZZ() {
 	  
 	/* Arno, 2012-03-05: Moved from onCreate, such that we only launch the
 	 * service when Python is installed.
@@ -323,7 +323,7 @@ public class P2PStartActivity extends Activity implements Pausable {
 	super.onStart();
 	Log.w("Swift","P2PStartActivity.onStart" );
 	if (1==1){//!globalP2Prunning) {
-		startP2PEngine();
+		//startP2PEngine();
 	}
   }
   

@@ -34,32 +34,18 @@ import java.util.Timer;
 
 
 
-public class VideoListActivity extends ListActivity implements Pausable {
-	
-	boolean ispaused = false;
-	
+public class VideoListActivity extends ListActivity {	
 	
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	  super.onCreate(savedInstanceState);
     	  
-    	  P2PStartActivity.addAct(this);
-    	  
-//    	  ArrayList<String> videoList = new ArrayList<String>();
-//    	  videoList.add((String) getResources().getText(R.string.v1_title));
-//    	  videoList.add((String) getResources().getText(R.string.v2_title));
-//    	  videoList.add((String) getResources().getText(R.string.v3_title));
-    	  
-    	  
     	  setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item, VIDEOS));
 
     	  ListView lv = getListView();
     	  lv.setTextFilterEnabled(true);
 
-
-    	  
-    	  
     	  lv.setOnItemClickListener(new OnItemClickListener() {
     	    public void onItemClick(AdapterView<?> parent, View view,
     	        int position, long id) {
@@ -72,36 +58,22 @@ public class VideoListActivity extends ListActivity implements Pausable {
 //    	    	Intent intent = new Intent(getBaseContext(), VideoInfoActivity.class);
 //    	    	intent.putExtra("video_pos", position);
 //    	    	startActivity(intent);      	    	
-    	    	if (position != 0) {
-    	    		if (!P2PStartActivity.globalP2Prunning) {
-        	    		Toast.makeText(getBaseContext(), "You need to restart  the P2P Engine to contine", Toast.LENGTH_LONG).show();
-    	    		}
-    	    		else {
-		//    	    	Play video
-		    	    	Intent intent = new Intent(getBaseContext(), VideoPlayerActivity.class);
-		    	    	intent.putExtra("hash", HASHES[position]);
-		    	  	    // Arno, 2012-03-22: Default tracker is central tracker, swift now
-		    	  	    // has a default local peer which is the DHT.
-		    	    	intent.putExtra("tracker", "192.16.127.98:20050"); // KTH's tracker
-//		    	    	intent.putExtra("tracker", "tracker3.p2p-next.org:20050"); // Delft's tracker
-		    	    	//intent.putExtra("tracker", "127.0.0.1:9999"); // DHT
-		//    	    	intent.putExtra("destination", destination);
-		      	    	startActivity(intent);
-    	    		}
-    	    	}
-    	    	else {
-    	    		P2PStartActivity.globalP2PStartActivity.stopP2PEngine();
-	    	    	Intent intent = new Intent(getBaseContext(), P2PStartActivity.class);
-	      	    	startActivity(intent);
-    	    	}
 
-    	    	
-    	      
+    	    	//    	    	Play video
+    	    	Intent intent = new Intent(getBaseContext(), VideoPlayerActivity.class);
+    	    	intent.putExtra("hash", HASHES[position]);
+    	    	// Arno, 2012-03-22: Default tracker is central tracker, swift now
+    	    	// has a default local peer which is the DHT.
+    	    	intent.putExtra("tracker", "192.16.127.98:20050"); // KTH's tracker
+//		       	intent.putExtra("tracker", "tracker3.p2p-next.org:20050"); // Delft's tracker
+    	    	//intent.putExtra("tracker", "127.0.0.1:9999"); // DHT
+    	    	//intent.putExtra("destination", destination);
+    	    	startActivity(intent);
     	    }
     	  });
     	} // Arno: If you change the order here, change HASHES[] order as well!
-	static final String[] VIDEOS = new String[] {
-		">>> Re-start P2P Engine <<<",
+	
+    static final String[] VIDEOS = new String[] {
 		"(480p) TED: Ken Robinson says schools kill creativity", 
 		"(480p-low) TED: Ken Robinson says schools kill creativity", 
 		"(480p) TED: Jill Bolte Taylor's stroke of insight", 
@@ -135,8 +107,8 @@ public class VideoListActivity extends ListActivity implements Pausable {
 		"(480p) VODO: An Honest Man", 
 		"(480p-low) VODO: An Honest Man", 
     };
+
 	static final String[] HASHES = new String[] {
-		"",
 		"2b2fe5f1462e5b7ac4d70fa081e0169160b2d3a6", // SirKenRobinson_2006-480p.ts
 		"114c618ec72e691e5b4730a17f58d215b0418ad4", // SirKenRobinson_2006-480p-512kbps.ts
 		"a004e583a05de39f87ceb7a6eb5608c89415e2f0", // JillBolteTaylor_2008-480p.ts
@@ -170,48 +142,5 @@ public class VideoListActivity extends ListActivity implements Pausable {
 		"3ce3f4a5bb785d5e8eb7bf3f2615e37095eb5170", // An.Honest.Man.Xvid-VODO.ts
 		"15f2fb2f7880c8c806d67ed1c070d925aaaa7f7b", // An-Honest-Man-Xvid-VODO-480p-512kbps.ts	
 	};
-      
-
-	  // From Pausable interface
-	public boolean isPaused()
-	{
-		  return ispaused;
-	}
-	
-	
-	public void checkAllActPaused()
-	{
-		Log.w("Swift","Checking VodoActivity" );
-		if (P2PStartActivity.allActPaused() > 0)
-		{
-			Log.w("Swift","Starting timer" );
-			Timer t = new Timer("AllActPausedTimer",true);
-			PauseTimer pt = new PauseTimer();
-			t.schedule(pt, 2000);
-		}
-	}
-
-	
-	public void onPause()
-	{
-			super.onPause();
-			ispaused = true;
-
-			checkAllActPaused();
-	}
-		
-	public void onResume()
-	{
-			super.onResume();
-			ispaused = false;
-	}
-	
-		
-	public void onDestroy()
-	{
-			super.onDestroy();
-				
-			P2PStartActivity.delAct(this);
-	}
 }
 
