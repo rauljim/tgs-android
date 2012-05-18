@@ -48,81 +48,16 @@ import java.util.Timer;
 /**
  * @author Alexey Reznichenko (alexey.reznichenko@gmail.com)
  */
-public class P2PStartActivity extends Activity implements Pausable {
+public class P2PStartActivity extends Activity {
 
-
-	boolean ispaused = false;
-	
-	/*
-	 * Arno, 2012-03-23: Global admin of activities
-	 */
-	public static Boolean globalP2Prunning = Boolean.TRUE;
 	public static P2PStartActivity  globalP2PStartActivity = null;
 	private SwiftService scriptService = null;
-
-	public static Set<Activity>		appSet;
-	
-	
-	public static synchronized void addAct(Activity a)
-	{
-		if (appSet == null)
-			appSet = new HashSet<Activity>();
-		
-		Log.w("Swift","ADD activity" + a );
-		appSet.add(a);
-	}
-	
-	public static synchronized void delAct(Activity a)
-	{
-		try
-		{
-			appSet.remove(a);
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	public static synchronized int allActPaused()
-	{
-		Log.w("Swift","Pausing activitiy set is " + appSet.size() );
-		
-		
-		Iterator<Activity> iter = appSet.iterator();
-		boolean oneHasFocus = false;
-		while(iter.hasNext()) {
-
-			Activity a = (Activity)iter.next();
-			if (a.hasWindowFocus())
-				oneHasFocus = true;
-		    Pausable p = (Pausable)a; 
-		    if (!p.isPaused())
-		    {
-		    	return 0;
-		    }
-		    	
-		}
-		if (!oneHasFocus)
-			return 2; // All paused and none have focus
-		else
-			return 1; // All paused
-	}
-	
-	public static synchronized int numActs()
-	{
-		return appSet.size();
-	}
-	
 	
   @Override
   protected void onCreate(Bundle savedInstanceState) {
 	  super.onCreate(savedInstanceState);
 
 	  globalP2PStartActivity = this;
-	  P2PStartActivity.addAct(this);
-	  
-	  globalP2Prunning = Boolean.TRUE;
 	  
 	  setContentView(R.layout.p2p);
 	  copyResourcesToLocal();
@@ -136,58 +71,53 @@ public class P2PStartActivity extends Activity implements Pausable {
 	    }
 	}
 
-  protected void startP2PEngineZZ() {
+  protected void startP2PEngine() {
 	  
 	/* Arno, 2012-03-05: Moved from onCreate, such that we only launch the
 	 * service when Python is installed.
 	 */
 	Log.w("QMediaPython","prepareUninstallButton");
-    if (1==1){//Constants.ACTION_LAUNCH_SCRIPT_FOR_RESULT.equals(getIntent().getAction())) {
-    	
-      // Arno: layout moved up
-      //setTheme(android.R.style.Theme_Dialog);
-      //setContentView(R.layout.dialog);
-      ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-          scriptService = ((SwiftService.LocalBinder) service).getService();
-          try {
-            RpcReceiverManager manager = scriptService.getRpcReceiverManager();
-            ActivityResultFacade resultFacade = manager.getReceiver(ActivityResultFacade.class);
-            resultFacade.setActivity(P2PStartActivity.this);
-          } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-          }
-        }
+    
+	ServiceConnection connection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			scriptService = ((SwiftService.LocalBinder) service).getService();
+			try {
+				RpcReceiverManager manager = scriptService.getRpcReceiverManager();
+				ActivityResultFacade resultFacade = manager.getReceiver(ActivityResultFacade.class);
+				resultFacade.setActivity(P2PStartActivity.this);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
           // Ignore.
         }
       };
+      
 //      Raul, 2012-03-28: This creates problems when restarting P2P
 //      bindService(new Intent(this, ScriptService.class), connection, Context.BIND_AUTO_CREATE);
       startService(new Intent(this, SwiftService.class));
-    } else {
-    	
-    	
-      ScriptApplication application = (ScriptApplication) getApplication();
-      if (application.readyToStart()) {
-        startService(new Intent(this, SwiftService.class));
-      }
+
+//  } else {
+//      ScriptApplication application = (ScriptApplication) getApplication();
+//      if (application.readyToStart()) {
+//        startService(new Intent(this, SwiftService.class));
+//      }
       // Arno, 2012-02-15: Hack to keep this activity alive.
       // finish();
-    }
+
 //    Raul, 2012-03-26: Autoinstall done, show video list (no need for button) 
-    Intent intent = new Intent(getBaseContext(), VideoListActivity.class);
-    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    startActivity(intent);
+      Intent intent = new Intent(getBaseContext(), VideoListActivity.class);
+      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      startActivity(intent);
   }
 
   
 	public void stopP2PEngine()
 	{
-		P2PStartActivity.globalP2Prunning = Boolean.FALSE;
 		stopService(new Intent(getBaseContext(), SwiftService.class));
 //		unbindService(scriptService);
 		
@@ -219,29 +149,7 @@ public class P2PStartActivity extends Activity implements Pausable {
 		} 
 		clientSocket.close(); 
 	}
-	
-  
-  // From Pausable interface
-  public boolean isPaused()
-  {
-	  return ispaused;
-  }
-  
-
-
-	public void checkAllActPaused()
-	{
-		Log.w("Swift","Checking P2PStartActivityActivity" );
-		if (P2PStartActivity.allActPaused() > 0)
-		{
-			Log.w("Swift","Starting timer" );
-			Timer t = new Timer("AllActPausedTimer",true);
-			PauseTimer pt = new PauseTimer();
-			t.schedule(pt, 2000);
-		}
-	}
-
-	
+		
 	private void copyResourcesToLocal() {
 		String name, sFileName;
 		InputStream content;
@@ -301,42 +209,12 @@ public class P2PStartActivity extends Activity implements Pausable {
 		return false;
 	}
 
-  
-  public void onPause()
-  {
-	super.onPause();
-	Log.w("Swift","P2PStartActivity.onPause" );
-	ispaused = true;
-	
-	checkAllActPaused();
-  }
-
-  public void onResume()
-  {
-	super.onResume();
-	Log.w("Swift","P2PStartActivity.onResume" );
-	ispaused = false;
-  }
-  
   public void onStart()
   {
 	super.onStart();
 	Log.w("Swift","P2PStartActivity.onStart" );
-	if (1==1){//!globalP2Prunning) {
-		//startP2PEngine();
-	}
-  }
-  
-  public void onRestart()
-  {
-	super.onRestart();
-	Log.w("Swift","P2PStartActivity.onRestart" );
-  }
-
-  public void onDestroy()
-  {
-		super.onDestroy();
-		
-		P2PStartActivity.delAct(this);	
+	//		startP2PEngine();
   }
 }
+
+  
