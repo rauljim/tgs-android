@@ -33,6 +33,8 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Alexey Reznichenko (alexey.reznichenko@gmail.com)
@@ -140,10 +142,34 @@ public class VideoPlayerActivity extends Activity {
 			e.printStackTrace();
 		}
 		Bundle extras = getIntent().getExtras();
-		hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
-		tracker = extras.getString("tracker"); // See VodoEitActivity to change this
+		String text = extras.getString("android.intent.extra.TEXT");
+		if (text == ""){
+			//from menu
+		
+			hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
+			tracker = extras.getString("tracker"); // See VodoEitActivity to change this
+		}
+		else{
+			//from twicca			
+			Log.w("video twicca", text);
+			Pattern p = Pattern.compile("ppsp://.{40}");
+			Matcher m = p.matcher(text);
+			if (m.find()) {
+			    String s = m.group();
+			    hash = s.substring(7);
+			    Log.w("video twicca", hash);
+			}
+			else{
+				hash = "";
+			    Log.w("video twicca", "no ppsp link found");
+			}
+			tracker = "192.16.127.98:20050"; //TODO
+					
+		}
 		destination = "/sdcard/swift/video.ts";
-		SwiftStartDownload();
+		if (hash != ""){
+			SwiftStartDownload();
+		}
 	}
 
   

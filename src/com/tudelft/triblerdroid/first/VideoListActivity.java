@@ -61,6 +61,7 @@ public class VideoListActivity extends ListActivity {
 
     	    	//    	    	Play video
     	    	Intent intent = new Intent(getBaseContext(), VideoPlayerActivity.class);
+    	    	intent.putExtra("text", "");
     	    	intent.putExtra("hash", HASHES[position]);
     	    	// Arno, 2012-03-22: Default tracker is central tracker, swift now
     	    	// has a default local peer which is the DHT.
