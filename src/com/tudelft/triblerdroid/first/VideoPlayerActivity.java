@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -32,16 +33,13 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.io.File;
-import java.util.Timer;
 
 /**
  * @author Alexey Reznichenko (alexey.reznichenko@gmail.com)
  */
 public class VideoPlayerActivity extends Activity {
 
-	/*
-	 * Arno: From Riccardo's original SwiftBeta
-	 */
+
 	NativeLib nativelib = null;
 //	protected TextView _text;
     protected SwiftMainThread _swiftMainThread;
@@ -50,6 +48,8 @@ public class VideoPlayerActivity extends Activity {
     protected ProgressDialog _dialog;
     protected Integer _seqCompInt;
 
+    private boolean videoPlaying = false;
+    
     String hash; 
 	String tracker;
 	String destination;
@@ -60,59 +60,92 @@ public class VideoPlayerActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
 	
 	  super.onCreate(savedInstanceState);
-
 	  
-//	  Raul, 2012-03-21: No necessary because of the notitle.fullscreen in Manifest
-//      setTheme(android.R.style.Theme_Light);
-//      requestWindowFeature(Window.FEATURE_NO_TITLE);
-//      getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
-//                              WindowManager.LayoutParams.FLAG_FULLSCREEN); 
-      setContentView(R.layout.main);
+	  if (pythonIsInstalled()){
+		  Log.w("player","onCreate true");
 
-      // Arno, 2012-02-15: Hack to keep this activity alive.
-      // finish();
-      
-      try
-      {
-    	  SwiftInitalize();
-      }
-      catch(Exception e)
-      {
-    	  e.printStackTrace();
-      }
-	  Bundle extras = getIntent().getExtras();
-	  hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
-	  tracker = extras.getString("tracker"); // See VodoEitActivity to change this
-	  destination = "/sdcard/swift/video.ts";
-	  SwiftStartDownload();
+		  startSwiftAndPlay();
+	  }
+	  else{
+		  Log.w("player","onCreate false");
+		  Intent intent = new Intent(getBaseContext(), PythonAutoinstallActivity.class);
+		  startActivity(intent);
+	  }	  
   }
   
   @Override
   protected void onRestart() {
 	  super.onRestart();
 	  // Go back to video list
-	  finish();
+	  if (pythonIsInstalled()){
+		  Log.w("player","onRestart play");
+		  startSwiftAndPlay();
+	  }
+	  else{
+		  Log.w("player","onRestart false");  
+		  finish();
+	  }
   }
 
-    
-	
   public void onPause()
   {
 	  super.onPause();
-	  finish();
+	  if (pythonIsInstalled()){
+		  Log.w("player","onPause kill");
+		  finish();
+	  }
+	  else{
+		  Log.w("player","onPause false");
+	  }
   }
 	
   public void onResume()
   {
 	  super.onResume();
+	  if (pythonIsInstalled()){
+		  Log.w("player","onResume play");
+		  startSwiftAndPlay();
+	  }
+	  else{
+		  Log.w("player","onPause false");  
+	  }
   }
 	
   public void onDestroy()
   {
 	  super.onDestroy();
+	  Log.w("player","onDestroy");
 	  _statsTask.cancel(true);
   }
+
   
+	private boolean pythonIsInstalled(){
+		File pythonBin = new File("/data/data/"+getClass().getPackage().getName()+"/files/python/bin/python");
+		return (pythonBin.exists() && pythonBin.canExecute());
+	}
+	
+	private void startSwiftAndPlay(){
+		if (videoPlaying){
+			return;
+		}
+		videoPlaying = true;
+		
+		setContentView(R.layout.main);	      
+		try
+		{
+			SwiftInitalize();
+		}	
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		Bundle extras = getIntent().getExtras();
+		hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
+		tracker = extras.getString("tracker"); // See VodoEitActivity to change this
+		destination = "/sdcard/swift/video.ts";
+		SwiftStartDownload();
+	}
+
   
   /*
    *  Arno: From Riccardo's original SwiftBeta

@@ -20,6 +20,10 @@
             android:name=".PythonAutoinstallActivity"
             android:configChanges="keyboardHidden|orientation" >
         </activity>
+                <activity
+            android:name=".CrazyMain"
+            android:configChanges="keyboardHidden|orientation" >
+        </activity>
         <activity
             android:name=".P2PStartActivity"
             android:configChanges="keyboardHidden|orientation" >
@@ -50,12 +54,17 @@
             android:configChanges="keyboardHidden|orientation"
             android:theme="@android:style/Theme.Translucent" />
         <activity
+            android:name="com.googlecode.android_scripting.activity.Main"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@android:style/Theme.Translucent" />
+        <activity
             android:name="com.tudelft.triblerdroid.first.DialogActivity"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@android:style/Theme.Light" />
+        
     </application>
 
-    <uses-sdk android:minSdkVersion="4" />
+    <uses-sdk android:minSdkVersion="10" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />

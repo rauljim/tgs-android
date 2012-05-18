@@ -16,34 +16,18 @@
 
 package com.tudelft.triblerdroid.first;
 
-import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.IBinder;
 import android.util.Log;
-
-import com.googlecode.android_scripting.Constants;
-import com.googlecode.android_scripting.facade.ActivityResultFacade;
-import com.googlecode.android_scripting.jsonrpc.RpcReceiverManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.Timer;
+import com.tudelft.triblerdroid.first.PythonInstallIntegration;
 
 /**
  * @author Alexey Reznichenko (alexey.reznichenko@gmail.com)
@@ -127,9 +111,10 @@ public class PythonAutoinstallActivity extends PythonInstallIntegration {
 	 */
 	Log.w("QMediaPython","prepareUninstallButton");
 //    Raul, 2012-03-26: Autoinstall done, show video list (no need for button) 
-    Intent intent = new Intent(getBaseContext(), P2PStartActivity.class);
-    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    startActivity(intent);
+    //Intent intent = new Intent(getBaseContext(), P2PStartActivity.class);
+    //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    //startActivity(intent);
+	finish();
   }
   
   public void onPause()
