@@ -143,7 +143,7 @@ public class VideoPlayerActivity extends Activity {
 		}
 		Bundle extras = getIntent().getExtras();
 		String text = extras.getString("android.intent.extra.TEXT");
-		if (text == ""){
+		if (text == null){
 			//from menu
 		
 			hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
