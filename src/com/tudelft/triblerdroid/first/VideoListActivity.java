@@ -82,8 +82,8 @@ public class VideoListActivity extends ListActivity implements Pausable {
 		    	    	intent.putExtra("hash", HASHES[position]);
 		    	  	    // Arno, 2012-03-22: Default tracker is central tracker, swift now
 		    	  	    // has a default local peer which is the DHT.
-	//	    	    	intent.putExtra("tracker", "192.16.127.98:20050"); // KTH's tracker
-		    	    	intent.putExtra("tracker", "tracker3.p2p-next.org:20050"); // Delft's tracker
+		    	    	intent.putExtra("tracker", "192.16.127.98:20050"); // KTH's tracker
+//		    	    	intent.putExtra("tracker", "tracker3.p2p-next.org:20050"); // Delft's tracker
 		    	    	//intent.putExtra("tracker", "127.0.0.1:9999"); // DHT
 		//    	    	intent.putExtra("destination", destination);
 		      	    	startActivity(intent);
