@@ -313,12 +313,9 @@ public class VideoPlayerActivity extends Activity {
 	  		ret = "Received wrong number of parameters during initialization!";
 	  	}
 	  	else {
-	  		try {//TODO: catch InterruptedException (onDestroy)
-	
+	  		try {
 	  			NativeLib nativelib =  new NativeLib();
 	  			mVideoView = (VideoView) findViewById(R.id.surface_view);
-	  			boolean play = false, pause=false;
-	  			
 	  			while(true) {
 	  				String progstr = nativelib.httpprogress(args[0]);
 	  				String[] elems = progstr.split("/");
@@ -344,15 +341,10 @@ public class VideoPlayerActivity extends Activity {
 	  	    		//(asize > 0 && seqcomp == asize) (e.i, file downloaded)
 	  				Thread.sleep( 1000 );
 	  			}
-	  			
-//	  			Log.w("SwiftStats", "*** SHUTDOWN SWIFT ***");
-//	  			// Arno, 2012-03-22: Halts swift completely
-//	  			nativelib.stop();
 	  		}
-	  		catch (Exception e ) {
-	  			//System.out.println("Stacktrace "+e.toString());
-	  			e.printStackTrace();
-	  			ret = "error occurred during initialization!";
+	  		catch (InterruptedException e ) {
+	  			Log.d("player","InterruptedException (onDestroy): stop Swift");
+	  			nativelib.stop();
 	  		}
 	  	}
 	      return ret;
