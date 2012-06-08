@@ -40,10 +40,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.Timer;
 
 /**
  * @author Alexey Reznichenko (alexey.reznichenko@gmail.com)
