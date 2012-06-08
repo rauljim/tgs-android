@@ -1,38 +1,13 @@
 package com.tudelft.triblerdroid.first;
 
-/*
- * StopP2PEngine diagram:
- * 
- * VodoEitActivity.onDestroy():
- *        Always
- * 
- * VodoEitActivity.onUserLeaveHint:
- *        Unfortunately also generated when SwiftAct is started,
- *        so only stopEngine when swift doesn't have focus? Assumes
- *        order of events (SwiftAct focus before VodoAct leave)
- *        
- * When in SwiftAct and Home button is pressed,
- *        SwiftAct gets onUserLeaveHint and pause.
- * 
- * When in SwiftAct and Back button is pressed,
- * 		  SwiftAct gets pause and destroy.
- */
-
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import java.util.Timer;
-
-
 
 public class VideoListActivity extends ListActivity {	
 	
@@ -49,31 +24,19 @@ public class VideoListActivity extends ListActivity {
     	  lv.setOnItemClickListener(new OnItemClickListener() {
     	    public void onItemClick(AdapterView<?> parent, View view,
     	        int position, long id) {
-    	    	// 	When clicked, show a toast with the TextView text
-//    	    	TextView selected_item = (TextView) view;
-//    	    	Toast.makeText(getApplicationContext(), Integer.toString(position),//((TextView) view).getText(),
-//    	    			Toast.LENGTH_SHORT).show();
-
-    	    	//See video info
-//    	    	Intent intent = new Intent(getBaseContext(), VideoInfoActivity.class);
-//    	    	intent.putExtra("video_pos", position);
-//    	    	startActivity(intent);      	    	
-
-    	    	//    	    	Play video
+//    	    	Play video
     	    	Intent intent = new Intent(getBaseContext(), VideoPlayerActivity.class);
-    	    	intent.putExtra("text", "");
     	    	intent.putExtra("hash", HASHES[position]);
     	    	// Arno, 2012-03-22: Default tracker is central tracker, swift now
-    	    	// has a default local peer which is the DHT.
+    	    	// has a default local peer which is the DHT (127.0.0.1:9999).
     	    	intent.putExtra("tracker", "192.16.127.98:20050"); // KTH's tracker
 //		       	intent.putExtra("tracker", "tracker3.p2p-next.org:20050"); // Delft's tracker
-    	    	//intent.putExtra("tracker", "127.0.0.1:9999"); // DHT
-    	    	//intent.putExtra("destination", destination);
     	    	startActivity(intent);
     	    }
     	  });
-    	} // Arno: If you change the order here, change HASHES[] order as well!
-	
+    	} 
+
+    // Arno: If you add/modify here, change HASHES[] as well!
     static final String[] VIDEOS = new String[] {
 		"(480p) TED: Ken Robinson says schools kill creativity", 
 		"(480p-low) TED: Ken Robinson says schools kill creativity", 
@@ -109,6 +72,7 @@ public class VideoListActivity extends ListActivity {
 		"(480p-low) VODO: An Honest Man", 
     };
 
+    // Arno: If you add/modify here, change VIDEOS[] as well!
 	static final String[] HASHES = new String[] {
 		"2b2fe5f1462e5b7ac4d70fa081e0169160b2d3a6", // SirKenRobinson_2006-480p.ts
 		"114c618ec72e691e5b4730a17f58d215b0418ad4", // SirKenRobinson_2006-480p-512kbps.ts
@@ -144,4 +108,3 @@ public class VideoListActivity extends ListActivity {
 		"15f2fb2f7880c8c806d67ed1c070d925aaaa7f7b", // An-Honest-Man-Xvid-VODO-480p-512kbps.ts	
 	};
 }
-
