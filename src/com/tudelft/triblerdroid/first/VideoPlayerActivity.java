@@ -22,12 +22,10 @@ import java.util.regex.Pattern;
 
 public class VideoPlayerActivity extends Activity {
 
-
-	NativeLib nativelib = null;
-//	protected TextView _text;
+    NativeLib nativelib = null;
     protected SwiftMainThread _swiftMainThread;
     protected StatsTask _statsTask;
-	private VideoView mVideoView = null;
+    private VideoView mVideoView = null;
     protected ProgressDialog _dialog;
     protected Integer _seqCompInt;
 
@@ -38,19 +36,17 @@ public class VideoPlayerActivity extends Activity {
 	String destination;
 	boolean inmainloop = false;
 	
-	
   @Override
   protected void onCreate(Bundle savedInstanceState) {
 	
 	  super.onCreate(savedInstanceState);
 	  
 	  if (pythonIsInstalled()){
-		  Log.w("player","onCreate true");
-
+		  Log.w("player","onCreate: Python OK");
 		  startSwiftAndPlay();
 	  }
 	  else{
-		  Log.w("player","onCreate false");
+		  Log.w("player","onCreate: Python FAIL (installing python package)");
 		  Intent intent = new Intent(getBaseContext(), PythonAutoinstallActivity.class);
 		  startActivity(intent);
 	  }	  
@@ -59,13 +55,13 @@ public class VideoPlayerActivity extends Activity {
   @Override
   protected void onRestart() {
 	  super.onRestart();
-	  // Go back to video list
 	  if (pythonIsInstalled()){
 		  Log.w("player","onRestart play");
 		  startSwiftAndPlay();
 	  }
 	  else{
-		  Log.w("player","onRestart false");  
+		  // Go back to video list or twicca
+		  Log.w("player","onRestart: Python FAIL (exit player)");  
 		  finish();
 	  }
   }
@@ -74,11 +70,11 @@ public class VideoPlayerActivity extends Activity {
   {
 	  super.onPause();
 	  if (pythonIsInstalled()){
-		  Log.w("player","onPause kill");
+		  Log.w("player","onPause: Python OK (exit player)");
 		  finish();
 	  }
 	  else{
-		  Log.w("player","onPause false");
+		  Log.w("player","onPause: Python FAIL (wait for installer)");
 	  }
   }
 	
@@ -86,18 +82,18 @@ public class VideoPlayerActivity extends Activity {
   {
 	  super.onResume();
 	  if (pythonIsInstalled()){
-		  Log.w("player","onResume play");
+		  Log.w("player","onResume: Python OK (back from installer, play video)");
 		  startSwiftAndPlay();
 	  }
 	  else{
-		  Log.w("player","onPause false");  
+		  Log.w("player","onPause: Python FAIL (wait, installer still not done)");  
 	  }
   }
 	
   public void onDestroy()
   {
 	  super.onDestroy();
-	  Log.w("player","onDestroy");
+	  Log.w("player","onDestroy: finish() OR OS killed Activity");
 	  _statsTask.cancel(true);
   }
 
@@ -112,7 +108,6 @@ public class VideoPlayerActivity extends Activity {
 			return;
 		}
 		videoPlaying = true;
-		
 		setContentView(R.layout.main);	      
 		try
 		{
@@ -125,13 +120,12 @@ public class VideoPlayerActivity extends Activity {
 		Bundle extras = getIntent().getExtras();
 		String text = extras.getString("android.intent.extra.TEXT");
 		if (text == null){
-			//from menu
-		
+			//no text from twicca, parameters come from menu
 			hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
-			tracker = extras.getString("tracker"); // See VodoEitActivity to change this
+			tracker = extras.getString("tracker");
 		}
 		else{
-			//from twicca			
+			//parameters come from twicca			
 			Log.w("video twicca", text);
 			Pattern p = Pattern.compile("ppsp://.{40}");
 			Matcher m = p.matcher(text);
@@ -145,7 +139,6 @@ public class VideoPlayerActivity extends Activity {
 			    Log.w("video twicca", "no ppsp link found");
 			}
 			tracker = "192.16.127.98:20050"; //TODO
-					
 		}
 		destination = "/sdcard/swift/video.ts";
 		if (hash != ""){
@@ -153,19 +146,14 @@ public class VideoPlayerActivity extends Activity {
 		}
 	}
 
-  
-  /*
-   *  Arno: From Riccardo's original SwiftBeta
-   */
-  
-  protected void SwiftInitalize()
-  {
-	  // create dir for swift
-	  String swiftFolder = "/swift";
-	  String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
-	  File mySwiftFolder = new File(extStorageDirectory + swiftFolder);
-	  mySwiftFolder.mkdir();	  
-  }
+	protected void SwiftInitalize()
+	{
+		// create dir for swift
+		String swiftFolder = "/swift";
+		String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
+		File mySwiftFolder = new File(extStorageDirectory + swiftFolder);
+		mySwiftFolder.mkdir();	  
+	}
   
 	//starts the download thread
 	protected void SwiftStartDownload() {
@@ -187,26 +175,16 @@ public class VideoPlayerActivity extends Activity {
 	  _dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 	  // reset the bar to the default value of 0
 	  _dialog.setProgress(0);
-	  
-	  //stop the engine if the procress scree is cancelled
+	  //exit player if the progress screen is cancelled
 	  _dialog.setOnCancelListener(new OnCancelListener() {
-			
 			@Override
 			public void onCancel(DialogInterface dialog) {
-//				_text.setText("TODO HTTPGW engine stopped!");
-				// Arno, 2012-01-30: TODO tell HTTPGW to stop serving data
-				//nativelib.stop();
-				// Raul, 2012-03-27: don't stay here with a black screen. 
-				// Go back to video list
 				finish();
 			}
 		});
-	
 	  // display the progressbar
 	  _dialog.show();
-	  
 	}
-	
 	
 	//starts the video playback
 	private void SwiftStartPlayer() {
@@ -219,20 +197,13 @@ public class VideoPlayerActivity extends Activity {
 			runOnUiThread(new Runnable(){
 				public void run() {
 					getWindow().setFormat(PixelFormat.TRANSLUCENT);
-//					_text.setText("Play " + destination);
 		    		mVideoView = (VideoView) findViewById(R.id.surface_view);
-	
-		    		// Arno, 2012-01-30: Download *and* play, using HTTPGW
-		    		//String filename = "/sdcard/swift/" + destination;
-		    		//mVideoView.setVideoPath(destination);
+		    		// Play via HTTPGW
 		    		String urlstr = "http://127.0.0.1:8082/"+hash;
-		    		//String urlstr = "file:"+destination;
 		    		mVideoView.setVideoURI(Uri.parse(urlstr));
-		    		
 		    		mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 						@Override
 						public void onPrepared (MediaPlayer mp) {
-//							_text.setText("Player75 prepared!");
 							_dialog.dismiss();
 						}
 					});
@@ -259,17 +230,13 @@ public class VideoPlayerActivity extends Activity {
     		{
     			NativeLib nativelib =  new NativeLib();
     			String ret = nativelib.start(hash, tracker, destination);
-    			
-				SwiftStartPlayer();
-				
+    			SwiftStartPlayer();
 				// Arno: Never returns, calls libevent2 mainloop
 				if (!inmainloop) 
 				{
 					inmainloop = true;
 					Log.w("Swift","Entering libevent2 mainloop");
-					
 					int progr = nativelib.mainloop();
-					
 					Log.w("Swift","LEFT MAINLOOP!");
     			}
     		}
@@ -318,8 +285,6 @@ public class VideoPlayerActivity extends Activity {
 	
 	  	    			}
 	  	    		});
-	  				//Raul, 20120425: removed break which caused playback interruption when
-	  	    		//(asize > 0 && seqcomp == asize) (e.i, file downloaded)
 	  				Thread.sleep( 1000 );
 	  			}
 	  		}
@@ -331,7 +296,4 @@ public class VideoPlayerActivity extends Activity {
 	      return ret;
 	  }
 	}
-
-	
-
 }
