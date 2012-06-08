@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -16,7 +17,14 @@ import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.googlecode.android_scripting.FileUtils;
+import com.googlecode.android_scripting.interpreter.InterpreterUtils;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,6 +115,8 @@ public class VideoPlayerActivity extends Activity {
 		if (videoPlaying){
 			return;
 		}
+		setContentView(R.layout.p2p);
+		copyResourcesToLocal(); //copy Python code from res/raw to SD card
 		videoPlaying = true;
 		setContentView(R.layout.main);	      
 		try
@@ -201,6 +211,7 @@ public class VideoPlayerActivity extends Activity {
 		    		// Play via HTTPGW
 		    		String urlstr = "http://127.0.0.1:8082/"+hash;
 		    		mVideoView.setVideoURI(Uri.parse(urlstr));
+		    		//TODO(low priority): finish() when video is over
 		    		mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 						@Override
 						public void onPrepared (MediaPlayer mp) {
@@ -296,4 +307,78 @@ public class VideoPlayerActivity extends Activity {
 	      return ret;
 	  }
 	}
+	
+	
+//	Code from P2PStartActivity below this line
+	
+	private void copyResourcesToLocal() {
+		String name, sFileName;
+		InputStream content;
+		R.raw a = new R.raw();
+		java.lang.reflect.Field[] t = R.raw.class.getFields();
+		Resources resources = getResources();
+		for (int i = 0; i < t.length; i++) {
+			try {
+				name = resources.getText(t[i].getInt(a)).toString();
+				sFileName = name.substring(name.lastIndexOf('/') + 1, name
+						.length());
+				content = getResources().openRawResource(t[i].getInt(a));
+
+				// Copies script to internal memory only if changes were made
+				sFileName = InterpreterUtils.getInterpreterRoot(this)
+						.getAbsolutePath()
+						+ "/" + sFileName;
+				if (needsToBeUpdated(sFileName, content)) {
+					Log.d("Swift", "Copying from stream " + sFileName);
+					content.reset();
+					FileUtils.copyFromStream(sFileName, content);
+				}
+				FileUtils.chmod(new File(sFileName), 0755);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	private boolean needsToBeUpdated(String filename, InputStream content) {
+		File script = new File(filename);
+		FileInputStream fin;
+		Log.d("Swift", "Checking if " + filename + " exists");
+
+		if (!script.exists()) {
+			Log.d("Swift", "not found");
+			return true;
+		}
+
+		Log.d("Swift", "Comparing file with content");
+		try {
+			fin = new FileInputStream(filename);
+			int c;
+			while ((c = fin.read()) != -1) {
+				if (c != content.read()) {
+					Log.d("Swift", "Something changed replacing");
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			Log.d("Swift", "Something failed during comparing");
+//			Log.e("Swift", e);
+			return true;
+		}
+		Log.d("Swift", "No need to update " + filename);
+		return false;
+	}
+	
+	private void copyFile(InputStream in, OutputStream out) throws IOException {
+		byte[] buffer = new byte[1024];
+		int read;
+		while((read = in.read(buffer)) != -1){
+			out.write(buffer, 0, read);
+		}
+	}
+
+	
+	
 }
+
+
