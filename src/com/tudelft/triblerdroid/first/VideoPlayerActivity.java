@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -65,6 +66,12 @@ public class VideoPlayerActivity extends Activity implements Pausable {
 
 	  P2PStartActivity.addAct(this);
 	  
+//	  Raul, 2012-06-12: Install Python libs (if needed)
+	  setContentView(R.layout.pythonautoinstall);
+	  Intent intent = new Intent(getBaseContext(), PythonAutoinstallActivity.class);
+	  startActivityForResult(intent, 0);
+	  Log.w("player", "after calling autoinstall");
+	  
 //	  Raul, 2012-03-21: No necessary because of the notitle.fullscreen in Manifest
 //      setTheme(android.R.style.Theme_Light);
 //      requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -89,12 +96,29 @@ public class VideoPlayerActivity extends Activity implements Pausable {
       {
     	  e.printStackTrace();
       }
-	  Bundle extras = getIntent().getExtras();
-	  hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
-	  tracker = extras.getString("tracker"); // See VodoEitActivity to change this
-	  destination = "/sdcard/swift/video.ts";
-	  SwiftStartDownload();
   }
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data)
+  {
+	  super.onActivityResult(requestCode, resultCode, data);
+	  if (requestCode == 0){
+//		  Raul, 2012-06-12: Start Pymdht
+		  Intent intent = new Intent(getBaseContext(), P2PStartActivity.class);
+		  startActivityForResult(intent, 1);
+		  Log.w("player", "after calling P2P");		  
+		  return;
+	  }
+	  if (requestCode == 1){
+		  Log.w("player", "onActivityResult");
+		  Bundle extras = getIntent().getExtras();
+		  hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
+		  tracker = extras.getString("tracker"); // See VodoEitActivity to change this
+		  destination = "/sdcard/swift/video.ts";
+		  SwiftStartDownload();
+		  return;
+	  }
+  }
+  
   
   @Override
   protected void onRestart() {

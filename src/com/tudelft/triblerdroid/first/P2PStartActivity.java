@@ -179,10 +179,17 @@ public class P2PStartActivity extends Activity implements Pausable {
       // finish();
     }
 //    Raul, 2012-03-26: Autoinstall done, show video list (no need for button) 
-    Intent intent = new Intent(getBaseContext(), VideoListActivity.class);
-    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    startActivity(intent);
-  }
+//    Intent intent = new Intent(getBaseContext(), VideoListActivity.class);
+//    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//    startActivity(intent);
+//    Raul, 2012-06-12: done here, finish
+    Log.d("p2p", "done");
+    Intent intent=new Intent();
+//    intent.putExtra("ComingFrom", "Hello");
+    setResult(RESULT_OK, intent);
+    finish();
+  
+}
 
   
 	public void stopP2PEngine()

@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="libs/locale_platform.jar"/>
 	<classpathentry kind="lib" path="libs/script.jar"/>
 	<classpathentry kind="lib" path="libs/interpreter-ab6.jar"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
