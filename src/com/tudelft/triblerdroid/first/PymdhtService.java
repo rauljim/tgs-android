@@ -51,7 +51,7 @@ import java.util.concurrent.CountDownLatch;
  * @author Alexey Reznichenko (alexey.reznichenko@gmail.com)
  * @author Manuel Naranjo (manuel@aircable.net)
  */
-public class SwiftService extends ForegroundService {
+public class PymdhtService extends ForegroundService {
 	private final static int NOTIFICATION_ID = NotificationIdFactory.create();
 	private final CountDownLatch mLatch = new CountDownLatch(1);
 	private final IBinder mBinder;
@@ -61,12 +61,12 @@ public class SwiftService extends ForegroundService {
     private AndroidProxy mProxy;
     
 	public class LocalBinder extends Binder {
-		public SwiftService getService() {
-			return SwiftService.this;
+		public PymdhtService getService() {
+			return PymdhtService.this;
 		}
 	}
 	
-	public SwiftService() {
+	public PymdhtService() {
 		super(NOTIFICATION_ID);
 		mBinder = new LocalBinder();
 	}
@@ -146,7 +146,7 @@ public class SwiftService extends ForegroundService {
 		Log.w("Arno: Looking for interpreter for script " + fileName );
 		
 		Interpreter interpreter = null;
-		for (int i=0; i<10; i++) {
+		for (int i=0; i<30; i++) {
 			// Arno, 2012-03-06: Sometimes the interpreter detection stuff
 			// doesn't appear to be ready when this is called. Calling it
 			// multiple times seems to help?
@@ -154,10 +154,16 @@ public class SwiftService extends ForegroundService {
 			interpreter = mInterpreterConfiguration
 				.getInterpreterForScript(fileName);
 		}
-		
-		if (interpreter == null || !interpreter.isInstalled()) {
+		Log.w("after funny for loop");
+		if (interpreter == null) {
+		Log.w("interpreter IS null");
+		return;
+		}			
+		if (!interpreter.isInstalled()) {
+			Log.w("interpreter NOT installed");
 			return;
 		}
+		Log.w("interpreter NOT null");
 		// Copies script to internal memory.
 		fileName = InterpreterUtils.getInterpreterRoot(this).getAbsolutePath()
 				+ "/" + fileName;

@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
-import android.content.ServiceConnection;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 
 public class VideoPlayerActivity extends Activity {
 
-	private SwiftService scriptService = null;
+	private PymdhtService pymdhtService = null;
     NativeLib nativelib = null;
     protected SwiftMainThread _swiftMainThread;
     protected StatsTask _statsTask;
@@ -89,8 +89,8 @@ public class VideoPlayerActivity extends Activity {
   {
 	  super.onPause();
 	  if (pythonIsInstalled()){
-		  Log.w("player","onPause: Python OK (exit player)");
-		  finish();
+		  Log.w("player","onPause: Python OK (exit player) DISABLED!!!!");
+		  //finish();
 	  }
 	  else{
 		  Log.w("player","onPause: Python FAIL (wait for installer)");
@@ -128,7 +128,7 @@ public class VideoPlayerActivity extends Activity {
 		}
 		setContentView(R.layout.p2p);
 		copyResourcesToLocal(); //copy Python code from res/raw to SD card
-		//TODO startP2PEngine();
+		startP2PEngine();
 		videoPlaying = true;
 		setContentView(R.layout.main);	      
 		try
@@ -400,9 +400,9 @@ public class VideoPlayerActivity extends Activity {
 		ServiceConnection connection = new ServiceConnection() {
 			@Override
 			public void onServiceConnected(ComponentName name, IBinder service) {
-				scriptService = ((SwiftService.LocalBinder) service).getService();
+				pymdhtService = ((PymdhtService.LocalBinder) service).getService();
 				try {
-					RpcReceiverManager manager = scriptService.getRpcReceiverManager();
+					RpcReceiverManager manager = pymdhtService.getRpcReceiverManager();
 					ActivityResultFacade resultFacade = manager.getReceiver(ActivityResultFacade.class);
 					resultFacade.setActivity(VideoPlayerActivity.this);
 				} catch (InterruptedException e) {
@@ -417,61 +417,47 @@ public class VideoPlayerActivity extends Activity {
 		      };
 		      
 //		      Raul, 2012-03-28: This creates problems when restarting P2P
-//		      bindService(new Intent(this, ScriptService.class), connection, Context.BIND_AUTO_CREATE);
-		      startService(new Intent(this, SwiftService.class));
-
-		//  } else {
+//		      bindService(new Intent(this, PymdhtService.class), connection, Context.BIND_AUTO_CREATE);
+		      startService(new Intent(this, PymdhtService.class));
 //		      ScriptApplication application = (ScriptApplication) getApplication();
 //		      if (application.readyToStart()) {
 //		        startService(new Intent(this, SwiftService.class));
 //		      }
-		      // Arno, 2012-02-15: Hack to keep this activity alive.
-		      // finish();
-
-//		    Raul, 2012-03-26: Autoinstall done, show video list (no need for button) 
-		      Intent intent = new Intent(getBaseContext(), VideoListActivity.class);
-		      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		      startActivity(intent);
-		  }
+		      
+	}
 
 		  
-			public void stopP2PEngine()
-			{
-				stopService(new Intent(getBaseContext(), SwiftService.class));
-//				unbindService(scriptService);
+	public void stopP2PEngine()
+	{
+		stopService(new Intent(getBaseContext(), PymdhtService.class));
+//		unbindService(pymdhtService);
 				
-				// Arno, 2012-03-23: Don't work if called by TimerTask :-(
-				// Toast.makeText(getBaseContext(), "P2P Engine DOWN", Toast.LENGTH_LONG).show();
+		// Arno, 2012-03-23: Don't work if called by TimerTask :-(
+		// Toast.makeText(getBaseContext(), "P2P Engine DOWN", Toast.LENGTH_LONG).show();
 				
-				String msg = "KILL_DHT";
-				InetAddress IPAddress = null;
-				try {
-					IPAddress = InetAddress.getByName("127.0.0.1");
-				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} 
-				DatagramPacket sendPacket = 
-						new DatagramPacket(msg.getBytes(), msg.length(), IPAddress, 9999); 
-				DatagramSocket clientSocket = null;
-				try {
-					clientSocket = new DatagramSocket();
-				} catch (SocketException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} 
-				try {
-					clientSocket.send(sendPacket);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} 
-				clientSocket.close(); 
-			}
-	
-	
-	
-	
+		String msg = "KILL_DHT";
+		InetAddress IPAddress = null;
+		try {
+			IPAddress = InetAddress.getByName("127.0.0.1");
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		DatagramPacket sendPacket = 
+				new DatagramPacket(msg.getBytes(), msg.length(), IPAddress, 9999); 
+		DatagramSocket clientSocket = null;
+		try {
+			clientSocket = new DatagramSocket();
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		try {
+			clientSocket.send(sendPacket);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		clientSocket.close(); 
+	}
 }
-
-
