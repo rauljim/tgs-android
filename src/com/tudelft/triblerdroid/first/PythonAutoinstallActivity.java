@@ -1,19 +1,4 @@
-/*
- * Copyright (C) 2010 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
-
+//Skeleton example from Alexey Reznichenko
 package com.tudelft.triblerdroid.first;
 
 import android.app.Activity;
@@ -45,9 +30,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Timer;
 
-/**
- * @author Alexey Reznichenko (alexey.reznichenko@gmail.com)
- */
 public class PythonAutoinstallActivity extends PythonInstallIntegration {
 
 
@@ -129,35 +111,14 @@ public class PythonAutoinstallActivity extends PythonInstallIntegration {
 //    Raul, 2012-03-26: Autoinstall done, show video list (no need for button) 
     Intent intent = new Intent(getBaseContext(), P2PStartActivity.class);
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    startActivity(intent);
-  }
-  
-  public void onPause()
-  {
-	super.onPause();
-	Log.w("Swift","PythonAutoinstallActivity.onPause" );
+    startActivityForResult(intent, 0);
   }
 
-  public void onResume()
-  {
-	super.onResume();
-	Log.w("Swift","PythonAutoinstallActivity.onResume" );
-  }
-  
-  public void onStart()
-  {
-	super.onStart();
-	Log.w("Swift","PythonAutoinstallActivity.onStart" );
-  }
-  
-  public void onRestart()
-  {
-	super.onRestart();
-	Log.w("Swift","PythonAutoinstallActivity.onRestart" );
-  }
-
-  public void onDestroy()
-  {
-		super.onDestroy();
-  }
+	@Override
+    protected void onActivityResult(int requestCode, int resultCode,
+            Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		// Done, exit application
+        finish();
+	}
 }

@@ -86,7 +86,7 @@ public class VideoListActivity extends ListActivity implements Pausable {
 		    	    	intent.putExtra("tracker", "tracker3.p2p-next.org:20050"); // Delft's tracker
 		    	    	//intent.putExtra("tracker", "127.0.0.1:9999"); // DHT
 		//    	    	intent.putExtra("destination", destination);
-		      	    	startActivity(intent);
+		      	    	startActivityForResult(intent, 0);
     	    		}
     	    	}
     	    	else {
@@ -171,13 +171,11 @@ public class VideoListActivity extends ListActivity implements Pausable {
 		"15f2fb2f7880c8c806d67ed1c070d925aaaa7f7b", // An-Honest-Man-Xvid-VODO-480p-512kbps.ts	
 	};
       
-
 	  // From Pausable interface
 	public boolean isPaused()
 	{
 		  return ispaused;
 	}
-	
 	
 	public void checkAllActPaused()
 	{
@@ -190,7 +188,6 @@ public class VideoListActivity extends ListActivity implements Pausable {
 			t.schedule(pt, 2000);
 		}
 	}
-
 	
 	public void onPause()
 	{
@@ -205,13 +202,13 @@ public class VideoListActivity extends ListActivity implements Pausable {
 			super.onResume();
 			ispaused = false;
 	}
-	
-		
-	public void onDestroy()
-	{
-			super.onDestroy();
-				
-			P2PStartActivity.delAct(this);
+
+	@Override
+    protected void onActivityResult(int requestCode, int resultCode,
+            Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		// Done, exit application
+        finish();
 	}
 }
 
