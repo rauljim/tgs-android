@@ -6,8 +6,10 @@ import android,time
 import dht
 
 droid = android.Android()
-droid.makeToast('Python says: Hello, Android!')
-droid.vibrate(300)
+while 1:
+    droid.makeToast('Python says: Hello, Android!')
+    droid.vibrate(300)
+    time.sleep(2)
 
 dht.SwiftTraker(9999).start()
 # Raul, 2012-03-09: SwiftTracker does not create a thread!!

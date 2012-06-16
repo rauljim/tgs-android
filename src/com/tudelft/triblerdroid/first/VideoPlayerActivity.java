@@ -62,51 +62,90 @@ public class VideoPlayerActivity extends Activity {
 	  
 	  if (pythonIsInstalled()){
 		  Log.w("player","onCreate: Python OK");
-		  startSwiftAndPlay();
+		  Intent intent = new Intent(getBaseContext(), P2PStartActivity.class);
+  		  startActivityForResult(intent, 1);
+  		  Log.w("player", "after calling P2P");		  
 	  }
 	  else{
-		  Log.w("player","onCreate: Python FAIL (installing python package)");
+		  Log.w("player","onCreate: ???????? Python FAIL (autoinstalling python package)");
 		  Intent intent = new Intent(getBaseContext(), PythonAutoinstallActivity.class);
-		  startActivity(intent);
+		  startActivityForResult(intent, 0);
 	  }	  
   }
-  
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data)
+  {
+	  super.onActivityResult(requestCode, resultCode, data);
+	  if (requestCode == 0){
+  		  Log.w("player", "back from Autoinstall");
+  		  if (resultCode == RESULT_OK) {
+  			  Log.w("player", "RESULT_OK");
+  		  }
+  		  if (resultCode == RESULT_CANCELED) {
+  			  Log.w("player", "RESULT_CANCELED");
+  		  }
+//		  Raul, 2012-06-12: Start Pymdht
+		  Intent intent = new Intent(getBaseContext(), P2PStartActivity.class);
+  		  Log.w("player", "calling P2P to start DHT");		  
+//  		  startActivityForResult(intent, 1);
+  		  return;
+	  }
+	  if (requestCode == 1){
+		  Log.w("player", "back from P2P");		  
+  		  if (resultCode == RESULT_OK) {
+  			  Log.w("player", "RESULT_OK");
+  		  }
+  		  if (resultCode == RESULT_CANCELED) {
+  			  Log.w("player", "RESULT_CANCELED");
+  		  }
+  		  Bundle extras = getIntent().getExtras();
+  		  hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
+  		  tracker = extras.getString("tracker"); // See VodoEitActivity to change this
+  		  destination = "/sdcard/swift/video.ts";
+  		  startSwiftAndPlay();
+  		  return;
+	  }
+  }
+    
   @Override
   protected void onRestart() {
 	  super.onRestart();
-	  if (pythonIsInstalled()){
-		  Log.w("player","onRestart play");
-		  startSwiftAndPlay();
-	  }
-	  else{
-		  // Go back to video list or twicca
-		  Log.w("player","onRestart: Python FAIL (exit player)");  
-		  finish();
-	  }
+	  Log.w("player","onRestart: do nothing");
+//	  if (pythonIsInstalled()){
+//		  Log.w("player","onRestart play");
+////		  startSwiftAndPlay();
+//	  }
+//	  else{
+//		  // Go back to video list or twicca
+//		  Log.w("player","onRestart: Python FAIL (exit player) DISABLED!!");  
+////		  finish();
+//	  }
   }
 
   public void onPause()
   {
 	  super.onPause();
-	  if (pythonIsInstalled()){
-		  Log.w("player","onPause: Python OK (exit player) DISABLED!!!!");
-		  //finish();
-	  }
-	  else{
-		  Log.w("player","onPause: Python FAIL (wait for installer)");
-	  }
+	  Log.w("player","onPause: do nothing");
+//	  if (pythonIsInstalled()){
+//		  Log.w("player","onPause: Python OK (exit player) DISABLED!!!!");
+//		  //finish();
+//	  }
+//	  else{
+//		  Log.w("player","onPause: Python FAIL (wait for installer)");
+//	  }
   }
 	
   public void onResume()
   {
 	  super.onResume();
-	  if (pythonIsInstalled()){
-		  Log.w("player","onResume: Python OK (back from installer, play video)");
-		  startSwiftAndPlay();
-	  }
-	  else{
-		  Log.w("player","onPause: Python FAIL (wait, installer still not done)");  
-	  }
+	  Log.w("player","onResume: do nothing");
+//	  if (pythonIsInstalled()){
+//		  Log.w("player","onResume: Python OK (back from installer, play video)");
+////		  startSwiftAndPlay();
+//	  }
+//	  else{
+//		  Log.w("player","onPause: Python FAIL (wait, installer still not done)");  
+//	  }
   }
 	
   public void onDestroy()
@@ -126,9 +165,9 @@ public class VideoPlayerActivity extends Activity {
 		if (videoPlaying){
 			return;
 		}
-		setContentView(R.layout.p2p);
-		copyResourcesToLocal(); //copy Python code from res/raw to SD card
-		startP2PEngine();
+		//setContentView(R.layout.p2p);
+		//copyResourcesToLocal(); //copy Python code from res/raw to SD card
+		//startP2PEngine();
 		videoPlaying = true;
 		setContentView(R.layout.main);	      
 		try
@@ -201,7 +240,8 @@ public class VideoPlayerActivity extends Activity {
 	  _dialog.setOnCancelListener(new OnCancelListener() {
 			@Override
 			public void onCancel(DialogInterface dialog) {
-				finish();
+				Log.w("player", "SwiftCreateProcess.onCancel (exit player)");
+//				finish();
 			}
 		});
 	  // display the progressbar
@@ -395,7 +435,7 @@ public class VideoPlayerActivity extends Activity {
 		/* Arno, 2012-03-05: Moved from onCreate, such that we only launch the
 		 * service when Python is installed.
 		 */
-		Log.w("QMediaPython","prepareUninstallButton");
+		Log.w("player","startP2PEngine (DHT)");
 		
 		ServiceConnection connection = new ServiceConnection() {
 			@Override

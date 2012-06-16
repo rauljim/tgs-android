@@ -27,40 +27,48 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import com.tudelft.triblerdroid.first.PythonInstallIntegration;
+//import com.tudelft.triblerdroid.first.PythonInstallIntegration;
 
 /**
  * @author Alexey Reznichenko (alexey.reznichenko@gmail.com)
  */
+
 public class PythonAutoinstallActivity extends PythonInstallIntegration {
-
-
 	
+	private String MkdirSwift(){
+		  String swiftFolder = "/swift";
+		  String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
+		  try
+		  {
+			  File mySwiftFolder = new File(extStorageDirectory + swiftFolder);
+			  mySwiftFolder.mkdir();
+		  }
+		  catch(Exception e)
+		  {
+			  e.printStackTrace();
+		  }
+		  return extStorageDirectory;
+	}
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
 	  super.onCreate(savedInstanceState);
-	  
-	  
+//	  Raul, 2012-06-15: super.onCreate will call
+//	  prepareInstallButton (if python not installed)
+//	  or
+//	  prepareUninstallButton (if Python is installed)
 	  setContentView(R.layout.pythonautoinstall);
+  }
 
-//	  Raul, 2012-03-09: moved here because pymdht creates files in this directory
-	  // create dir for swift
-	  String swiftFolder = "/swift";
-	  String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
-	  try
-	  {
-		  File mySwiftFolder = new File(extStorageDirectory + swiftFolder);
-		  mySwiftFolder.mkdir();
-	  }
-	  catch(Exception e)
-	  {
-		  e.printStackTrace();
-	  }
-
+  private boolean arnoTest(){
+	  boolean python_is_installed = false;
+	  String extStorageDirectory = MkdirSwift();
 	  // ARNO TEST
 	  File pythonBin = new File("/data/data/"+getClass().getPackage().getName()+"/files/python/bin/python");
 	  if (pythonBin.exists() && pythonBin.canExecute()){
-		  setInstalled(true);
+		  setInstalled(true); //Raul: where is setInstalled this defined????
+		  python_is_installed = true;
+		  Log.w("autoinstall", "arno test OK");
 	  }
 	  else{
 		  String pythonPath = extStorageDirectory + "/python-for-android-files/";
@@ -74,7 +82,7 @@ public class PythonAutoinstallActivity extends PythonInstallIntegration {
 		  {
 			  e.printStackTrace();
 		  }
-		  Log.w("Swift", "Copy Python interpreter to sdcard");
+		  Log.w("autoinstall", "Copy Python interpreter to sdcard");
 		  String[] filenames = {"python_extras_r14.zip", "python_r16.zip"};
 		  AssetManager assetManager = getAssets();
 		  InputStream in = null;
@@ -87,15 +95,17 @@ public class PythonAutoinstallActivity extends PythonInstallIntegration {
 				  in.close();
 				  out.close();
 			  }catch(Exception e) {
-				  Log.e("Swift", e.getMessage());
+				  Log.e("autoinstall", e.getMessage());
 		      }    
 			  
 		  }
-
-		  setInstalled(false);
+		  Log.w("autoinstall", "arno test FAIL");
+		  setInstalled(false); //Raul: where is setInstalled this defined????
+		  python_is_installed = false;
 	  }
+	  return python_is_installed;
   }
-	
+  
   private void copyFile(InputStream in, OutputStream out) throws IOException {
 	    byte[] buffer = new byte[1024];
 	    int read;
@@ -104,45 +114,32 @@ public class PythonAutoinstallActivity extends PythonInstallIntegration {
 	    }
 	}
   @Override
+  protected void prepareInstallButton() {
+	  // This is called if not installed
+	  // see http://android-scripting.googlecode.com/hg-history/22a732e968f7f2cd8375fcad23dc2b6d537b5f58/android/PythonForAndroid/src/com/googlecode/pythonforandroid/Main.java
+	  Log.w("autoinstall", "done FAIL >> installing");
+	  boolean pythonIsInstalled = arnoTest();
+	  if (pythonIsInstalled){
+		  Log.w("autoinstall", "arno test OK");
+	  }
+	  else{
+		  Log.w("autoinstall", "arno test FALSE");
+	  }
+	  install();//super.prepareInstallButton();
+//	  Log.w("autoinstall", "done OK (optimistic)");
+//	  Intent intent=new Intent();
+//	  setResult(RESULT_OK, intent);
+//	  finish();
+  }
+  
+  @Override
   protected void prepareUninstallButton() {
-	  
-	/* Arno, 2012-03-05: Moved from onCreate, such that we only launch the
-	 * service when Python is installed.
-	 */
-	Log.w("QMediaPython","prepareUninstallButton");
-//    Raul, 2012-03-26: Autoinstall done, show video list (no need for button) 
-    //Intent intent = new Intent(getBaseContext(), P2PStartActivity.class);
-    //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    //startActivity(intent);
-	finish();
-  }
-  
-  public void onPause()
-  {
-	super.onPause();
-	Log.w("Swift","PythonAutoinstallActivity.onPause" );
-  }
-
-  public void onResume()
-  {
-	super.onResume();
-	Log.w("Swift","PythonAutoinstallActivity.onResume" );
-  }
-  
-  public void onStart()
-  {
-	super.onStart();
-	Log.w("Swift","PythonAutoinstallActivity.onStart" );
-  }
-  
-  public void onRestart()
-  {
-	super.onRestart();
-	Log.w("Swift","PythonAutoinstallActivity.onRestart" );
-  }
-
-  public void onDestroy()
-  {
-		super.onDestroy();
+	  // This is called if the interpreted is already installed or
+	  // it has been just installed.
+	  // see http://android-scripting.googlecode.com/hg-history/22a732e968f7f2cd8375fcad23dc2b6d537b5f58/android/PythonForAndroid/src/com/googlecode/pythonforandroid/Main.java
+	  Log.w("autoinstall", "done OK");
+	  Intent intent=new Intent();
+	  setResult(RESULT_OK, intent);
+	  //finish();
   }
 }

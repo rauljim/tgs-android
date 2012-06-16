@@ -52,7 +52,7 @@
 		    </intent-filter>
         </activity>
         
-        <service android:name=".PymdhtService" />
+        <service android:name=".SwiftService" />
 
         <activity
             android:name="com.googlecode.android_scripting.activity.FutureActivity"

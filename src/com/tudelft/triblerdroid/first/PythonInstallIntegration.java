@@ -42,7 +42,7 @@ public class PythonInstallIntegration extends Main {
 		  String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
 		  File myPythonFolder = new File(extStorageDirectory + pythonFolder);
 		  myPythonFolder.mkdir();
-		  Log.w("QMediaPython","Made directory for extracted Python");
+		  Log.w("installIntegration","Made directory for extracted Python");
 		  
 		  // Arno, 2012-03-06: If installation fails on a testing phone,
 		  // you may need to delete /mnt/com.tudelft.triblerdroid.first
@@ -75,8 +75,7 @@ public class PythonInstallIntegration extends Main {
 
 	  @Override
 	  protected void initializeViews() {
-		  
-		  Log.w("QMediaPython","initializeViews");
+		  Log.w("InstallIntegration","initializeViews");
 	      // Arno, 2012-02-15: Need to figure out these Intents/launch modes,
 	      // for now, hack an Activity with the Python running as a ForegroundService
 	      //Raul, 2012-03-08: Intro layout
