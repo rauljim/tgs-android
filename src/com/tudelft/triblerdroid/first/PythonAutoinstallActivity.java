@@ -93,8 +93,11 @@ public class PythonAutoinstallActivity extends PythonInstallIntegration {
 	Log.w("QMediaPython","prepareUninstallButton");
 //    Raul, 2012-03-26: Autoinstall done, show video list (no need for button) 
     Intent intent = new Intent(getBaseContext(), P2PStartActivity.class);
-    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    startActivityForResult(intent, 0);
+	Bundle extras = getIntent().getExtras();
+	if (extras != null){
+		intent.putExtras(extras);
+	}
+	startActivityForResult(intent, 0);
   }
 
 	@Override

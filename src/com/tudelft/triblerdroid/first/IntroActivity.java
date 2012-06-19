@@ -19,8 +19,7 @@ public class IntroActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);	  
-		
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		boolean showIntro = settings.getBoolean("showIntro", true);
 
 		if (showIntro) {
@@ -31,7 +30,7 @@ public class IntroActivity extends Activity {
 			b_continue.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					if (!cb_showIntro.isChecked()){
-						SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+						//SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 						SharedPreferences.Editor editor = settings.edit();
 						editor.putBoolean("showIntro", false);
 						editor.commit(); //Raul: don't forget to commit edits!!
@@ -39,6 +38,10 @@ public class IntroActivity extends Activity {
 					}
 					setContentView(R.layout.pythonautoinstall);
 					Intent intent = new Intent(getBaseContext(), PythonAutoinstallActivity.class);
+					Bundle extras = getIntent().getExtras();
+					if (extras != null){
+						intent.putExtras(extras);
+					}
 					startActivityForResult(intent, 0);
 				}  	
 			});
@@ -47,6 +50,10 @@ public class IntroActivity extends Activity {
 		{
 			Log.w("intro", "don't show intro: go to P2P directly");
 			Intent intent = new Intent(getBaseContext(), P2PStartActivity.class);
+			Bundle extras = getIntent().getExtras();
+			if (extras != null){
+				intent.putExtras(extras);
+			}
 			startActivityForResult(intent, 0);
 		}
 	}

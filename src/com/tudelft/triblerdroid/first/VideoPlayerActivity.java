@@ -18,7 +18,8 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.io.File;
-import java.util.Timer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class VideoPlayerActivity extends Activity {
 
@@ -38,22 +39,8 @@ public class VideoPlayerActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
 	
 	  super.onCreate(savedInstanceState);
-
-//	  Raul, 2012-03-21: No necessary because of the notitle.fullscreen in Manifest
-//      setTheme(android.R.style.Theme_Light);
-//      requestWindowFeature(Window.FEATURE_NO_TITLE);
-//      getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
-//                              WindowManager.LayoutParams.FLAG_FULLSCREEN); 
+ 
       setContentView(R.layout.main);
-
-////      Raul, 2012-03-09: initialized in P2PStartActivity
-//      ScriptApplication application = (ScriptApplication) getApplication();
-//      if (application.readyToStart()) {
-//        startService(new Intent(this, ScriptService.class));
-//      }
-      // Arno, 2012-02-15: Hack to keep this activity alive.
-      // finish();
-      
       try
       {
     	  SwiftInitalize();
@@ -63,12 +50,34 @@ public class VideoPlayerActivity extends Activity {
     	  e.printStackTrace();
       }
 	  Bundle extras = getIntent().getExtras();
-	  hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
-	  tracker = extras.getString("tracker"); // See VodoEitActivity to change this
+	  String text = extras.getString("android.intent.extra.TEXT");
+	  if (text != null){
+		  //parameters come from twicca			
+		  Log.w("video twicca", text);
+		  Pattern p = Pattern.compile("ppsp://.{40}");
+		  Matcher m = p.matcher(text);
+		  if (m.find()) {
+			  String s = m.group();
+			  hash = s.substring(7);
+			  Log.w("video twicca", hash);
+		  }
+		  else{
+			  hash = "";
+			  Log.w("video twicca", "no ppsp link found");
+		  }
+		  tracker = "192.16.127.98:20050"; //TODO
+	  }
+	  else
+	  {
+		  //parameters come from menu
+		  hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
+		  tracker = extras.getString("tracker"); // See VodoEitActivity to change this
+	  }
 	  destination = "/sdcard/swift/video.ts";
 	  SwiftStartDownload();
   }
   
+  @Override
   public void onDestroy()
   {
 		super.onDestroy();

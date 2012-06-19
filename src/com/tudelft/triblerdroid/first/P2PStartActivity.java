@@ -38,6 +38,7 @@ public class P2PStartActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
 	  super.onCreate(savedInstanceState);
 	  setContentView(R.layout.p2p);
+	  //TOO copyResources ONLY if app upgrade (use SharedPreferences)
 	  copyResourcesToLocal();
   }
 	
@@ -92,8 +93,16 @@ public class P2PStartActivity extends Activity {
       // finish();
     }
 //    Raul, 2012-03-26: Autoinstall done, show video list (no need for button) 
-    Intent intent = new Intent(getBaseContext(), VideoListActivity.class);
-    startActivityForResult(intent, 0);
+    Intent intent;
+	Bundle extras = getIntent().getExtras();
+	if (extras != null){
+		intent = new Intent(getBaseContext(), VideoPlayerActivity.class);
+		intent.putExtras(extras);
+	}
+	else{
+		intent = new Intent(getBaseContext(), VideoListActivity.class);
+	}
+	startActivityForResult(intent, 0);
   }
 
   
