@@ -39,4 +39,14 @@
 
     </LinearLayout>
 
+    <CheckBox
+        android:id="@+id/cb_show_intro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/b_continue"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        
+        android:text="Always show this screen" />
+
 </RelativeLayout>
