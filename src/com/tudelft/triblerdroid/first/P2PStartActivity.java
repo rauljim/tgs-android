@@ -30,82 +30,13 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Timer;
 
-public class P2PStartActivity extends Activity implements Pausable {
+public class P2PStartActivity extends Activity {
 
-
-	boolean ispaused = false;
-	
-	/*
-	 * Arno, 2012-03-23: Global admin of activities
-	 */
-	public static Boolean globalP2Prunning = Boolean.TRUE;
-	public static P2PStartActivity  globalP2PStartActivity = null;
 	private SwiftService scriptService = null;
-
-	public static Set<Activity>		appSet;
-	
-	
-	public static synchronized void addAct(Activity a)
-	{
-		if (appSet == null)
-			appSet = new HashSet<Activity>();
-		
-		Log.w("Swift","ADD activity" + a );
-		appSet.add(a);
-	}
-	
-	public static synchronized void delAct(Activity a)
-	{
-		try
-		{
-			appSet.remove(a);
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	public static synchronized int allActPaused()
-	{
-		Log.w("Swift","Pausing activitiy set is " + appSet.size() );
-		
-		
-		Iterator<Activity> iter = appSet.iterator();
-		boolean oneHasFocus = false;
-		while(iter.hasNext()) {
-
-			Activity a = (Activity)iter.next();
-			if (a.hasWindowFocus())
-				oneHasFocus = true;
-		    Pausable p = (Pausable)a; 
-		    if (!p.isPaused())
-		    {
-		    	return 0;
-		    }
-		    	
-		}
-		if (!oneHasFocus)
-			return 2; // All paused and none have focus
-		else
-			return 1; // All paused
-	}
-	
-	public static synchronized int numActs()
-	{
-		return appSet.size();
-	}
-	
 	
   @Override
   protected void onCreate(Bundle savedInstanceState) {
 	  super.onCreate(savedInstanceState);
-
-	  globalP2PStartActivity = this;
-	  P2PStartActivity.addAct(this);
-	  
-	  globalP2Prunning = Boolean.TRUE;
-	  
 	  setContentView(R.layout.p2p);
 	  copyResourcesToLocal();
   }
@@ -168,7 +99,6 @@ public class P2PStartActivity extends Activity implements Pausable {
   
 	public void stopP2PEngine()
 	{
-		P2PStartActivity.globalP2Prunning = Boolean.FALSE;
 		stopService(new Intent(getBaseContext(), SwiftService.class));
 //		unbindService(scriptService);
 		
@@ -200,28 +130,6 @@ public class P2PStartActivity extends Activity implements Pausable {
 		} 
 		clientSocket.close(); 
 	}
-	
-  
-  // From Pausable interface
-  public boolean isPaused()
-  {
-	  return ispaused;
-  }
-  
-
-
-	public void checkAllActPaused()
-	{
-		Log.w("Swift","Checking P2PStartActivityActivity" );
-		if (P2PStartActivity.allActPaused() > 0)
-		{
-			Log.w("Swift","Starting timer" );
-			Timer t = new Timer("AllActPausedTimer",true);
-			PauseTimer pt = new PauseTimer();
-			t.schedule(pt, 2000);
-		}
-	}
-
 	
 	private void copyResourcesToLocal() {
 		String name, sFileName;
@@ -282,31 +190,6 @@ public class P2PStartActivity extends Activity implements Pausable {
 		return false;
 	}
 
-  
-  public void onPause()
-  {
-	super.onPause();
-	Log.w("Swift","P2PStartActivity.onPause" );
-	ispaused = true;
-	
-	checkAllActPaused();
-  }
-
-  public void onResume()
-  {
-	super.onResume();
-	Log.w("Swift","P2PStartActivity.onResume" );
-	ispaused = false;
-  }
-  
-  public void onStart()
-  {
-	super.onStart();
-	Log.w("Swift","P2PStartActivity.onStart" );
-	if (1==1){//!globalP2Prunning) {
-		startP2PEngine();
-	}
-  }
   	@Override
     protected void onActivityResult(int requestCode, int resultCode,
             Intent data) {
@@ -315,4 +198,12 @@ public class P2PStartActivity extends Activity implements Pausable {
 		stopP2PEngine();
         finish();
 	}
+  	
+  	@Override
+  	public void onStart()
+  	{
+  		super.onStart();
+  		Log.w("Swift","P2PStartActivity.onStart" );
+  		startP2PEngine();
+  	}
 }

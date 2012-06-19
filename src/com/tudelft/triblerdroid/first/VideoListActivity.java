@@ -1,24 +1,5 @@
 package com.tudelft.triblerdroid.first;
 
-/*
- * StopP2PEngine diagram:
- * 
- * VodoEitActivity.onDestroy():
- *        Always
- * 
- * VodoEitActivity.onUserLeaveHint:
- *        Unfortunately also generated when SwiftAct is started,
- *        so only stopEngine when swift doesn't have focus? Assumes
- *        order of events (SwiftAct focus before VodoAct leave)
- *        
- * When in SwiftAct and Home button is pressed,
- *        SwiftAct gets onUserLeaveHint and pause.
- * 
- * When in SwiftAct and Back button is pressed,
- * 		  SwiftAct gets pause and destroy.
- */
-
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,38 +9,21 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.Timer;
 
-
-
-public class VideoListActivity extends ListActivity implements Pausable {
-	
-	boolean ispaused = false;
-	
+public class VideoListActivity extends ListActivity {
 	
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	  super.onCreate(savedInstanceState);
     	  
-    	  P2PStartActivity.addAct(this);
-    	  
-//    	  ArrayList<String> videoList = new ArrayList<String>();
-//    	  videoList.add((String) getResources().getText(R.string.v1_title));
-//    	  videoList.add((String) getResources().getText(R.string.v2_title));
-//    	  videoList.add((String) getResources().getText(R.string.v3_title));
-    	  
-    	  
     	  setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item, VIDEOS));
 
     	  ListView lv = getListView();
     	  lv.setTextFilterEnabled(true);
 
-
-    	  
-    	  
     	  lv.setOnItemClickListener(new OnItemClickListener() {
     	    public void onItemClick(AdapterView<?> parent, View view,
     	        int position, long id) {
@@ -147,40 +111,8 @@ public class VideoListActivity extends ListActivity implements Pausable {
 		"3ce3f4a5bb785d5e8eb7bf3f2615e37095eb5170", // An.Honest.Man.Xvid-VODO.ts
 		"15f2fb2f7880c8c806d67ed1c070d925aaaa7f7b", // An-Honest-Man-Xvid-VODO-480p-512kbps.ts	
 	};
-      
-	  // From Pausable interface
-	public boolean isPaused()
-	{
-		  return ispaused;
-	}
-	
-	public void checkAllActPaused()
-	{
-		Log.w("Swift","Checking VodoActivity" );
-		if (P2PStartActivity.allActPaused() > 0)
-		{
-			Log.w("Swift","Starting timer" );
-			Timer t = new Timer("AllActPausedTimer",true);
-			PauseTimer pt = new PauseTimer();
-			t.schedule(pt, 2000);
-		}
-	}
-	
-	public void onPause()
-	{
-			super.onPause();
-			ispaused = true;
 
-			checkAllActPaused();
-	}
-		
-	public void onResume()
-	{
-			super.onResume();
-			ispaused = false;
-	}
-
-	@Override
+    @Override
     protected void onActivityResult(int requestCode, int resultCode,
             Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
