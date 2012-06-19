@@ -312,6 +312,7 @@ public class P2PStartActivity extends Activity implements Pausable {
             Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		// Done, exit application
+		stopP2PEngine();
         finish();
 	}
 }
