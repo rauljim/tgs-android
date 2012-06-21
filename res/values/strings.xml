@@ -2,7 +2,7 @@
 <resources>
 
     <string name="hello">App with swift and Python</string>
-    <string name="app_name">Libswift</string>
+    <string name="app_name">ppsp_player</string>
     <string name="loading">P2P Engine UP</string>
 
 </resources>
