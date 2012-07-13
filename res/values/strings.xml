@@ -5,5 +5,6 @@
     <string name="app_name">Libswift</string>
     <string name="loading">P2P Engine UP</string>
     <string name="show_message">statistics</string>
-
+	<string name="down_str">Download speed:</string>
+	<string name="up_str">Upload speed:</string>
 </resources>
