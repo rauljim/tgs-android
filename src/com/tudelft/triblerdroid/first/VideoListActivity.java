@@ -117,7 +117,7 @@ public class VideoListActivity extends ListActivity {
             Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		// Done, exit application
-        finish();
+        //finish(); //anand - testing the statistics activity
 	}
 }
 
