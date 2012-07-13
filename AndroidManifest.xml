@@ -57,7 +57,11 @@
         <provider
             android:authorities="com.tudelft.triblerdroid.first.pythonprovider"
             android:name=".PythonProvider" />
-
+        <!-- Anand begin - added statistics activity -->
+		<activity 
+             android:name=".StatisticsActivity" 
+             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>        
+        <!-- end - added statistics activity -->  
         <activity
             android:name="com.googlecode.android_scripting.activity.FutureActivity"
             android:configChanges="keyboardHidden|orientation"
