@@ -10,4 +10,11 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
+    <Button
+        android:layout_width="96dp"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:onClick="ShowStatistics"
+        android:text="@string/show_message" />
+
 </RelativeLayout>
