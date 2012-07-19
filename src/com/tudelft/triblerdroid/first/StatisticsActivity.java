@@ -10,13 +10,17 @@ import android.widget.TextView;
 public class StatisticsActivity extends Activity{
 	protected Integer _seqCompInt;
 	private TextView txtDownSpeed = null; 
+	private TextView txtUpSpeed = null; 
+	private TextView txtLeechers = null;
+	private TextView txtSeeders = null;
 	protected UpdateTask _updateTask;
 
 	String hash; 
 	String tracker;
 	String destination;
 	long seqcomp;
-	int i;
+	int dspeed, uspeed, nleech, nseed;
+	String progstr;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -27,6 +31,9 @@ public class StatisticsActivity extends Activity{
 		tracker = extras.getString("com.tudelft.triblerdroid.first.VideoPlayerActivity.tracker");
 		destination = extras.getString("com.tudelft.triblerdroid.first.VideoPlayerActivity.destination");
 		txtDownSpeed = (TextView) findViewById(R.id.down_speed);
+		txtUpSpeed = (TextView) findViewById(R.id.up_speed);
+		txtLeechers = (TextView) findViewById(R.id.nbr_leech);
+		txtSeeders = (TextView) findViewById(R.id.nbr_seed);
 		_updateTask.execute( hash, tracker, destination );
 	}
 
@@ -45,7 +52,6 @@ public class StatisticsActivity extends Activity{
 	private class UpdateTask extends AsyncTask<String, Integer, String> {
 
 		protected String doInBackground(String... args) {
-			i=0;
 			String ret = "hello";
 			if (args.length != 3) {
 				ret = "Received wrong number of parameters during initialization!";
@@ -56,16 +62,27 @@ public class StatisticsActivity extends Activity{
 					NativeLib nativelib =  new NativeLib();
 
 					while(true) {
-						String progstr = nativelib.httpprogress(args[0]);
+						progstr = nativelib.httpprogress(args[0]);
 						String[] elems = progstr.split("/");
 						seqcomp = Long.parseLong(elems[0]);
 
 						_seqCompInt = new Integer((int)(seqcomp/1024));
 
 						txtDownSpeed = (TextView) findViewById(R.id.down_speed);
+						progstr = "";
+						progstr = nativelib.stats();
+						String[] items = progstr.split("/");
+						dspeed = Integer.parseInt(items[0]);
+						uspeed = Integer.parseInt(items[1]);
+						nleech = Integer.parseInt(items[2]);
+						nseed = Integer.parseInt(items[3]);
 						runOnUiThread(new Runnable(){
 							public void run() {
-								txtDownSpeed.setText("test"+(i++));
+								txtDownSpeed.setText(dspeed+" kb/s");
+								txtUpSpeed.setText(uspeed+" kb/s");
+								//txtUpSpeed.setText(progstr);// to check all details from statsgw
+								txtLeechers.setText(nleech+" ");
+								txtSeeders.setText(nseed+" ");
 							}
 						});
 						Thread.sleep( 1000 );

@@ -82,7 +82,13 @@ public class VideoPlayerActivity extends Activity {
 	  destination = "/sdcard/swift/video.ts";
 	  SwiftStartDownload();
   }
-  
+  //stops the Async task when we press back button on video player
+  @Override
+  public void onStop()
+  {
+	  super.onStop();
+	  _statsTask.cancel(true);
+  }
   @Override
   public void onDestroy()
   {
