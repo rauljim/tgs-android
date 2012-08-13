@@ -36,11 +36,15 @@ public class IntroActivity extends Activity {
 						editor.commit(); //Raul: don't forget to commit edits!!
 						Log.w("intro", "Don't show Intro next time");
 					}
-					setContentView(R.layout.pythonautoinstall);
-					Intent intent = new Intent(getBaseContext(), PythonAutoinstallActivity.class);
+//					setContentView(R.layout.pythonautoinstall);
+					Intent intent = new Intent(getBaseContext(), P2PStartActivity.class);
 					Bundle extras = getIntent().getExtras();
 					if (extras != null){
+						intent = new Intent(getBaseContext(), VideoPlayerActivity.class);
 						intent.putExtras(extras);
+					}
+					else{
+						intent = new Intent(getBaseContext(), VideoListActivity.class);
 					}
 					startActivityForResult(intent, 0);
 				}  	
