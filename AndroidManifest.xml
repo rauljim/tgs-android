@@ -26,14 +26,6 @@
 		    </intent-filter>
         </activity>
         <activity
-            android:name=".PythonAutoinstallActivity"
-            android:configChanges="keyboardHidden|orientation" >
-        </activity>
-        <activity
-            android:name=".P2PStartActivity"
-            android:configChanges="keyboardHidden|orientation" >
-        </activity>
-        <activity
             android:name=".VideoListActivity"
             android:configChanges="keyboardHidden|orientation" >
         </activity>
@@ -52,12 +44,6 @@
 		    </intent-filter>
         </activity>
         
-        <service android:name=".SwiftService" />
-
-        <provider
-            android:authorities="com.tudelft.triblerdroid.first.pythonprovider"
-            android:name=".PythonProvider" />
-
         <activity
             android:name="com.googlecode.android_scripting.activity.FutureActivity"
             android:configChanges="keyboardHidden|orientation"

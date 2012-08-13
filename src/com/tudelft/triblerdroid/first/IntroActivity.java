@@ -37,7 +37,7 @@ public class IntroActivity extends Activity {
 						Log.w("intro", "Don't show Intro next time");
 					}
 //					setContentView(R.layout.pythonautoinstall);
-					Intent intent = new Intent(getBaseContext(), P2PStartActivity.class);
+					Intent intent;// = new Intent(getBaseContext(), P2PStartActivity.class);
 					Bundle extras = getIntent().getExtras();
 					if (extras != null){
 						intent = new Intent(getBaseContext(), VideoPlayerActivity.class);
@@ -53,10 +53,14 @@ public class IntroActivity extends Activity {
 		else
 		{
 			Log.w("intro", "don't show intro: go to P2P directly");
-			Intent intent = new Intent(getBaseContext(), P2PStartActivity.class);
+			Intent intent;// = new Intent(getBaseContext(), P2PStartActivity.class);
 			Bundle extras = getIntent().getExtras();
 			if (extras != null){
+				intent = new Intent(getBaseContext(), VideoPlayerActivity.class);
 				intent.putExtras(extras);
+			}
+			else{
+				intent = new Intent(getBaseContext(), VideoListActivity.class);
 			}
 			startActivityForResult(intent, 0);
 		}
