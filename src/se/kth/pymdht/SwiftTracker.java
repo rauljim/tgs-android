@@ -43,9 +43,9 @@ public class SwiftTracker{
 			System.out.println(CHANNEL_SIZE + 1 + BIN_SIZE + HASH_SIZE + 1 + CHANNEL_SIZE);
 			return FAILED;
 		}
-		for (int i=0;i<datagram.getLength();i++){
-			System.out.println((int)(char)data[i]);
-		}
+//		for (int i=0;i<datagram.getLength();i++){
+//			System.out.println((int)(char)data[i]);
+//		}
 		int pos = 0;
 		byte[] local_cid = Arrays.copyOfRange(data, pos, pos + CHANNEL_SIZE);
 //		if (!local_cid.equals(CHANNEL_ZERO)){
