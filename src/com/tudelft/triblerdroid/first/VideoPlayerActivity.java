@@ -17,9 +17,14 @@ import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import se.kth.pymdht.Pymdht;
 
 public class VideoPlayerActivity extends Activity {
 
@@ -106,6 +111,18 @@ public class VideoPlayerActivity extends Activity {
   
 	//starts the download thread
 	protected void SwiftStartDownload() {
+		BufferedReader unstable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(R.raw.bootstrap_unstable)));
+		BufferedReader stable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(R.raw.bootstrap_stable)));
+		final Pymdht dht = new Pymdht(9999, unstable, stable);
+		Runnable runnable_dht = new Runnable(){
+		    @Override
+		    public void run() {
+		        dht.start();
+		    }
+		};
+
+		Thread dht_thread = new Thread(runnable_dht);
+		dht_thread.start();
 		// Start the background process
 		_swiftMainThread = new SwiftMainThread();
 		_swiftMainThread.start();    	
