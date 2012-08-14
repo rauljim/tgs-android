@@ -10,10 +10,12 @@ import se.kth.pymdht.Controller.LookupDone;
 
 public class Reactor {
 
+	private static final int MAX_NUM_ROUNDS = 100;
 	int timeout_delay = 100;
 	private boolean _running;
 	private DatagramSocket _s;
 	private Controller _controller;
+	private int round;
 	
 	public Reactor(int port, Controller controller) throws SocketException{
 		this._running = false;
@@ -28,6 +30,9 @@ public class Reactor {
 		try{
 			while (this._running){
 				this._running = this.run_one_step();
+				if (this.round > MAX_NUM_ROUNDS){
+					this._running = false;
+				}
 			}
 		}
 		catch (Exception e){
