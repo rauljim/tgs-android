@@ -42,7 +42,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
 		    </intent-filter>
         </activity>
-        
+        <!-- Anand begin - added statistics activity -->
+		<activity 
+             android:name=".StatisticsActivity" 
+             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>        
+        <!-- end - added statistics activity -->  
         <activity
             android:name="com.tudelft.triblerdroid.first.DialogActivity"
             android:configChanges="keyboardHidden|orientation"

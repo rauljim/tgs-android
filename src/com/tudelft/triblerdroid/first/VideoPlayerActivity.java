@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.View;
 import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -22,7 +24,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class VideoPlayerActivity extends Activity {
-
+	//Anand - begin - added constants to pass parameters to next activity
+	private static final String _HASH = "com.tudelft.triblerdroid.first.VideoPlayerActivity.hash";
+	private static final String _TRACKER = "com.tudelft.triblerdroid.first.VideoPlayerActivity.tracker";
+	private static final String _DESTINATION = "com.tudelft.triblerdroid.first.VideoPlayerActivity.destination";
+	//end
 	NativeLib nativelib = null;
     protected SwiftMainThread _swiftMainThread;
     protected StatsTask _statsTask;
@@ -76,7 +82,13 @@ public class VideoPlayerActivity extends Activity {
 	  destination = "/sdcard/swift/video.ts";
 	  SwiftStartDownload();
   }
-  
+  //stops the Async task when we press back button on video player
+  @Override
+  public void onStop()
+  {
+	  super.onStop();
+	  _statsTask.cancel(true);
+  }
   @Override
   public void onDestroy()
   {
@@ -89,7 +101,6 @@ public class VideoPlayerActivity extends Activity {
 		//nativelib.stop(); Raul: this raises an exception.
 		//I think it's because there is not time to execute it onDestroy
   }
-  
   
   /*
    *  Arno: From Riccardo's original SwiftBeta
@@ -272,5 +283,14 @@ public class VideoPlayerActivity extends Activity {
 	  	}
 	      return ret;
 	  }
+	}
+	
+	public void ShowStatistics(View view){
+		Intent intent = new Intent(getBaseContext(), StatisticsActivity.class);
+		intent.putExtra(_HASH, hash);
+		intent.putExtra(_TRACKER, tracker);
+		intent.putExtra(_DESTINATION, destination);
+		startActivity(intent);
+		
 	}
 }
