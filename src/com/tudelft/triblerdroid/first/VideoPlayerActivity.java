@@ -19,9 +19,14 @@ import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import se.kth.pymdht.Pymdht;
 
 public class VideoPlayerActivity extends Activity {
 	//Anand - begin - added constants to pass parameters to next activity
@@ -36,7 +41,7 @@ public class VideoPlayerActivity extends Activity {
     protected ProgressDialog _dialog;
     protected Integer _seqCompInt;
 
-    String hash; 
+    String hash = null; 
 	String tracker;
 	String destination;
 	boolean inmainloop = false;
@@ -55,32 +60,17 @@ public class VideoPlayerActivity extends Activity {
       {
     	  e.printStackTrace();
       }
+      
 	  Bundle extras = getIntent().getExtras();
-	  String text = extras.getString("android.intent.extra.TEXT");
-	  if (text != null){
-		  //parameters come from twicca			
-		  Log.w("video twicca", text);
-		  Pattern p = Pattern.compile("ppsp://.{40}");
-		  Matcher m = p.matcher(text);
-		  if (m.find()) {
-			  String s = m.group();
-			  hash = s.substring(7);
-			  Log.w("video twicca", hash);
-		  }
-		  else{
-			  hash = "";
-			  Log.w("video twicca", "no ppsp link found");
-		  }
-		  tracker = "192.16.127.98:20050"; //TODO
-	  }
-	  else
-	  {
-		  //parameters come from menu
-		  hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
-		  tracker = extras.getString("tracker"); // See VodoEitActivity to change this
-	  }
+
+	  hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
+	  tracker = "192.16.127.98:20050"; //TODO
 	  destination = "/sdcard/swift/video.ts";
-	  SwiftStartDownload();
+	  if (hash != null){
+		  Log.w("final hash", hash);
+		  SwiftStartDownload();
+	  }		 
+	  Log.w("video player", "setup DONE");
   }
   //stops the Async task when we press back button on video player
   @Override
@@ -117,6 +107,18 @@ public class VideoPlayerActivity extends Activity {
   
 	//starts the download thread
 	protected void SwiftStartDownload() {
+		BufferedReader unstable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(R.raw.bootstrap_unstable)));
+		BufferedReader stable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(R.raw.bootstrap_stable)));
+		final Pymdht dht = new Pymdht(9999, unstable, stable);
+		Runnable runnable_dht = new Runnable(){
+		    @Override
+		    public void run() {
+		        dht.start();
+		    }
+		};
+
+		Thread dht_thread = new Thread(runnable_dht);
+		dht_thread.start();
 		// Start the background process
 		_swiftMainThread = new SwiftMainThread();
 		_swiftMainThread.start();    	

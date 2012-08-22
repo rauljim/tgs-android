@@ -1,21 +1,29 @@
+Here, I describe my development environment. You may use any other tools.
 
-* TriblerDroid *
+(K)Ubuntu 12.04 64-bits
+Eclipse
 
-To build, 
-1. Run arno-build.bat in jni, after installing Android NDK and editing .bat
-2. Build .apk from Eclipse (e.g. Run project)
-3. Patch .apk to add missing native lib by running patch0.bat in the hack/ 
-   directory.
-4. Install and run .apk on device
+sudo apt-get install lib32ncurses5 lib32stdc++6 # need 32-bit libraries
+http://stackoverflow.com/questions/10005907/eclipse-android-plugin-libncurses-so-5
 
+Install Android SDK (Eclipse plug-in): http://developer.android.com/sdk/installing/installing-adt.html
+Install Android NDK (installed in ~/android/): http://developer.android.com/tools/sdk/ndk/index.html
 
+Install SDK API 10 (I have my SDKs in ~/android/android-sdks/)
 
+fork and get code from github (I have my code in ~/git/):
+git clone git@github.com:username/tgs-android.git
+cd tgs-android
 
-ORIGINAL
-========
+Get jni (P2P C++ library) and compile:
+git submodule init
+git submodule update
+cd jni
+~/android/android-ndk-r8b/ndk-build
 
-To rebuild the zip file and scripts jar:
+Import project into Eclipse
 
-Use build.xml as an ant script.
+Connect device (Galaxy Nexus, in my case):
+http://stackoverflow.com/questions/9210152/set-up-device-for-development-no-permissions
 
-NOTE: Project settings (classpath etc) are stored in ".tmp/" and needs to be modified if changes are made to the build path.
+In Eclipse: Run as > Android Application
