@@ -15,7 +15,19 @@
 				<action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="ppsp"/>
+            </intent-filter>
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" android:host="ppsp.me"/>
+            </intent-filter>
+             <intent-filter>
                 <action android:name="com.googlecode.android_scripting.action.ACTION_LAUNCH_FOR_RESULT" />
                 <category android:name="android.intent.category.DEFAULT" />
 		    </intent-filter>

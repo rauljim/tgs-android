@@ -35,7 +35,7 @@ public class VideoPlayerActivity extends Activity {
     protected ProgressDialog _dialog;
     protected Integer _seqCompInt;
 
-    String hash; 
+    String hash = null; 
 	String tracker;
 	String destination;
 	boolean inmainloop = false;
@@ -54,32 +54,17 @@ public class VideoPlayerActivity extends Activity {
       {
     	  e.printStackTrace();
       }
+      
 	  Bundle extras = getIntent().getExtras();
-	  String text = extras.getString("android.intent.extra.TEXT");
-	  if (text != null){
-		  //parameters come from twicca			
-		  Log.w("video twicca", text);
-		  Pattern p = Pattern.compile("ppsp://.{40}");
-		  Matcher m = p.matcher(text);
-		  if (m.find()) {
-			  String s = m.group();
-			  hash = s.substring(7);
-			  Log.w("video twicca", hash);
-		  }
-		  else{
-			  hash = "";
-			  Log.w("video twicca", "no ppsp link found");
-		  }
-		  tracker = "192.16.127.98:20050"; //TODO
-	  }
-	  else
-	  {
-		  //parameters come from menu
-		  hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
-		  tracker = extras.getString("tracker"); // See VodoEitActivity to change this
-	  }
+
+	  hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
+	  tracker = "192.16.127.98:20050"; //TODO
 	  destination = "/sdcard/swift/video.ts";
-	  SwiftStartDownload();
+	  if (hash != null){
+		  Log.w("final hash", hash);
+		  SwiftStartDownload();
+	  }		 
+	  Log.w("video player", "setup DONE");
   }
   
   @Override
