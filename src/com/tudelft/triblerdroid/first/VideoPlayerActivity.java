@@ -184,6 +184,7 @@ public class VideoPlayerActivity extends Activity {
 						public void onPrepared (MediaPlayer mp) {
 //							_text.setText("Player75 prepared!");
 							_dialog.dismiss();
+							_statsTask.cancel(true);
 						}
 					});
 		    		
@@ -264,6 +265,8 @@ public class VideoPlayerActivity extends Activity {
 	  				_seqCompInt = new Integer((int)(seqcomp/1024));
 	  				
 	  				Log.w("SwiftStats", "SeqComp   " + seqcomp );
+	  				if(isCancelled())
+	  					break;
 	  				
 	  	    		runOnUiThread(new Runnable(){
 	  	    			public void run() {
