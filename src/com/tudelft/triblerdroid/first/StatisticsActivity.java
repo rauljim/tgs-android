@@ -1,8 +1,10 @@
 package com.tudelft.triblerdroid.first;
 
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -21,6 +23,7 @@ public class StatisticsActivity extends Activity{
 	long seqcomp;
 	int dspeed, uspeed, nleech, nseed;
 	String progstr;
+	ExecutorService exec;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,68 +37,54 @@ public class StatisticsActivity extends Activity{
 		txtUpSpeed = (TextView) findViewById(R.id.up_speed);
 		txtLeechers = (TextView) findViewById(R.id.nbr_leech);
 		txtSeeders = (TextView) findViewById(R.id.nbr_seed);
-		_updateTask.execute( hash, tracker, destination );
+		exec = Executors.newCachedThreadPool();
+		exec.execute(_updateTask);
 	}
 
 	@Override
 	public void onDestroy()
 	{
 		super.onDestroy();
-		_updateTask.cancel(true);
+		exec.shutdown();
 		Log.w("SwiftStatsActivity", "*** SHUTDOWN SWIFT STATS ACTIVITY ***");
 	}
+	private class UpdateTask implements Runnable {
 
-	/**
-	 * sub-class of AsyncTask. Retrieves stats from Swift via JNI and
-	 * updates the statistics activity.
-	 */
-	private class UpdateTask extends AsyncTask<String, Integer, String> {
+		public void run() {
+			try {
 
-		protected String doInBackground(String... args) {
-			String ret = "hello";
-			if (args.length != 3) {
-				ret = "Received wrong number of parameters during initialization!";
-			}
-			else {
-				try {
+				NativeLib nativelib = new NativeLib();
 
-					NativeLib nativelib =  new NativeLib();
+				while (true) {
+					progstr = nativelib.httpprogress(hash);
+					String[] elems = progstr.split("/");
+					seqcomp = Long.parseLong(elems[0]);
 
-					while(true) {
-						progstr = nativelib.httpprogress(args[0]);
-						String[] elems = progstr.split("/");
-						seqcomp = Long.parseLong(elems[0]);
+					_seqCompInt = new Integer((int) (seqcomp / 1024));
 
-						_seqCompInt = new Integer((int)(seqcomp/1024));
-
-						txtDownSpeed = (TextView) findViewById(R.id.down_speed);
-						progstr = "";
-						progstr = nativelib.stats();
-						String[] items = progstr.split("/");
-						dspeed = Integer.parseInt(items[0]);
-						uspeed = Integer.parseInt(items[1]);
-						nleech = Integer.parseInt(items[2]);
-						nseed = Integer.parseInt(items[3]);
-						runOnUiThread(new Runnable(){
-							public void run() {
-								txtDownSpeed.setText(dspeed+" kb/s");
-								txtUpSpeed.setText(uspeed+" kb/s");
-								//txtUpSpeed.setText(progstr);// to check all details from statsgw
-								txtLeechers.setText(nleech+" ");
-								txtSeeders.setText(nseed+" ");
-							}
-						});
-						Thread.sleep( 1000 );
-					}
-
+					txtDownSpeed = (TextView) findViewById(R.id.down_speed);
+					progstr = "";
+					progstr = nativelib.stats();
+					String[] items = progstr.split("/");
+					dspeed = Integer.parseInt(items[0]);
+					uspeed = Integer.parseInt(items[1]);
+					nleech = Integer.parseInt(items[2]);
+					nseed = Integer.parseInt(items[3]);
+					runOnUiThread(new Runnable() {
+						public void run() {
+							txtDownSpeed.setText(dspeed + " kb/s");
+							txtUpSpeed.setText(uspeed + " kb/s");
+							txtLeechers.setText(nleech + " ");
+							txtSeeders.setText(nseed + " ");
+						}
+					});
+					Thread.sleep(1000);
 				}
-				catch (Exception e ) {
-					e.printStackTrace();
-					ret = "error occurred during initialization!";
-				}
+
+			} catch (Exception e) {
+				Log.w("Swift stats Activity", "Exception");
+				e.printStackTrace();
 			}
-			return ret;
 		}
 	}
-
 }
