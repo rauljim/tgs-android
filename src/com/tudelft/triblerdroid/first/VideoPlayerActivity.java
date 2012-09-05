@@ -262,7 +262,12 @@ public class VideoPlayerActivity extends Activity {
 	  	    		});
 	  				//Raul, 20120425: removed break which caused playback interruption when
 	  	    		//(asize > 0 && seqcomp == asize) (e.i, file downloaded)
-	  				Thread.sleep( 1000 );
+	  	    		try{
+	  	    			Thread.sleep( 1000 );
+	  	    		}
+	  	    		catch (InterruptedException e){
+	  	    			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>Sleep interrupted<<<<<<<<<<<<<<<<<<<<<<<");
+	  	    		}
 	  			}
 	  			
 	  		}
