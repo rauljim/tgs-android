@@ -69,6 +69,7 @@ public class Controller {
 			// this is not a DHT message. Swift?
 			//if swift: create lookup
 			if (swift_tracker.on_handshake(datagram)){
+				Log.w("pymdht.controller", "got HANDSHAKE from Swift");
 				datagrams_to_send.add(swift_tracker.handshake_reply_datagram);
 				lookup = new GetPeersLookup(swift_tracker.hash, bootstrapper);
 				datagrams_to_send = lookup.get_datagrams();
@@ -79,7 +80,6 @@ public class Controller {
 			}
 		}	
 		else{
-			Log.w("pymdht.controller", "got HANDSHAKE from Swift");
 			//DHT get_peers response
 			lookup.on_response(msg);
 			//more lookup queries
@@ -87,7 +87,7 @@ public class Controller {
 			//peers
 			List<ByteBuffer> cpeers = lookup.get_cpeers();
 			if (cpeers.size() > 0){
-				System.out.println(System.currentTimeMillis() + " peers " +cpeers.size());
+				Log.w("pymdht.controller", System.currentTimeMillis() + " peers " + cpeers.size());
 				DatagramPacket pex_datagram = swift_tracker.get_swift_pex_datagram(cpeers);
 				datagrams_to_send.add(pex_datagram);
 			}

@@ -1,5 +1,7 @@
 package se.kth.pymdht;
 
+import android.util.Log;
+
 import java.io.ByteArrayInputStream;
 import java.net.DatagramPacket;
 import java.net.Inet4Address;
@@ -65,7 +67,7 @@ public class IncomingMsg {
 			List<ByteBuffer> cpeers = (List<ByteBuffer>) this.r_dict.get(MsgConst.VALUES);
 			if (cpeers != null){	
 				this.cpeers = cpeers;//uncompact_peers(cpeers);
-				System.out.println("peers");
+				Log.w("IncomingMsg", "cpeers.size(): " + cpeers.size());
 			}
 			else{
 				this.cpeers = new ArrayList<ByteBuffer>(0);
