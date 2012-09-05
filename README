@@ -1,3 +1,6 @@
+This is a guide for developers. Information for users can be found on http://ppsp.me.
+Please, contact info@ppsp.me if you have any comment or questions.
+
 Here, I describe my development environment. You may use any other tools.
 
 (K)Ubuntu 12.04 64-bits
@@ -27,3 +30,7 @@ Connect device (Galaxy Nexus, in my case):
 http://stackoverflow.com/questions/9210152/set-up-device-for-development-no-permissions
 
 In Eclipse: Run as > Android Application
+
+Now, your phone is running the application. Open the browser (on the device) and type ppsp.me.
+Follow the links to find ppsp.me links and select the ppsp_player app to open them.
+After a (short) buffering delay, your device will start playing the video.
