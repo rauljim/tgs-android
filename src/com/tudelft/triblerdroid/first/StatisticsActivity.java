@@ -37,8 +37,11 @@ public class StatisticsActivity extends Activity{
 		txtUpSpeed = (TextView) findViewById(R.id.up_speed);
 		txtLeechers = (TextView) findViewById(R.id.nbr_leech);
 		txtSeeders = (TextView) findViewById(R.id.nbr_seed);
+		System.out.println("creating thread pool");
 		exec = Executors.newCachedThreadPool();
+		System.out.println("starting thread");
 		exec.execute(_updateTask);
+		System.out.println("create done");
 	}
 
 	@Override
@@ -64,7 +67,9 @@ public class StatisticsActivity extends Activity{
 
 					txtDownSpeed = (TextView) findViewById(R.id.down_speed);
 					progstr = "";
+					System.out.println("native stats");
 					progstr = nativelib.stats();
+					System.out.println("native stats DONE");
 					String[] items = progstr.split("/");
 					dspeed = Integer.parseInt(items[0]);
 					uspeed = Integer.parseInt(items[1]);
