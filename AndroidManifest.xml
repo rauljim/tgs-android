@@ -56,7 +56,7 @@
         </activity>
         
         <activity
-            android:name="com.tudelft.triblerdroid.first.DialogActivity"
+            android:name="me.ppsp.ppsp_player"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@android:style/Theme.Light" />
     </application>
