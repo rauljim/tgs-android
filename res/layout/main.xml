@@ -10,4 +10,10 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
+    <Button
+        style="@style/ButtonText"
+        android:background="@drawable/btn_black_glossy"
+        android:onClick="ShowStatistics"
+        android:text="@string/show_message" />
+
 </RelativeLayout>

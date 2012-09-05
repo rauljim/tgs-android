@@ -4,5 +4,29 @@
     <string name="hello">App with swift and Python</string>
     <string name="app_name">ppsp_player</string>
     <string name="loading">P2P Engine UP</string>
+    <string name="show_message">statistics</string>
+    <string name="down_str">Download speed:</string>
+    <string name="up_str">Upload speed:</string>
+    <string name="leech_str">Leechers:</string>
+    <string name="seed_str">Seeders:</string>
+
+    <style name="ButtonText">
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:gravity">top</item>
+        <item name="android:textSize">15dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_marginLeft">14dp</item>
+        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">2</item>
+    </style>
 
 </resources>
