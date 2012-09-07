@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
 
@@ -42,7 +43,9 @@ public class IntroActivity extends Activity {
 						Log.w("intro", "Don't show Intro next time");
 					}
 					Intent intent = getPlayerIntent();
-					startActivityForResult(intent, 0);
+					if (intent != null){
+						startActivityForResult(intent, 0);
+					}
 				}  	
 			});
 		}
@@ -50,7 +53,9 @@ public class IntroActivity extends Activity {
 		{
 			Log.w("intro", "don't show intro: go to P2P directly");
 			intent = getPlayerIntent();
-			startActivityForResult(intent, 0);
+			if (intent != null){
+				startActivityForResult(intent, 0);
+			}
 		}
 	}
 	
@@ -63,8 +68,12 @@ public class IntroActivity extends Activity {
 			intent.putExtra("hash", hash);
 		}
 		else{
-			//no hash: show menu
-			intent = new Intent(getBaseContext(), VideoListActivity.class);
+			//no hash: show start page
+			intent = null;//new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.ppsp.me/start.html"));
+			//intent = new Intent(getBaseContext(), VideoListActivity.class);
+			setContentView(R.layout.start);
+			WebView myWebView = (WebView) findViewById(R.id.webview);
+			myWebView.loadUrl("http://ppsp.me/start.html");
 		}
 		return intent;
 
