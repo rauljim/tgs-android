@@ -4,7 +4,7 @@
     <string name="hello">App with swift and Python</string>
     <string name="app_name">ppsp_player</string>
     <string name="loading">P2P Engine UP</string>
-    <string name="show_message">statistics</string>
+    <string name="show_message">P2P info</string>
     <string name="down_str">Download speed:</string>
     <string name="up_str">Upload speed:</string>
     <string name="leech_str">Leechers:</string>
