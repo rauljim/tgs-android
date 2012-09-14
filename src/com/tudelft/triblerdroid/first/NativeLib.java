@@ -33,4 +33,8 @@ public class NativeLib {
    * Returns Hello World string
    */
   public native String hello();
+  /**
+   * Returns stats String
+   */
+  public native String stats();
 }
