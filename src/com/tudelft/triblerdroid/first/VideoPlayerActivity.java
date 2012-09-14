@@ -184,7 +184,9 @@ public class VideoPlayerActivity extends Activity {
 						public void onPrepared (MediaPlayer mp) {
 //							_text.setText("Player75 prepared!");
 							_dialog.dismiss();
-							_statsTask.cancel(true);
+							
+							//Cancel _statsTask if you don't want to get downloading report on catlog 
+							//_statsTask.cancel(true);
 						}
 					});
 		    		
