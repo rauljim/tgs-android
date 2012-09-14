@@ -4,7 +4,13 @@ package com.tudelft.triblerdroid.first;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import se.kth.pymdht.Id;
+import se.kth.pymdht.Id.IdError;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -27,8 +33,8 @@ public class IntroActivity extends Activity {
 		boolean showIntro = settings.getBoolean("showIntro", true);
 		Intent intent;
 
-		intent = getPlayerIntent();
-		if (intent == null){
+		final String hash = getHash();
+		if (hash == null){
 			// no link: show welcome
 			setContentView(R.layout.welcome);
 			Button b_twitter = (Button) findViewById(R.id.b_twitter);
@@ -41,8 +47,17 @@ public class IntroActivity extends Activity {
 			});
 			return;
 		}
-		
-		
+
+		Id id = null;
+		try{
+			id = new Id(hash);
+		}
+		catch(IdError e){
+			Log.w("hash", "invalid");
+			showDialog(0);
+			return;
+		}
+
 		if (showIntro) {
 			setContentView(R.layout.intro);
 			cb_showIntro = (CheckBox) findViewById(R.id.cb_show_intro);
@@ -57,33 +72,38 @@ public class IntroActivity extends Activity {
 						editor.commit(); //Raul: don't forget to commit edits!!
 						Log.w("intro", "Don't show Intro next time");
 					}
-					Intent intent = getPlayerIntent();
-					if (intent != null){
-						startActivityForResult(intent, 0);
-					}
+					Intent intent = getPlayerIntent(hash);
+					startActivityForResult(intent, 0);
 				}  	
 			});
 		}
 		else
 		{
 			Log.w("intro", "don't show intro: go to P2P directly");
-			intent = getPlayerIntent();
-			if (intent != null){
-				startActivityForResult(intent, 0);
-			}
+			intent = getPlayerIntent(hash);
+			startActivityForResult(intent, 0);
 		}
 	}
 	
-	private Intent getPlayerIntent(){
+	protected Dialog onCreateDialog(int id) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Invalid PPSP link")
+		.setCancelable(false)
+		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				IntroActivity.this.finish();
+			}
+		});
+		AlertDialog alert = builder.create();
+	    return alert;
+	}
+	
+	private Intent getPlayerIntent(String hash){
 		Intent intent = null;
-		String hash = getHash();
-		if (hash != null){
-			//found hash: play video
-			intent = new Intent(getBaseContext(), VideoPlayerActivity.class);
-			intent.putExtra("hash", hash);
-		}
+		//found hash: play video
+		intent = new Intent(getBaseContext(), VideoPlayerActivity.class);
+		intent.putExtra("hash", hash);
 		return intent;
-
 	}
 	
 	private String getHash(){
