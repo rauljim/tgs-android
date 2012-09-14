@@ -50,15 +50,17 @@ public class StatisticsActivity extends Activity{
 		super.onDestroy();
 		exec.shutdown();
 		Log.w("SwiftStatsActivity", "*** SHUTDOWN SWIFT STATS ACTIVITY ***");
+		_updateTask.stop();
 	}
 	private class UpdateTask implements Runnable {
+		private boolean running = true;
 
 		public void run() {
 			try {
 
 				NativeLib nativelib = new NativeLib();
 
-				while (true) {
+				while (running) {
 					progstr = nativelib.httpprogress(hash);
 					String[] elems = progstr.split("/");
 					seqcomp = Long.parseLong(elems[0]);
@@ -67,10 +69,9 @@ public class StatisticsActivity extends Activity{
 
 					txtDownSpeed = (TextView) findViewById(R.id.down_speed);
 					progstr = "";
-					System.out.println("native stats");
 					progstr = nativelib.stats();
-					System.out.println("native stats DONE");
 					String[] items = progstr.split("/");
+					Log.i("stats", progstr);
 					dspeed = Integer.parseInt(items[0]);
 					uspeed = Integer.parseInt(items[1]);
 					nleech = Integer.parseInt(items[2]);
@@ -90,6 +91,11 @@ public class StatisticsActivity extends Activity{
 				Log.w("Swift stats Activity", "Exception");
 				e.printStackTrace();
 			}
+		}
+	
+
+		public void stop(){
+			running = false;
 		}
 	}
 }
