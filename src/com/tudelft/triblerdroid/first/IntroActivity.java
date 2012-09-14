@@ -107,11 +107,13 @@ public class IntroActivity extends Activity {
 	}
 	
 	private String getHash(){
+		Log.d("hhhh","getHash");
 		String hash = null;
 		String tracker = "192.16.127.98:20050"; //TODO
 		Uri data = getIntent().getData(); 
 		Uri datas = getIntent().getData(); 
 		if (datas != null) { 
+			Log.d("hhhh","datas");
 			System.out.println("URI: " + datas);
 			String scheme = data.getScheme(); 
 			String host = data.getHost(); 
@@ -144,7 +146,9 @@ public class IntroActivity extends Activity {
 					Log.w("video twicca", "no ppsp link found");
 				}
 				tracker = "192.16.127.98:20050"; //TODO
+				return hash;
 			}
+			hash = extras.getString("hash");
 			return hash;
 		}
 		return hash;
