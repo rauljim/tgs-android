@@ -18,7 +18,6 @@ import android.widget.CheckBox;
 
 public class IntroActivity extends Activity {
     public static final String PREFS_NAME = "settings.dat";
-    Button b_continue;
     CheckBox cb_showIntro;
 
 	@Override
@@ -27,12 +26,28 @@ public class IntroActivity extends Activity {
 		final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		boolean showIntro = settings.getBoolean("showIntro", true);
 		Intent intent;
+
+		intent = getPlayerIntent();
+		if (intent == null){
+			// no link: show welcome
+			setContentView(R.layout.welcome);
+			Button b_twitter = (Button) findViewById(R.id.b_twitter);
+			b_twitter.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					Intent i = new Intent(Intent.ACTION_VIEW);
+					i.setData(Uri.parse("https://twitter.com/ppsp_test"));
+					startActivity(i);
+				}
+			});
+			return;
+		}
+		
 		
 		if (showIntro) {
 			setContentView(R.layout.intro);
 			cb_showIntro = (CheckBox) findViewById(R.id.cb_show_intro);
 			cb_showIntro.setChecked(true);
-			b_continue = (Button) findViewById(R.id.b_continue);
+			Button b_continue = (Button) findViewById(R.id.b_continue);
 			b_continue.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					if (!cb_showIntro.isChecked()){
@@ -60,20 +75,12 @@ public class IntroActivity extends Activity {
 	}
 	
 	private Intent getPlayerIntent(){
-		Intent intent;
+		Intent intent = null;
 		String hash = getHash();
 		if (hash != null){
 			//found hash: play video
 			intent = new Intent(getBaseContext(), VideoPlayerActivity.class);
 			intent.putExtra("hash", hash);
-		}
-		else{
-			//no hash: show start page
-			intent = null;//new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.ppsp.me/start.html"));
-			//intent = new Intent(getBaseContext(), VideoListActivity.class);
-			setContentView(R.layout.start);
-			WebView myWebView = (WebView) findViewById(R.id.webview);
-			myWebView.loadUrl("http://ppsp.me/start.html");
 		}
 		return intent;
 
