@@ -16,7 +16,7 @@ public class Receiver extends AnalyticsReceiver {
 		String referrerString = extras.getString("referrer");
 			Log.w("TEST", "Referrer is: " + referrerString);
 	
-			Intent introIntent = new Intent(context, IntroActivity.class);
+			Intent introIntent = new Intent(context, com.tudelft.triblerdroid.first.IntroActivity.class);
 			introIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			introIntent.putExtra("hash", referrerString);
 			context.startActivity(introIntent);

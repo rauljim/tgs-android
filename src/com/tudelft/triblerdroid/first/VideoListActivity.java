@@ -19,7 +19,7 @@ public class VideoListActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
     	  super.onCreate(savedInstanceState);
     	  
-    	  setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item, VIDEOS));
+    	  setListAdapter(new ArrayAdapter<String>(this, me.ppsp.test.R.layout.list_item, VIDEOS));
 
     	  ListView lv = getListView();
     	  lv.setTextFilterEnabled(true);

@@ -51,7 +51,7 @@ public class VideoPlayerActivity extends Activity {
 	
 	  super.onCreate(savedInstanceState);
  
-      setContentView(R.layout.main);
+      setContentView(me.ppsp.test.R.layout.main);
       try
       {
     	  SwiftInitalize();
@@ -107,8 +107,8 @@ public class VideoPlayerActivity extends Activity {
   
 	//starts the download thread
 	protected void SwiftStartDownload() {
-		BufferedReader unstable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(R.raw.bootstrap_unstable)));
-		BufferedReader stable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(R.raw.bootstrap_stable)));
+		BufferedReader unstable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(me.ppsp.test.R.raw.bootstrap_unstable)));
+		BufferedReader stable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(me.ppsp.test.R.raw.bootstrap_stable)));
 		final Pymdht dht = new Pymdht(9999, unstable, stable);
 		Runnable runnable_dht = new Runnable(){
 		    @Override
@@ -170,7 +170,7 @@ public class VideoPlayerActivity extends Activity {
 				public void run() {
 					getWindow().setFormat(PixelFormat.TRANSLUCENT);
 //					_text.setText("Play " + destination);
-		    		mVideoView = (VideoView) findViewById(R.id.surface_view);
+		    		mVideoView = (VideoView) findViewById(me.ppsp.test.R.id.surface_view);
 	
 		    		// Arno, 2012-01-30: Download *and* play, using HTTPGW
 		    		//String filename = "/sdcard/swift/" + destination;
@@ -250,7 +250,7 @@ public class VideoPlayerActivity extends Activity {
 	  		try {//TODO: catch InterruptedException (onDestroy)
 	
 	  			NativeLib nativelib =  new NativeLib();
-	  			mVideoView = (VideoView) findViewById(R.id.surface_view);
+	  			mVideoView = (VideoView) findViewById(me.ppsp.test.R.id.surface_view);
 	  			boolean play = false, pause=false;
 	  			
 	  			while(true) {

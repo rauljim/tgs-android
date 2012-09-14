@@ -24,7 +24,7 @@ public class VideoInfoActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
-    	setContentView(R.layout.video_info);
+    	setContentView(me.ppsp.test.R.layout.video_info);
     	
     	Bundle extras = getIntent().getExtras();
     	final Integer pos = extras.getInt("video_pos", 0);
@@ -41,12 +41,12 @@ public class VideoInfoActivity extends Activity {
 
     	}
     	
-    	TextView t = (TextView) findViewById(R.id.title);
+    	TextView t = (TextView) findViewById(me.ppsp.test.R.id.title);
     	t.setText(title);
-    	t = (TextView) findViewById(R.id.description);
+    	t = (TextView) findViewById(me.ppsp.test.R.id.description);
     	t.setText(description);
 
-    	Button b_play = (Button) findViewById(R.id.b_play);
+    	Button b_play = (Button) findViewById(me.ppsp.test.R.id.b_play);
   	  
     	b_play.setOnClickListener(new OnClickListener() {
       	    public void onClick(View view) {
@@ -58,7 +58,7 @@ public class VideoInfoActivity extends Activity {
       	    }
       	});
     	
-      	Button b_web_info = (Button) findViewById(R.id.b_web_info);
+      	Button b_web_info = (Button) findViewById(me.ppsp.test.R.id.b_web_info);
       	 	  
       	b_web_info.setOnClickListener(new OnClickListener() {
       	    public void onClick(View view) {

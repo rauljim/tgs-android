@@ -36,8 +36,8 @@ public class IntroActivity extends Activity {
 		final String hash = getHash();
 		if (hash == null){
 			// no link: show welcome
-			setContentView(R.layout.welcome);
-			Button b_twitter = (Button) findViewById(R.id.b_twitter);
+			setContentView(me.ppsp.test.R.layout.welcome);
+			Button b_twitter = (Button) findViewById(me.ppsp.test.R.id.b_twitter);
 			b_twitter.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					Intent i = new Intent(Intent.ACTION_VIEW);
@@ -59,10 +59,10 @@ public class IntroActivity extends Activity {
 		}
 
 		if (showIntro) {
-			setContentView(R.layout.intro);
-			cb_showIntro = (CheckBox) findViewById(R.id.cb_show_intro);
+			setContentView(me.ppsp.test.R.layout.intro);
+			cb_showIntro = (CheckBox) findViewById(me.ppsp.test.R.id.cb_show_intro);
 			cb_showIntro.setChecked(true);
-			Button b_continue = (Button) findViewById(R.id.b_continue);
+			Button b_continue = (Button) findViewById(me.ppsp.test.R.id.b_continue);
 			b_continue.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					if (!cb_showIntro.isChecked()){

@@ -27,16 +27,16 @@ public class StatisticsActivity extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.stats);
+		setContentView(me.ppsp.test.R.layout.stats);
 		_updateTask = new UpdateTask();
 		Bundle extras = getIntent().getExtras();
 		hash = extras.getString("com.tudelft.triblerdroid.first.VideoPlayerActivity.hash");
 		tracker = extras.getString("com.tudelft.triblerdroid.first.VideoPlayerActivity.tracker");
 		destination = extras.getString("com.tudelft.triblerdroid.first.VideoPlayerActivity.destination");
-		txtDownSpeed = (TextView) findViewById(R.id.down_speed);
-		txtUpSpeed = (TextView) findViewById(R.id.up_speed);
-		txtLeechers = (TextView) findViewById(R.id.nbr_leech);
-		txtSeeders = (TextView) findViewById(R.id.nbr_seed);
+		txtDownSpeed = (TextView) findViewById(me.ppsp.test.R.id.down_speed);
+		txtUpSpeed = (TextView) findViewById(me.ppsp.test.R.id.up_speed);
+		txtLeechers = (TextView) findViewById(me.ppsp.test.R.id.nbr_leech);
+		txtSeeders = (TextView) findViewById(me.ppsp.test.R.id.nbr_seed);
 		System.out.println("creating thread pool");
 		exec = Executors.newCachedThreadPool();
 		System.out.println("starting thread");
@@ -67,7 +67,7 @@ public class StatisticsActivity extends Activity{
 
 					_seqCompInt = new Integer((int) (seqcomp / 1024));
 
-					txtDownSpeed = (TextView) findViewById(R.id.down_speed);
+					txtDownSpeed = (TextView) findViewById(me.ppsp.test.R.id.down_speed);
 					progstr = "";
 					progstr = nativelib.stats();
 					String[] items = progstr.split("/");
