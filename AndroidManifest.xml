@@ -45,14 +45,6 @@
 		    </intent-filter>
         </activity>
         <activity
-            android:name="com.tudelft.triblerdroid.first.VideoListActivity"
-            android:configChanges="keyboardHidden|orientation" >
-        </activity>
-        <activity
-            android:name="com.tudelft.triblerdroid.first.VideoInfoActivity"
-            android:configChanges="keyboardHidden|orientation" >
-        </activity>
-        <activity
             android:name="com.tudelft.triblerdroid.first.VideoPlayerActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:screenOrientation="landscape"
