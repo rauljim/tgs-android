@@ -58,7 +58,8 @@ public class IntroActivity extends Activity {
 			return;
 		}
 
-		if (showIntro) {
+		if (false) {//never show info TODO: need to migrate to about
+			//TODO: 3g warning
 			setContentView(me.ppsp.test.R.layout.intro);
 			cb_showIntro = (CheckBox) findViewById(me.ppsp.test.R.id.cb_show_intro);
 			cb_showIntro.setChecked(true);

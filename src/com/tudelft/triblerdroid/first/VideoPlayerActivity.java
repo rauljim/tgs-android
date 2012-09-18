@@ -151,7 +151,8 @@ public class VideoPlayerActivity extends Activity {
 				finish();
 			}
 		});
-	
+	  
+	  ShowStatistics();
 	  // display the progressbar
 	  _dialog.show();
 	  
@@ -297,7 +298,7 @@ public class VideoPlayerActivity extends Activity {
 	  }
 	}
 	
-	public void ShowStatistics(View view){
+	public void ShowStatistics(){
 		Intent intent = new Intent(getBaseContext(), StatisticsActivity.class);
 		intent.putExtra(_HASH, hash);
 		intent.putExtra(_TRACKER, tracker);
