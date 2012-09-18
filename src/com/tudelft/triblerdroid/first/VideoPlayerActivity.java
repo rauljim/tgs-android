@@ -14,18 +14,18 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import me.ppsp.test.R;
 import se.kth.pymdht.Pymdht;
 
 public class VideoPlayerActivity extends Activity {
@@ -72,6 +72,35 @@ public class VideoPlayerActivity extends Activity {
 	  }		 
 	  Log.w("video player", "setup DONE");
   }
+  
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu)
+  {
+      MenuInflater menuInflater = getMenuInflater();
+      menuInflater.inflate(R.layout.menu, menu);
+      return true;
+  }
+  
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item)
+  {
+
+      switch (item.getItemId())
+      {
+      case R.id.menu_stats:
+    	  ShowStatistics();
+	  return true;
+      case R.id.menu_settings:
+      	// Single menu item is selected do something
+      	// Ex: launching new activity/screen or show alert message
+          Toast.makeText(VideoPlayerActivity.this, "Settings is Selected", Toast.LENGTH_SHORT).show();
+          return true;
+
+      default:
+          return super.onOptionsItemSelected(item);
+      }
+  }    
+  
   //stops the Async task when we press back button on video player
   @Override
   public void onStop()

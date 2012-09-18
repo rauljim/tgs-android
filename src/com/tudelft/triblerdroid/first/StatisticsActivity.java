@@ -1,13 +1,19 @@
 package com.tudelft.triblerdroid.first;
 
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import me.ppsp.test.R;
 
 public class StatisticsActivity extends Activity{
 	protected Integer _seqCompInt;
@@ -52,6 +58,29 @@ public class StatisticsActivity extends Activity{
 		Log.w("SwiftStatsActivity", "*** SHUTDOWN SWIFT STATS ACTIVITY ***");
 		_updateTask.stop();
 	}
+	  
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		MenuInflater menuInflater = getMenuInflater();
+		menuInflater.inflate(R.layout.stats_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+		case R.id.menu_hide_stats:
+			finish();
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}    
+
+	
+	
 	private class UpdateTask implements Runnable {
 		private boolean running = true;
 
