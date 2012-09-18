@@ -4,13 +4,17 @@
         android:key="pref_stats"
         android:title="Show P2P Info (TODO)"
         android:defaultValue="true" />
+  	<CheckBoxPreference
+        android:key="pref_3g_warning"
+        android:title="Show warning when using 3G (TODO)"
+        android:defaultValue="true" />
     <CheckBoxPreference
         android:key="pref_clean_old"
         android:title="Delete old videos automatically (TODO)"
         android:defaultValue="true" />
      <Preference
         android:key="pref_clean_now"
-        android:title="Delete old videos now (TODO)"
+        android:title="Delete all videos now (TODO)"
         android:defaultValue="true" />
     
  </PreferenceScreen>
