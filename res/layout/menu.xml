@@ -7,4 +7,7 @@
     <item android:id="@+id/menu_settings"
           android:title="Settings (stops video)" />
 
+	<item android:id="@+id/menu_credits"
+          android:title="Credits (TODO)" />
+   	
     </menu>
