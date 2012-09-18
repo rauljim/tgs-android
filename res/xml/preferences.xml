@@ -16,5 +16,12 @@
         android:key="pref_clean_now"
         android:title="Delete all videos now (TODO)"
         android:defaultValue="true" />
-    
- </PreferenceScreen>
+    <Preference
+        android:key="pref_tweet"
+        android:title="Tweet test"
+        android:defaultValue="true" />
+ 	<Preference
+        android:key="pref_share"
+        android:title="Share test"
+        android:defaultValue="true" />
+</PreferenceScreen>
