@@ -89,12 +89,13 @@ public class VideoPlayerActivity extends Activity {
       {
       case R.id.menu_stats:
     	  ShowStatistics();
-	  return true;
+    	  return true;
       case R.id.menu_settings:
       	// Single menu item is selected do something
       	// Ex: launching new activity/screen or show alert message
-          Toast.makeText(VideoPlayerActivity.this, "Settings is Selected", Toast.LENGTH_SHORT).show();
-          return true;
+  		Intent intent = new Intent(getBaseContext(), Preferences.class);
+  		startActivity(intent);
+  		return true;
 
       default:
           return super.onOptionsItemSelected(item);

@@ -9,7 +9,9 @@
     <string name="up_str">Upload speed:</string>
     <string name="leech_str">Leechers:</string>
     <string name="seed_str">Seeders:</string>
-
+    
+    <string name="pref_stats">Show P2P info</string>
+    
   <!--   <style name="ButtonText">
         <item name="android:layout_width">100dp</item>
         <item name="android:layout_height">wrap_content</item>

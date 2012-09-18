@@ -5,6 +5,6 @@
           android:title="P2P info" />
 
     <item android:id="@+id/menu_settings"
-          android:title="Settings" />
+          android:title="Settings (stops video)" />
 
     </menu>

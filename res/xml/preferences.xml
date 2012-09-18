@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="pref_stats"
+        android:title="Show P2P Info (TODO)"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="pref_clean_old"
+        android:title="Delete old videos automatically (TODO)"
+        android:defaultValue="true" />
+     <Preference
+        android:key="pref_clean_now"
+        android:title="Delete old videos now (TODO)"
+        android:defaultValue="true" />
+    
+ </PreferenceScreen>
