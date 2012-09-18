@@ -10,7 +10,7 @@
     <string name="leech_str">Leechers:</string>
     <string name="seed_str">Seeders:</string>
 
-    <style name="ButtonText">
+  <!--   <style name="ButtonText">
         <item name="android:layout_width">100dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">#ffffff</item>
@@ -28,5 +28,5 @@
         <item name="android:shadowDy">1</item>
         <item name="android:shadowRadius">2</item>
     </style>
-
+ -->
 </resources>
