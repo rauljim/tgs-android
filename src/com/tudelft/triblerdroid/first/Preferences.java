@@ -3,13 +3,16 @@ package com.tudelft.triblerdroid.first;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.text.InputFilter.LengthFilter;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.Toast;
 
+import java.io.File;
 import java.util.List;
 
 import me.ppsp.test.R;
@@ -24,8 +27,18 @@ public class Preferences extends PreferenceActivity {
 		Preference button = (Preference)findPreference("pref_clean_now");
 		button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
-            public boolean onPreferenceClick(Preference arg0) { 
-            	Log.d("prefs", "CLEAN UP");
+            public boolean onPreferenceClick(Preference arg0) {
+            	String dir_path = Environment.getExternalStorageDirectory().getPath() + "/swift";
+            	File f = new File(dir_path);
+                if(f.isDirectory()){
+                	String files[]=  f.list();
+                  	for(int i=0;i<files.length;i++){
+                  		new File(dir_path, files[i]).delete();
+
+                  	}
+                }
+
+            	Toast.makeText(getApplicationContext(), "All videos DELETED", Toast.LENGTH_SHORT).show();
                 return true;
             }
         });

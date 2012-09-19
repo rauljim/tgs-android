@@ -10,11 +10,16 @@ import se.kth.pymdht.Id.IdError;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,7 +36,6 @@ public class IntroActivity extends Activity {
 		super.onCreate(savedInstanceState);	  
 		final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		boolean showIntro = settings.getBoolean("showIntro", true);
-		Intent intent;
 
 		final String hash = getHash();
 		if (hash == null){
@@ -57,34 +61,56 @@ public class IntroActivity extends Activity {
 			showDialog(0);
 			return;
 		}
+		boolean showWarning = false;
+		if (onMobileConnectivity()){
+			// we are connected via mobile connectivity. Show warning, if preference checked.
+			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			if (prefs.getBoolean("pref_mobile_warning", true)){
+				showWarning = true;
+				setContentView(me.ppsp.test.R.layout.warning);
+				final CheckBox cb_mobile_warning = (CheckBox) findViewById(me.ppsp.test.R.id.cb_mobile_warning);
+				cb_mobile_warning.setChecked(true);
+				Button b_continue = (Button) findViewById(me.ppsp.test.R.id.b_continue);
+				b_continue.setOnClickListener(new OnClickListener() {
+					public void onClick(View v) {
+						if (!cb_mobile_warning.isChecked()){
+							//SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+							SharedPreferences.Editor editor = prefs.edit();
+							editor.putBoolean("pref_mobile_warning", false);
+							editor.commit(); //Raul: don't forget to commit edits!!
+							Log.w("intro", "Don't show Intro next time");
+						}
+						Intent intent = getPlayerIntent(hash);
+						startActivityForResult(intent, 0);
 
-		if (false) {//never show info TODO: need to migrate to about
-			//TODO: 3g warning
-			setContentView(me.ppsp.test.R.layout.intro);
-			cb_showIntro = (CheckBox) findViewById(me.ppsp.test.R.id.cb_show_intro);
-			cb_showIntro.setChecked(true);
-			Button b_continue = (Button) findViewById(me.ppsp.test.R.id.b_continue);
-			b_continue.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					if (!cb_showIntro.isChecked()){
-						//SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-						SharedPreferences.Editor editor = settings.edit();
-						editor.putBoolean("showIntro", false);
-						editor.commit(); //Raul: don't forget to commit edits!!
-						Log.w("intro", "Don't show Intro next time");
-					}
-					Intent intent = getPlayerIntent(hash);
-					startActivityForResult(intent, 0);
-				}  	
-			});
+					}  	
+				});
+			}
 		}
-		else
-		{
-			Log.w("intro", "don't show intro: go to P2P directly");
-			intent = getPlayerIntent(hash);
+		if (!showWarning){
+			Log.w("intro", "don't show warning: go to P2P directly");
+			Intent intent = getPlayerIntent(hash);
 			startActivityForResult(intent, 0);
 		}
 	}
+	
+	protected boolean onMobileConnectivity(){
+		ConnectivityManager mConnectivity = (ConnectivityManager) getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		NetworkInfo info = mConnectivity.getActiveNetworkInfo();
+		if (info == null) {
+			//no connection at all
+		    return false;
+		}
+		int netType = info.getType();
+		int netSubtype = info.getSubtype();
+		
+		if (netType == ConnectivityManager.TYPE_MOBILE){
+			return true;
+		}
+		return false;
+	}
+	
 	
 	protected Dialog onCreateDialog(int id) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);

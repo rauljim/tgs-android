@@ -91,13 +91,14 @@ public class VideoPlayerActivity extends Activity {
     	  ShowStatistics();
     	  return true;
       case R.id.menu_settings:
-      	// Single menu item is selected do something
-      	// Ex: launching new activity/screen or show alert message
   		Intent intent = new Intent(getBaseContext(), Preferences.class);
   		startActivity(intent);
   		return true;
+      case R.id.menu_about:
+        setContentView(me.ppsp.test.R.layout.about);
+    	return true;
 
-      default:
+        default:
           return super.onOptionsItemSelected(item);
       }
   }    
