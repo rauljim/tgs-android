@@ -1,22 +1,12 @@
 //Skeleton example from Alexey Reznichenko
 package com.tudelft.triblerdroid.first;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import se.kth.pymdht.Id;
-import se.kth.pymdht.Id.IdError;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -25,14 +15,17 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.Toast;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import se.kth.pymdht.Id;
+import se.kth.pymdht.Id.IdError;
 
 public class IntroActivity extends Activity {
     public static final String PREFS_NAME = "settings.dat";
