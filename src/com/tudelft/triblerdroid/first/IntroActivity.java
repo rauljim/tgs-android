@@ -1,6 +1,8 @@
 //Skeleton example from Alexey Reznichenko
 package com.tudelft.triblerdroid.first;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,10 +12,14 @@ import se.kth.pymdht.Id.IdError;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -26,18 +32,38 @@ import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 public class IntroActivity extends Activity {
     public static final String PREFS_NAME = "settings.dat";
-    CheckBox cb_showIntro;
+//    CheckBox cb_showIntro;
+    String hash = null;
+    boolean user_set_default_now = false;
+    public int INVALID_ID_DIALOG = 0;
+    public int SET_DEFAULT_DIALOG = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);	  
 		final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		boolean showIntro = settings.getBoolean("showIntro", true);
+		
+		hash = getHash();
 
-		final String hash = getHash();
+		// Check whether this app is the default for http://ppsp.me links
+
+		Intent ppspme_intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://ppsp.me"));
+		PackageManager pm = getBaseContext().getPackageManager();
+		final ResolveInfo mInfo = pm.resolveActivity(ppspme_intent, 0);
+		if (!pm.getApplicationLabel(mInfo.activityInfo.applicationInfo).equals("ppsp_player")){
+//			Toast.makeText(getBaseContext(), "ppsp_player is not default app for ppsp.me links", Toast.LENGTH_LONG).show();
+			// Show dialog to set myself as default
+			showDialog(SET_DEFAULT_DIALOG);
+			if (user_set_default_now){
+				return;
+			}
+		}
+
 		if (hash == null){
 			// no link: show welcome
 			setContentView(me.ppsp.test.R.layout.welcome);
@@ -51,14 +77,13 @@ public class IntroActivity extends Activity {
 			});
 			return;
 		}
-
 		Id id = null;
 		try{
 			id = new Id(hash);
 		}
 		catch(IdError e){
 			Log.w("hash", "invalid");
-			showDialog(0);
+			showDialog(INVALID_ID_DIALOG);
 			return;
 		}
 		boolean showWarning = false;
@@ -111,18 +136,40 @@ public class IntroActivity extends Activity {
 		return false;
 	}
 	
-	
 	protected Dialog onCreateDialog(int id) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Invalid PPSP link")
-		.setCancelable(false)
-		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				IntroActivity.this.finish();
-			}
-		});
-		AlertDialog alert = builder.create();
-	    return alert;
+		if (id == INVALID_ID_DIALOG){
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("Invalid PPSP link")
+			.setCancelable(false)
+			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					IntroActivity.this.finish();
+				}
+			});
+			AlertDialog alert = builder.create();
+			return alert;
+		}
+		if (id == SET_DEFAULT_DIALOG){
+			final String finalHash = hash;
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("PPSP.me links cannot be played by browsers. We recommend setting ppsp_player as default app for PPSP.me links.")
+			.setCancelable(false)
+			.setPositiveButton("Set default now", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					user_set_default_now = true;
+					Intent i = new Intent(Intent.ACTION_VIEW);
+					i.setData(Uri.parse("http://ppsp.me/"+finalHash));
+					startActivity(i);
+				}
+			})
+			.setNegativeButton("Later", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+				}
+			});
+			AlertDialog alert = builder.create();
+			return alert;	
+		}
+		return null;
 	}
 	
 	private Intent getPlayerIntent(String hash){
