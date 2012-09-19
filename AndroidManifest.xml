@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.ppsp.test"
-    android:versionCode="120909"
-    android:versionName="12.9.9" >
+    android:versionCode="120911"
+    android:versionName="12.9.11" >
     
     <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="10" />
     <uses-permission android:name="android.permission.INTERNET" />
