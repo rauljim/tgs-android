@@ -7,12 +7,14 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -182,8 +184,10 @@ public class VideoPlayerActivity extends Activity {
 				finish();
 			}
 		});
-	  
-	  ShowStatistics();
+	  SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+	  if (prefs.getBoolean("pref_stats", true)){
+		  ShowStatistics();
+	  }
 	  // display the progressbar
 	  _dialog.show();
 	  
