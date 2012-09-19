@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/b_continue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="48dp"
+        android:text="Continue >" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="42dp"
+        android:text="This application streams video via P2P. It is highly recommended to use this app while connected via Wi-Fi. Using this app on a mobile connection (3G for instance) may consume your monthly allowance or cause extra cost for you. P2P streaming may be blocked by your mobile operator, causing poor quality of experience."
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/b_continue"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="36dp" >
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="102dp"
+            android:src="@drawable/all_logos" />
+
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/cb_mobile_warning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/b_continue"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:checked="true"
+        android:text="Always show this screen on mobile connectivity" />
+
+</RelativeLayout>
