@@ -45,21 +45,21 @@ public class IntroActivity extends Activity {
 		hash = getHash();
 
 		// Check whether this app is the default for http://ppsp.me links
-
-		Intent ppspme_intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://ppsp.me"));
-		PackageManager pm = getBaseContext().getPackageManager();
-		final ResolveInfo mInfo = pm.resolveActivity(ppspme_intent, 0);
-		if (!pm.getApplicationLabel(mInfo.activityInfo.applicationInfo).equals("ppsp_player")){
-//			Toast.makeText(getBaseContext(), "ppsp_player is not default app for ppsp.me links", Toast.LENGTH_LONG).show();
-			// Show dialog to set myself as default
-			if (hash == null || !hash.equals("null")){
-				// avoids infinite loop (null comes from setting default dialog)
-				showDialog(SET_DEFAULT_DIALOG);
-			}
-			if (user_set_default_now){
-				return;
-			}
-		}
+		//Raul, 120920: Disable this for now (it's a bit annoying)
+//		Intent ppspme_intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://ppsp.me"));
+//		PackageManager pm = getBaseContext().getPackageManager();
+//		final ResolveInfo mInfo = pm.resolveActivity(ppspme_intent, 0);
+//		if (!pm.getApplicationLabel(mInfo.activityInfo.applicationInfo).equals("ppsp_player")){
+////			Toast.makeText(getBaseContext(), "ppsp_player is not default app for ppsp.me links", Toast.LENGTH_LONG).show();
+//			// Show dialog to set myself as default
+//			if (hash == null || !hash.equals("null")){
+//				// avoids infinite loop (null comes from setting default dialog)
+//				showDialog(SET_DEFAULT_DIALOG);
+//			}
+//			if (user_set_default_now){
+//				return;
+//			}
+//		}
 
 		if (hash == null || hash.equals("null")){
 			// no link: show welcome
