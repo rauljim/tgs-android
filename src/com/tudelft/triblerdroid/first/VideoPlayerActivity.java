@@ -3,6 +3,7 @@
 package com.tudelft.triblerdroid.first;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -40,7 +41,7 @@ public class VideoPlayerActivity extends Activity {
 	protected SwiftMainThread _swiftMainThread;
 	protected StatsTask _statsTask;
 	private VideoView mVideoView = null;
-	protected ProgressDialog _dialog;
+	protected ProgressDialog progressDialog;
 	protected Integer _seqCompInt;
 
 	String hash = null; 
@@ -48,6 +49,8 @@ public class VideoPlayerActivity extends Activity {
 	String destination;
 	boolean inmainloop = false;
 
+    public int PROGRESS_DIALOG = 0;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -73,6 +76,33 @@ public class VideoPlayerActivity extends Activity {
 			SwiftStartDownload();
 		}		 
 		Log.w("video player", "setup DONE");
+	}
+	
+	protected Dialog onCreateDialog(int id) {
+		if (id == PROGRESS_DIALOG){
+			progressDialog = new ProgressDialog(VideoPlayerActivity.this);
+			progressDialog.setCancelable(true);
+			progressDialog.setMessage("Connectivity: "+Util.getConnectivity(getApplicationContext())+"\nBuffering...");
+			// set the progress to be horizontal
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			// reset the bar to the default value of 0
+			progressDialog.setProgress(0);
+
+			//stop the engine if the procress scree is cancelled
+			progressDialog.setOnCancelListener(new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					//				_text.setText("TODO HTTPGW engine stopped!");
+					// Arno, 2012-01-30: TODO tell HTTPGW to stop serving data
+					//nativelib.stop();
+					// Raul, 2012-03-27: don't stay here with a black screen. 
+					// Go back to video list
+					finish();
+				}
+			});
+			return progressDialog;
+		}
+		return null;
 	}
 
 	@Override
@@ -163,33 +193,12 @@ public class VideoPlayerActivity extends Activity {
 
 	// creates the progress dialog
 	protected void SwiftCreateProgress() {
-		_dialog = new ProgressDialog(VideoPlayerActivity.this);
-		_dialog.setCancelable(true);
-		_dialog.setMessage("Connectivity: "+Util.getConnectivity(getApplicationContext())+"\nBuffering...");
-		// set the progress to be horizontal
-		_dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		// reset the bar to the default value of 0
-		_dialog.setProgress(0);
-
-		//stop the engine if the procress scree is cancelled
-		_dialog.setOnCancelListener(new OnCancelListener() {
-
-			@Override
-			public void onCancel(DialogInterface dialog) {
-				//				_text.setText("TODO HTTPGW engine stopped!");
-				// Arno, 2012-01-30: TODO tell HTTPGW to stop serving data
-				//nativelib.stop();
-				// Raul, 2012-03-27: don't stay here with a black screen. 
-				// Go back to video list
-				finish();
-			}
-		});
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		if (prefs.getBoolean("pref_stats", true)){
 			ShowStatistics();
 		}
 		// display the progressbar
-		_dialog.show();
+		showDialog(PROGRESS_DIALOG);
 
 	}
 
@@ -218,8 +227,7 @@ public class VideoPlayerActivity extends Activity {
 					mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 						@Override
 						public void onPrepared (MediaPlayer mp) {
-							//							_text.setText("Player75 prepared!");
-							_dialog.dismiss();
+							dismissDialog(PROGRESS_DIALOG);
 
 							//Cancel _statsTask if you don't want to get downloading report on catlog 
 							//_statsTask.cancel(true);
@@ -296,9 +304,9 @@ public class VideoPlayerActivity extends Activity {
 						long asize = Long.parseLong(elems[1]);
 
 						if (asize == 0)
-							_dialog.setMax(1024);
+							progressDialog.setMax(1024);
 						else
-							_dialog.setMax((int)(asize/1024));
+							progressDialog.setMax((int)(asize/1024));
 
 						_seqCompInt = new Integer((int)(seqcomp/1024));
 
@@ -308,7 +316,7 @@ public class VideoPlayerActivity extends Activity {
 
 						runOnUiThread(new Runnable(){
 							public void run() {
-								_dialog.setProgress(_seqCompInt.intValue() );
+								progressDialog.setProgress(_seqCompInt.intValue() );
 
 							}
 						});
