@@ -192,6 +192,13 @@ public class VideoPlayerActivity extends Activity {
 						//_statsTask.cancel(true);
 					}
 				});
+				mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+					@Override
+					public void onCompletion(MediaPlayer mp) {
+						// TODO set as default / post tweet
+//						finish();
+					}
+				});
 				MediaController mediaController = new MediaController(VideoPlayerActivity.this);
 				mediaController.setAnchorView(mVideoView);
 				mVideoView.setMediaController(mediaController);
