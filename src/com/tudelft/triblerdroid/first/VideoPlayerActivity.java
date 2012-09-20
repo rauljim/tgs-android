@@ -188,35 +188,29 @@ public class VideoPlayerActivity extends Activity {
 
 	//starts the video playback
 	private void SwiftStartPlayer() {
-		if (destination == null || destination.length() == 0) {
-			Toast.makeText(VideoPlayerActivity.this, "File URL/path is empty",
-					Toast.LENGTH_LONG).show();
-		}
-		else {
-			runOnUiThread(new Runnable(){
-				public void run() {
-					getWindow().setFormat(PixelFormat.TRANSLUCENT);
-					mVideoView = (VideoView) findViewById(me.ppsp.test.R.id.surface_view);
-					// Download *and* play, using HTTPGW
-					String urlstr = "http://127.0.0.1:8082/"+hash;
-					mVideoView.setVideoURI(Uri.parse(urlstr));
-					mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-						@Override
-						public void onPrepared (MediaPlayer mp) {
-							dismissDialog(PROGRESS_DIALOG);
-							//Cancel _statsTask if you don't want to get downloading report on catlog 
-							//_statsTask.cancel(true);
-						}
-					});
-					MediaController mediaController = new MediaController(VideoPlayerActivity.this);
-					mediaController.setAnchorView(mVideoView);
-					mVideoView.setMediaController(mediaController);
-					mVideoView.start();
-					mVideoView.requestFocus();
-					//mediaController.show(0); // keep visible
-				}
-			});
-		}
+		runOnUiThread(new Runnable(){
+			public void run() {
+				getWindow().setFormat(PixelFormat.TRANSLUCENT);
+				mVideoView = (VideoView) findViewById(me.ppsp.test.R.id.surface_view);
+				// Download *and* play, using HTTPGW
+				String urlstr = "http://127.0.0.1:8082/"+hash;
+				mVideoView.setVideoURI(Uri.parse(urlstr));
+				mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+					@Override
+					public void onPrepared (MediaPlayer mp) {
+						dismissDialog(PROGRESS_DIALOG);
+						//Cancel _statsTask if you don't want to get downloading report on catlog 
+						//_statsTask.cancel(true);
+					}
+				});
+				MediaController mediaController = new MediaController(VideoPlayerActivity.this);
+				mediaController.setAnchorView(mVideoView);
+				mVideoView.setMediaController(mediaController);
+				mVideoView.start();
+				mVideoView.requestFocus();
+				//mediaController.show(0); // keep visible
+			}
+		});
 	}
 
 	private class SwiftMainThread extends Thread{
