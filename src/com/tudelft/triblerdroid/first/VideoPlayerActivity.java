@@ -75,10 +75,23 @@ public class VideoPlayerActivity extends Activity {
 		hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
 		tracker = "192.16.127.98:20050"; //TODO
 		destination = "/sdcard/swift/video.ts";
-		if (hash != null){
-			Log.w("final hash", hash);
-			SwiftStartDownload();
-		}		 
+		if (hash == null){
+			return;
+		}
+		Log.w("final hash", hash);
+		startDHT();
+		// Start the background process
+		_swiftMainThread = new SwiftMainThread();
+		_swiftMainThread.start();
+		// Show P2P info (stats) according to preferences
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		if (prefs.getBoolean("pref_stats", true)){
+			ShowStatistics();
+		}
+		// start the progress bar
+		showDialog(PROGRESS_DIALOG);
+		_statsTask = new StatsTask();
+		_statsTask.execute( hash, tracker, destination );
 		Log.w("video player", "setup DONE");
 	}
 	
@@ -159,8 +172,7 @@ public class VideoPlayerActivity extends Activity {
 		//I think it's because there is not time to execute it onDestroy
 	}
 
-	//starts the download thread
-	protected void SwiftStartDownload() {
+	protected void startDHT(){
 		BufferedReader unstable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(me.ppsp.test.R.raw.bootstrap_unstable)));
 		BufferedReader stable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(me.ppsp.test.R.raw.bootstrap_stable)));
 		final Pymdht dht = new Pymdht(9999, unstable, stable);
@@ -172,20 +184,8 @@ public class VideoPlayerActivity extends Activity {
 		};
 		Thread dht_thread = new Thread(runnable_dht);
 		dht_thread.start();
-		// Start the background process
-		_swiftMainThread = new SwiftMainThread();
-		_swiftMainThread.start();
-		// Show P2P info (stats) according to preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		if (prefs.getBoolean("pref_stats", true)){
-			ShowStatistics();
-		}
-		// start the progress bar
-		showDialog(PROGRESS_DIALOG);
-		_statsTask = new StatsTask();
-		_statsTask.execute( hash, tracker, destination );
 	}
-
+	
 	//starts the video playback
 	private void SwiftStartPlayer() {
 		runOnUiThread(new Runnable(){
@@ -218,7 +218,7 @@ public class VideoPlayerActivity extends Activity {
 			try{
 				NativeLib nativelib =  new NativeLib();
 				String ret = nativelib.start(hash, tracker, destination);
-				SwiftStartPlayer();
+				SwiftStartPlayer(); //Raul, 120920: Why don't we call this from swiftStartDownload?
 				// Arno: Never returns, calls libevent2 mainloop
 				if (!inmainloop){
 					inmainloop = true;
