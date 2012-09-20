@@ -93,6 +93,7 @@ public class VideoPlayerActivity extends Activity {
 		_statsTask = new StatsTask();
 		_statsTask.execute( hash, tracker, destination );
 		Log.w("video player", "setup DONE");
+		startVideoPlayback();
 	}
 	
 	protected Dialog onCreateDialog(int id) {
@@ -187,8 +188,8 @@ public class VideoPlayerActivity extends Activity {
 	}
 	
 	//starts the video playback
-	private void SwiftStartPlayer() {
-		runOnUiThread(new Runnable(){
+	private void startVideoPlayback() {
+		runOnUiThread(new Runnable(){ //Raul, 120920: Why??
 			public void run() {
 				getWindow().setFormat(PixelFormat.TRANSLUCENT);
 				mVideoView = (VideoView) findViewById(me.ppsp.test.R.id.surface_view);
@@ -218,7 +219,7 @@ public class VideoPlayerActivity extends Activity {
 			try{
 				NativeLib nativelib =  new NativeLib();
 				String ret = nativelib.start(hash, tracker, destination);
-				SwiftStartPlayer(); //Raul, 120920: Why don't we call this from swiftStartDownload?
+				//startVideoPlayback(); //Raul, 120920: moved to onCreate
 				// Arno: Never returns, calls libevent2 mainloop
 				if (!inmainloop){
 					inmainloop = true;
