@@ -59,7 +59,11 @@ public class VideoPlayerActivity extends Activity {
 		setContentView(me.ppsp.test.R.layout.main);
 		try
 		{
-			SwiftInitalize();
+			// create dir for swift
+			String swiftFolder = "/swift";
+			String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
+			File mySwiftFolder = new File(extStorageDirectory + swiftFolder);
+			mySwiftFolder.mkdir();	  
 		}
 		catch(Exception e)
 		{
@@ -155,19 +159,6 @@ public class VideoPlayerActivity extends Activity {
 		//I think it's because there is not time to execute it onDestroy
 	}
 
-	/*
-	 *  Arno: From Riccardo's original SwiftBeta
-	 */
-
-	protected void SwiftInitalize()
-	{
-		// create dir for swift
-		String swiftFolder = "/swift";
-		String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
-		File mySwiftFolder = new File(extStorageDirectory + swiftFolder);
-		mySwiftFolder.mkdir();	  
-	}
-
 	//starts the download thread
 	protected void SwiftStartDownload() {
 		BufferedReader unstable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(me.ppsp.test.R.raw.bootstrap_unstable)));
@@ -184,24 +175,17 @@ public class VideoPlayerActivity extends Activity {
 		dht_thread.start();
 		// Start the background process
 		_swiftMainThread = new SwiftMainThread();
-		_swiftMainThread.start();    	
-		// start the progress bar
-		SwiftCreateProgress();
-		_statsTask = new StatsTask();
-		_statsTask.execute( hash, tracker, destination );
-	}
-
-	// creates the progress dialog
-	protected void SwiftCreateProgress() {
+		_swiftMainThread.start();
+		// Show P2P info (stats) according to preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		if (prefs.getBoolean("pref_stats", true)){
 			ShowStatistics();
 		}
-		// display the progressbar
+		// start the progress bar
 		showDialog(PROGRESS_DIALOG);
-
+		_statsTask = new StatsTask();
+		_statsTask.execute( hash, tracker, destination );
 	}
-
 
 	//starts the video playback
 	private void SwiftStartPlayer() {
