@@ -165,7 +165,7 @@ public class VideoPlayerActivity extends Activity {
 	protected void SwiftCreateProgress() {
 		_dialog = new ProgressDialog(VideoPlayerActivity.this);
 	  _dialog.setCancelable(true);
-	  _dialog.setMessage("Buffering...");
+	  _dialog.setMessage("Connectivity: "+Util.getConnectivity(getApplicationContext())+"\nBuffering...");
 	  // set the progress to be horizontal
 	  _dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 	  // reset the bar to the default value of 0

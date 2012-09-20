@@ -34,6 +34,7 @@ public class IntroActivity extends Activity {
     boolean user_set_default_now = false;
     public int INVALID_ID_DIALOG = 0;
     public int SET_DEFAULT_DIALOG = 1;
+    public int MOBILE_WARNING_DIALOG = 2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +52,16 @@ public class IntroActivity extends Activity {
 		if (!pm.getApplicationLabel(mInfo.activityInfo.applicationInfo).equals("ppsp_player")){
 //			Toast.makeText(getBaseContext(), "ppsp_player is not default app for ppsp.me links", Toast.LENGTH_LONG).show();
 			// Show dialog to set myself as default
-			showDialog(SET_DEFAULT_DIALOG);
+			if (hash == null || !hash.equals("null")){
+				// avoids infinite loop (null comes from setting default dialog)
+				showDialog(SET_DEFAULT_DIALOG);
+			}
 			if (user_set_default_now){
 				return;
 			}
 		}
 
-		if (hash == null){
+		if (hash == null || hash.equals("null")){
 			// no link: show welcome
 			setContentView(me.ppsp.test.R.layout.welcome);
 			Button b_twitter = (Button) findViewById(me.ppsp.test.R.id.b_twitter);
@@ -80,29 +84,31 @@ public class IntroActivity extends Activity {
 			return;
 		}
 		boolean showWarning = false;
-		if (onMobileConnectivity()){
+		if (Util.isMobileConnectivity(getBaseContext())){
 			// we are connected via mobile connectivity. Show warning, if preference checked.
 			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			if (prefs.getBoolean("pref_mobile_warning", true)){
 				showWarning = true;
-				setContentView(me.ppsp.test.R.layout.warning);
-				final CheckBox cb_mobile_warning = (CheckBox) findViewById(me.ppsp.test.R.id.cb_mobile_warning);
-				cb_mobile_warning.setChecked(true);
-				Button b_continue = (Button) findViewById(me.ppsp.test.R.id.b_continue);
-				b_continue.setOnClickListener(new OnClickListener() {
-					public void onClick(View v) {
-						if (!cb_mobile_warning.isChecked()){
-							//SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-							SharedPreferences.Editor editor = prefs.edit();
-							editor.putBoolean("pref_mobile_warning", false);
-							editor.commit(); //Raul: don't forget to commit edits!!
-							Log.w("intro", "Don't show Intro next time");
-						}
-						Intent intent = getPlayerIntent(hash);
-						startActivityForResult(intent, 0);
-
-					}  	
-				});
+				showDialog(MOBILE_WARNING_DIALOG);
+//
+//				setContentView(me.ppsp.test.R.layout.warning);
+//				final CheckBox cb_mobile_warning = (CheckBox) findViewById(me.ppsp.test.R.id.cb_mobile_warning);
+//				cb_mobile_warning.setChecked(true);
+//				Button b_continue = (Button) findViewById(me.ppsp.test.R.id.b_continue);
+//				b_continue.setOnClickListener(new OnClickListener() {
+//					public void onClick(View v) {
+//						if (!cb_mobile_warning.isChecked()){
+//							//SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+//							SharedPreferences.Editor editor = prefs.edit();
+//							editor.putBoolean("pref_mobile_warning", false);
+//							editor.commit(); //Raul: don't forget to commit edits!!
+//							Log.w("intro", "Don't show Intro next time");
+//						}
+//						Intent intent = getPlayerIntent(hash);
+//						startActivityForResult(intent, 0);
+//
+//					}  	
+//				});
 			}
 		}
 		if (!showWarning){
@@ -112,22 +118,6 @@ public class IntroActivity extends Activity {
 		}
 	}
 	
-	protected boolean onMobileConnectivity(){
-		ConnectivityManager mConnectivity = (ConnectivityManager) getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-		NetworkInfo info = mConnectivity.getActiveNetworkInfo();
-		if (info == null) {
-			//no connection at all
-		    return false;
-		}
-		int netType = info.getType();
-		int netSubtype = info.getSubtype();
-		
-		if (netType == ConnectivityManager.TYPE_MOBILE){
-			return true;
-		}
-		return false;
-	}
 	
 	protected Dialog onCreateDialog(int id) {
 		if (id == INVALID_ID_DIALOG){
@@ -152,10 +142,31 @@ public class IntroActivity extends Activity {
 					user_set_default_now = true;
 					Intent i = new Intent(Intent.ACTION_VIEW);
 					i.setData(Uri.parse("http://ppsp.me/"+finalHash));
+					Log.d("intro", "relaunch >> http://ppsp.me/"+finalHash);
 					startActivity(i);
+					IntroActivity.this.finish();
 				}
 			})
 			.setNegativeButton("Later", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+				}
+			});
+			AlertDialog alert = builder.create();
+			return alert;	
+		}
+		if (id == MOBILE_WARNING_DIALOG){
+			final String finalHash = hash;
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("Using mobile connectivity.\nWe recommend using wi-fi to download PPSP videos.\nDo you want to play anyway?")
+			.setCancelable(false)
+			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					Intent intent = getPlayerIntent(hash);
+					startActivityForResult(intent, 0);
+					IntroActivity.this.finish();
+				}
+			})
+			.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 				}
 			});
