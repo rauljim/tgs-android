@@ -170,7 +170,6 @@ public class VideoPlayerActivity extends Activity {
 				dht.start();
 			}
 		};
-
 		Thread dht_thread = new Thread(runnable_dht);
 		dht_thread.start();
 		// Start the background process
@@ -189,7 +188,6 @@ public class VideoPlayerActivity extends Activity {
 
 	//starts the video playback
 	private void SwiftStartPlayer() {
-		//_dialog.dismiss();
 		if (destination == null || destination.length() == 0) {
 			Toast.makeText(VideoPlayerActivity.this, "File URL/path is empty",
 					Toast.LENGTH_LONG).show();
@@ -198,27 +196,18 @@ public class VideoPlayerActivity extends Activity {
 			runOnUiThread(new Runnable(){
 				public void run() {
 					getWindow().setFormat(PixelFormat.TRANSLUCENT);
-					//					_text.setText("Play " + destination);
 					mVideoView = (VideoView) findViewById(me.ppsp.test.R.id.surface_view);
-
-					// Arno, 2012-01-30: Download *and* play, using HTTPGW
-					//String filename = "/sdcard/swift/" + destination;
-					//mVideoView.setVideoPath(destination);
+					// Download *and* play, using HTTPGW
 					String urlstr = "http://127.0.0.1:8082/"+hash;
-					//String urlstr = "file:"+destination;
 					mVideoView.setVideoURI(Uri.parse(urlstr));
-
 					mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 						@Override
 						public void onPrepared (MediaPlayer mp) {
 							dismissDialog(PROGRESS_DIALOG);
-
 							//Cancel _statsTask if you don't want to get downloading report on catlog 
 							//_statsTask.cancel(true);
 						}
 					});
-
-
 					MediaController mediaController = new MediaController(VideoPlayerActivity.this);
 					mediaController.setAnchorView(mVideoView);
 					mVideoView.setMediaController(mediaController);
@@ -226,36 +215,25 @@ public class VideoPlayerActivity extends Activity {
 					mVideoView.requestFocus();
 					//mediaController.show(0); // keep visible
 				}
-
 			});
-
 		}
 	}
 
-	private class SwiftMainThread extends Thread
-	{
-		public void run() 
-		{
-			try 
-			{
+	private class SwiftMainThread extends Thread{
+		public void run(){
+			try{
 				NativeLib nativelib =  new NativeLib();
 				String ret = nativelib.start(hash, tracker, destination);
-
 				SwiftStartPlayer();
-
 				// Arno: Never returns, calls libevent2 mainloop
-				if (!inmainloop) 
-				{
+				if (!inmainloop){
 					inmainloop = true;
 					Log.w("Swift","Entering libevent2 mainloop");
-
 					int progr = nativelib.mainloop();
-
 					Log.w("Swift","LEFT MAINLOOP!");
 				}
 			}
-			catch (Exception e ) 
-			{
+			catch (Exception e ){
 				e.printStackTrace();
 			}
 		}
