@@ -3,6 +3,10 @@ package com.tudelft.triblerdroid.first;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
+import android.widget.Toast;
+
+import java.io.File;
 
 
 class Util{
@@ -42,5 +46,29 @@ class Util{
 		}
 		return info.getType();
 
+	}
+	
+	static public void deleteAllSDContent(){
+		String dir_path = Environment.getExternalStorageDirectory().getPath() + "/swift";
+		File f = new File(dir_path);
+		if(f.isDirectory()){
+			String files[]=  f.list();
+			for(int i=0;i<files.length;i++){
+				new File(dir_path, files[i]).delete();
+
+			}
+		}
+	}
+	
+	static public void mkdirSDContent(){
+		try{
+			String swiftFolder = "/swift";
+			String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
+			File mySwiftFolder = new File(extStorageDirectory + swiftFolder);
+			mySwiftFolder.mkdir();	  
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 }

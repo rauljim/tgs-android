@@ -57,19 +57,7 @@ public class VideoPlayerActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(me.ppsp.test.R.layout.main);
-		try
-		{
-			// create dir for swift
-			String swiftFolder = "/swift";
-			String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
-			File mySwiftFolder = new File(extStorageDirectory + swiftFolder);
-			mySwiftFolder.mkdir();	  
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-
+		Util.mkdirSDContent();
 		Bundle extras = getIntent().getExtras();
 
 		hash = extras.getString("hash");//"280244b5e0f22b167f96c08605ee879b0274ce22"
