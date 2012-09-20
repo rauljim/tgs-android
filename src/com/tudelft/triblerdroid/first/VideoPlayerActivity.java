@@ -56,7 +56,7 @@ public class VideoPlayerActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 
-		setContentView(me.ppsp.test.R.layout.main);
+		setContentView(R.layout.main);
 		Util.mkdirSDContent();
 		Bundle extras = getIntent().getExtras();
 
@@ -133,7 +133,7 @@ public class VideoPlayerActivity extends Activity {
 			startActivity(intent);
 			return true;
 		case R.id.menu_about:
-			setContentView(me.ppsp.test.R.layout.about);
+			setContentView(R.layout.about);
 			return true;
 
 		default:
@@ -162,8 +162,8 @@ public class VideoPlayerActivity extends Activity {
 	}
 
 	protected void startDHT(){
-		BufferedReader unstable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(me.ppsp.test.R.raw.bootstrap_unstable)));
-		BufferedReader stable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(me.ppsp.test.R.raw.bootstrap_stable)));
+		BufferedReader unstable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(R.raw.bootstrap_unstable)));
+		BufferedReader stable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(R.raw.bootstrap_stable)));
 		final Pymdht dht = new Pymdht(9999, unstable, stable);
 		Runnable runnable_dht = new Runnable(){
 			@Override
@@ -180,7 +180,7 @@ public class VideoPlayerActivity extends Activity {
 		runOnUiThread(new Runnable(){ //Raul, 120920: Why??
 			public void run() {
 				getWindow().setFormat(PixelFormat.TRANSLUCENT);
-				mVideoView = (VideoView) findViewById(me.ppsp.test.R.id.surface_view);
+				mVideoView = (VideoView) findViewById(R.id.surface_view);
 				// Download *and* play, using HTTPGW
 				String urlstr = "http://127.0.0.1:8082/"+hash;
 				mVideoView.setVideoURI(Uri.parse(urlstr));
@@ -246,7 +246,7 @@ public class VideoPlayerActivity extends Activity {
 				try {//TODO: catch InterruptedException (onDestroy)
 
 					NativeLib nativelib =  new NativeLib();
-					mVideoView = (VideoView) findViewById(me.ppsp.test.R.id.surface_view);
+					mVideoView = (VideoView) findViewById(R.id.surface_view);
 					boolean play = false, pause=false;
 
 					while(true) {

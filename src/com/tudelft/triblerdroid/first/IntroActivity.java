@@ -24,6 +24,8 @@ import android.widget.CheckBox;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import me.ppsp.test.R;
+
 import se.kth.pymdht.Id;
 import se.kth.pymdht.Id.IdError;
 
@@ -63,8 +65,8 @@ public class IntroActivity extends Activity {
 
 		if (hash == null || hash.equals("null")){
 			// no link: show welcome
-			setContentView(me.ppsp.test.R.layout.welcome);
-			Button b_twitter = (Button) findViewById(me.ppsp.test.R.id.b_twitter);
+			setContentView(R.layout.welcome);
+			Button b_twitter = (Button) findViewById(R.id.b_twitter);
 			b_twitter.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					Intent i = new Intent(Intent.ACTION_VIEW);
@@ -91,10 +93,10 @@ public class IntroActivity extends Activity {
 				showWarning = true;
 				showDialog(MOBILE_WARNING_DIALOG);
 //
-//				setContentView(me.ppsp.test.R.layout.warning);
-//				final CheckBox cb_mobile_warning = (CheckBox) findViewById(me.ppsp.test.R.id.cb_mobile_warning);
+//				setContentView(R.layout.warning);
+//				final CheckBox cb_mobile_warning = (CheckBox) findViewById(R.id.cb_mobile_warning);
 //				cb_mobile_warning.setChecked(true);
-//				Button b_continue = (Button) findViewById(me.ppsp.test.R.id.b_continue);
+//				Button b_continue = (Button) findViewById(R.id.b_continue);
 //				b_continue.setOnClickListener(new OnClickListener() {
 //					public void onClick(View v) {
 //						if (!cb_mobile_warning.isChecked()){
