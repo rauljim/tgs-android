@@ -34,7 +34,9 @@ public class NativeLib {
    */
   public native String hello();
   /**
-   * Returns stats String
+   * Returns stats String DEPRECATED
    */
   public native String stats();
+  
+  public native String roothash(int file);
 }

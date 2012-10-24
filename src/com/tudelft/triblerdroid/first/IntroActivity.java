@@ -259,13 +259,15 @@ public class IntroActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode,
 			Intent data) {
 		boolean readyToTwit = false;
+		Uri videoUri = null;
+		
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
 			case CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE:
 				if (resultCode == RESULT_OK && data.getDataString() != null) {
-					Toast.makeText(this, "Video saved to:\n" + data.getData(), Toast.LENGTH_LONG)
+					videoUri = data.getData();
+					Toast.makeText(this, "Video saved to:\n" + videoUri, Toast.LENGTH_LONG)
 					.show();
-					readyToTwit = true;
 //					showTextFields(0);
 //					setTextFields(data.getDataString(), data.getData().getLastPathSegment());
 //					Uri vUri = data.getData();
@@ -287,12 +289,11 @@ public class IntroActivity extends Activity {
 				if (resultCode == RESULT_OK) {
 //					showTextFields(0);
 //					setTextFields(data.getDataString(), data.getData().getLastPathSegment());
-					Uri vUri = data.getData();
+					videoUri = data.getData();
 //					setVideoURI(vUri);
 //					String vPath = getRealPathFromURI(vUri);
 //					setVideoThumbnail(vPath);
-					Toast.makeText(this, "User selected "+vUri, Toast.LENGTH_LONG).show();
-					readyToTwit = true;
+					Toast.makeText(this, "User selected "+videoUri, Toast.LENGTH_LONG).show();
 				} else if (resultCode == RESULT_CANCELED) {
 					// User cancelled the video selection
 //					if (DEBUG_MODE) {
@@ -310,11 +311,23 @@ public class IntroActivity extends Activity {
 				}
 				break;
 		}
-		if (readyToTwit){
-			//TODO generate roothash
+		if (videoUri != null){
+			//generate roothash
+			
+			//FIXME
+			String hash = "0000000000000000000000000000000000000000";
+			String tracker = "192.16.127.98:20050";
+			String destination = "/sdcard/swift/video.ts";
+
+			NativeLib nativelib =  new NativeLib();		
+			String ret = nativelib.start(hash, tracker, destination);
+			String rootHash = hash;//nativelib.roothash(0);
+			
 			Intent i = new Intent(Intent.ACTION_VIEW);
-			i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=YourTextHere+&url=http://ppsp.me/1234567890123456789012345678901234567890"));
+			i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=YourTextHere+&url=http://ppsp.me/"+rootHash));
 			startActivity(i);
+			int progr = nativelib.mainloop();
+
 		}
 		// Done, exit application
 		//TODO: seed on background until one full copy is out
