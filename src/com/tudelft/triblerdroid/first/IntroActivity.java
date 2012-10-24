@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +31,8 @@ import se.kth.pymdht.Id;
 import se.kth.pymdht.Id.IdError;
 
 public class IntroActivity extends Activity {
+    private static final int SELECT_VIDEO_FILE_REQUEST_CODE = 200;
+
     public static final String PREFS_NAME = "settings.dat";
 //    CheckBox cb_showIntro;
     String hash = null;
@@ -120,6 +123,14 @@ public class IntroActivity extends Activity {
 		}
 	}
 	
+    /** Open phone's gallery when user clicks the button 'Select a video' */
+    public void selectVideo(View view) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("video/*"); // Only show videos
+        startActivityForResult(intent, SELECT_VIDEO_FILE_REQUEST_CODE);
+//        setTextFields();
+    }
+
 	
 	protected Dialog onCreateDialog(int id) {
 		if (id == INVALID_ID_DIALOG){
@@ -235,9 +246,46 @@ public class IntroActivity extends Activity {
 	}
 	
 	@Override
-    protected void onActivityResult(int requestCode, int resultCode,
-            Intent data) {
+	protected void onActivityResult(int requestCode, int resultCode,
+			Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+			case SELECT_VIDEO_FILE_REQUEST_CODE:
+				if (resultCode == RESULT_OK) {
+//					showTextFields(0);
+//					setTextFields(data.getDataString(), data.getData().getLastPathSegment());
+					Uri vUri = data.getData();
+//					setVideoURI(vUri);
+//					String vPath = getRealPathFromURI(vUri);
+//					setVideoThumbnail(vPath);
+					Toast.makeText(this, "User selected "+vUri, Toast.LENGTH_LONG).show();
+					//TODO generate roothash
+					Intent i = new Intent(Intent.ACTION_VIEW);
+					i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=YourTextHere+&url=http://ppsp.me/1234567890123456789012345678901234567890"));
+					startActivity(i);
+
+					
+				}
+//				 else if (resultCode == RESULT_CANCELED) {
+//					// User cancelled the video selection
+//					if (DEBUG_MODE) {
+//						Log.i(Log_Tag, "User cancelled the video selection");
+//					}
+//					Toast.makeText(this, "User cancelled the video selection", Toast.LENGTH_LONG)
+//					.show();
+//				} else {
+//					// Some other error, advise user
+//					if (DEBUG_MODE) {
+//						Log.i(Log_Tag, "Problem in selecting the video");
+//					}
+//					Toast.makeText(this, "Problem in selecting the video", Toast.LENGTH_LONG)
+//					.show();
+//				}
+				//break;
+				return;
+
+		}
+		
 		// Done, exit application
         finish();
 	}
