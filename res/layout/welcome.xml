@@ -59,7 +59,8 @@
         android:layout_alignRight="@+id/b_choose"
         android:layout_below="@+id/b_choose"
         android:layout_marginTop="20dp"
-        android:text="Record a video and share it with PPSP.me" />
+        android:text="Record a video and share it with PPSP.me" 
+        android:onClick="startCamera" />
 
     <Button
         android:id="@+id/b_twitter"

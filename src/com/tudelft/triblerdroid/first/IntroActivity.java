@@ -15,6 +15,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,6 +35,8 @@ public class IntroActivity extends Activity {
     private static final int SELECT_VIDEO_FILE_REQUEST_CODE = 200;
 
     public static final String PREFS_NAME = "settings.dat";
+
+	private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 100;
 //    CheckBox cb_showIntro;
     String hash = null;
     boolean user_set_default_now = false;
@@ -128,6 +131,13 @@ public class IntroActivity extends Activity {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("video/*"); // Only show videos
         startActivityForResult(intent, SELECT_VIDEO_FILE_REQUEST_CODE);
+//        setTextFields();
+    }
+    
+    /** Start phone's camera when user clicks the button 'Record a video' */
+    public void startCamera(View view) {
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
 //        setTextFields();
     }
 
@@ -248,8 +258,31 @@ public class IntroActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode,
 			Intent data) {
+		boolean readyToTwit = false;
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
+			case CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE:
+				if (resultCode == RESULT_OK && data.getDataString() != null) {
+					Toast.makeText(this, "Video saved to:\n" + data.getData(), Toast.LENGTH_LONG)
+					.show();
+					readyToTwit = true;
+//					showTextFields(0);
+//					setTextFields(data.getDataString(), data.getData().getLastPathSegment());
+//					Uri vUri = data.getData();
+//					setVideoURI(vUri);
+//					String vPath = getRealPathFromURI(vUri);
+//					setVideoThumbnail(vPath);
+				} else if (resultCode == RESULT_OK && data.getDataString() == null) {
+//					if (DEBUG_MODE) {
+//						Log.i(Log_Tag, "Problem in saving the video");
+//					}
+					Toast.makeText(this, "Problem in saving the video", Toast.LENGTH_LONG).show();
+				} else if (resultCode == RESULT_CANCELED) {
+					// User cancelled the video capture
+				} else {
+					// Video capture failed, advise user
+				}
+				break;
 			case SELECT_VIDEO_FILE_REQUEST_CODE:
 				if (resultCode == RESULT_OK) {
 //					showTextFields(0);
@@ -259,34 +292,32 @@ public class IntroActivity extends Activity {
 //					String vPath = getRealPathFromURI(vUri);
 //					setVideoThumbnail(vPath);
 					Toast.makeText(this, "User selected "+vUri, Toast.LENGTH_LONG).show();
-					//TODO generate roothash
-					Intent i = new Intent(Intent.ACTION_VIEW);
-					i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=YourTextHere+&url=http://ppsp.me/1234567890123456789012345678901234567890"));
-					startActivity(i);
-
-					
-				}
-//				 else if (resultCode == RESULT_CANCELED) {
-//					// User cancelled the video selection
+					readyToTwit = true;
+				} else if (resultCode == RESULT_CANCELED) {
+					// User cancelled the video selection
 //					if (DEBUG_MODE) {
 //						Log.i(Log_Tag, "User cancelled the video selection");
 //					}
-//					Toast.makeText(this, "User cancelled the video selection", Toast.LENGTH_LONG)
-//					.show();
-//				} else {
-//					// Some other error, advise user
+					Toast.makeText(this, "User cancelled the video selection", Toast.LENGTH_LONG)
+					.show();
+				} else {
+					// Some other error, advise user
 //					if (DEBUG_MODE) {
 //						Log.i(Log_Tag, "Problem in selecting the video");
 //					}
-//					Toast.makeText(this, "Problem in selecting the video", Toast.LENGTH_LONG)
-//					.show();
-//				}
-				//break;
-				return;
-
+					Toast.makeText(this, "Problem in selecting the video", Toast.LENGTH_LONG)
+					.show();
+				}
+				break;
 		}
-		
+		if (readyToTwit){
+			//TODO generate roothash
+			Intent i = new Intent(Intent.ACTION_VIEW);
+			i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=YourTextHere+&url=http://ppsp.me/1234567890123456789012345678901234567890"));
+			startActivity(i);
+		}
 		// Done, exit application
+		//TODO: seed on background until one full copy is out
         finish();
 	}
 }
