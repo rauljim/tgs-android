@@ -31,7 +31,7 @@ import me.ppsp.test.R;
 import se.kth.pymdht.Id;
 import se.kth.pymdht.Id.IdError;
 
-public class IntroActivity extends Activity {
+public class UploadActivity extends Activity {
     private static final int SELECT_VIDEO_FILE_REQUEST_CODE = 200;
 
     public static final String PREFS_NAME = "settings.dat";
@@ -46,84 +46,27 @@ public class IntroActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);	  
-		final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		boolean showIntro = settings.getBoolean("showIntro", true);
+		super.onCreate(savedInstanceState);	  		
+		setContentView(R.layout.video_upload);
+
+		//generate roothash
 		
-		hash = getHash();
+		//FIXME
+		String hash = "0000000000000000000000000000000000000000";
+		String tracker = "192.16.127.98:20050";
+		String destination = "/sdcard/swift/video.ts";
 
-		// Check whether this app is the default for http://ppsp.me links
-		//Raul, 120920: Disable this for now (it's a bit annoying)
-//		Intent ppspme_intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://ppsp.me"));
-//		PackageManager pm = getBaseContext().getPackageManager();
-//		final ResolveInfo mInfo = pm.resolveActivity(ppspme_intent, 0);
-//		if (!pm.getApplicationLabel(mInfo.activityInfo.applicationInfo).equals("ppsp_player")){
-////			Toast.makeText(getBaseContext(), "ppsp_player is not default app for ppsp.me links", Toast.LENGTH_LONG).show();
-//			// Show dialog to set myself as default
-//			if (hash == null || !hash.equals("null")){
-//				// avoids infinite loop (null comes from setting default dialog)
-//				showDialog(SET_DEFAULT_DIALOG);
-//			}
-//			if (user_set_default_now){
-//				return;
-//			}
-//		}
+		NativeLib nativelib =  new NativeLib();		
+		String ret = nativelib.start(hash, tracker, destination);
+		String rootHash = hash;//nativelib.roothash(0);
 
-		if (hash == null || hash.equals("null")){
-			// no link: show welcome
-			setContentView(R.layout.welcome);
-			Button b_twitter = (Button) findViewById(R.id.b_twitter);
-			b_twitter.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					Intent i = new Intent(Intent.ACTION_VIEW);
-					i.setData(Uri.parse("https://twitter.com/ppsp_test"));
-					startActivity(i);
-				}
-			});
-			return;
-		}
-		Id id = null;
-		try{
-			id = new Id(hash);
-		}
-		catch(IdError e){
-			Log.w("hash", "invalid");
-			showDialog(INVALID_ID_DIALOG);
-			return;
-		}
-		boolean showWarning = false;
-		if (Util.isMobileConnectivity(getBaseContext())){
-			// we are connected via mobile connectivity. Show warning, if preference checked.
-			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-			if (prefs.getBoolean("pref_mobile_warning", true)){
-				showWarning = true;
-				showDialog(MOBILE_WARNING_DIALOG);
-//
-//				setContentView(R.layout.warning);
-//				final CheckBox cb_mobile_warning = (CheckBox) findViewById(R.id.cb_mobile_warning);
-//				cb_mobile_warning.setChecked(true);
-//				Button b_continue = (Button) findViewById(R.id.b_continue);
-//				b_continue.setOnClickListener(new OnClickListener() {
-//					public void onClick(View v) {
-//						if (!cb_mobile_warning.isChecked()){
-//							//SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-//							SharedPreferences.Editor editor = prefs.edit();
-//							editor.putBoolean("pref_mobile_warning", false);
-//							editor.commit(); //Raul: don't forget to commit edits!!
-//							Log.w("intro", "Don't show Intro next time");
-//						}
-//						Intent intent = getPlayerIntent(hash);
-//						startActivityForResult(intent, 0);
-//
-//					}  	
-//				});
-			}
-		}
-		if (!showWarning){
-			Log.w("intro", "don't show warning: go to P2P directly");
-			Intent intent = getPlayerIntent(hash);
-			startActivityForResult(intent, 0);
-		}
+		
+		Intent i = new Intent(Intent.ACTION_VIEW);
+		i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=I+just+uploaded+a+video.+Check+it+out!+&url=http://ppsp.me/"+rootHash));
+		startActivity(i);
+		//int progr = nativelib.mainloop();
+
+		
 	}
 	
     /** Open phone's gallery when user clicks the button 'Select a video' */
@@ -149,7 +92,7 @@ public class IntroActivity extends Activity {
 			.setCancelable(false)
 			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
-					IntroActivity.this.finish();
+					UploadActivity.this.finish();
 				}
 			});
 			AlertDialog alert = builder.create();
@@ -167,7 +110,7 @@ public class IntroActivity extends Activity {
 					i.setData(Uri.parse("http://ppsp.me/"+finalHash));
 					Log.d("intro", "relaunch >> http://ppsp.me/"+finalHash);
 					startActivity(i);
-					IntroActivity.this.finish();
+					UploadActivity.this.finish();
 				}
 			})
 			.setNegativeButton("Later", new DialogInterface.OnClickListener() {
@@ -186,7 +129,7 @@ public class IntroActivity extends Activity {
 				public void onClick(DialogInterface dialog, int id) {
 					Intent intent = getPlayerIntent(hash);
 					startActivityForResult(intent, 0);
-					IntroActivity.this.finish();
+					UploadActivity.this.finish();
 				}
 			})
 			.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -312,9 +255,22 @@ public class IntroActivity extends Activity {
 				break;
 		}
 		if (videoUri != null){
-			Intent intent = new Intent(getBaseContext(), UploadActivity.class);
-			intent.putExtra("videoUri", videoUri);
-			startActivity(intent);
+			//generate roothash
+			
+			//FIXME
+			String hash = "0000000000000000000000000000000000000000";
+			String tracker = "192.16.127.98:20050";
+			String destination = "/sdcard/swift/video.ts";
+
+			NativeLib nativelib =  new NativeLib();		
+			String ret = nativelib.start(hash, tracker, destination);
+			String rootHash = hash;//nativelib.roothash(0);
+			
+			Intent i = new Intent(Intent.ACTION_VIEW);
+			i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=I+just+uploaded+a+video.+Check+it+out!+&url=http://ppsp.me/"+rootHash));
+			startActivity(i);
+			int progr = nativelib.mainloop();
+
 		}
 		// Done, exit application
 		//TODO: seed on background until one full copy is out
