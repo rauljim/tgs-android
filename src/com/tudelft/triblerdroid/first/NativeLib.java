@@ -38,5 +38,5 @@ public class NativeLib {
    */
   public native String stats();
   
-  public native String roothash(int file);
+  public native String roothash(String string);
 }

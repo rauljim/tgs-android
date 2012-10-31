@@ -4,7 +4,7 @@
     android:versionCode="120915"
     android:versionName="12.9.15" >
     
-    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="10" />
+    <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="11" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

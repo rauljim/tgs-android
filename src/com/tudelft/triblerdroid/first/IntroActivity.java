@@ -2,6 +2,7 @@
 package com.tudelft.triblerdroid.first;
 
 import android.app.Activity;
+import android.content.CursorLoader;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -23,6 +25,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,6 +46,12 @@ public class IntroActivity extends Activity {
     public int INVALID_ID_DIALOG = 0;
     public int SET_DEFAULT_DIALOG = 1;
     public int MOBILE_WARNING_DIALOG = 2;
+
+	private String tracker;
+
+	private String destination;
+
+	private NativeLib nativelib;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -268,12 +277,6 @@ public class IntroActivity extends Activity {
 					videoUri = data.getData();
 					Toast.makeText(this, "Video saved to:\n" + videoUri, Toast.LENGTH_LONG)
 					.show();
-//					showTextFields(0);
-//					setTextFields(data.getDataString(), data.getData().getLastPathSegment());
-//					Uri vUri = data.getData();
-//					setVideoURI(vUri);
-//					String vPath = getRealPathFromURI(vUri);
-//					setVideoThumbnail(vPath);
 				} else if (resultCode == RESULT_OK && data.getDataString() == null) {
 //					if (DEBUG_MODE) {
 //						Log.i(Log_Tag, "Problem in saving the video");
@@ -294,6 +297,8 @@ public class IntroActivity extends Activity {
 //					String vPath = getRealPathFromURI(vUri);
 //					setVideoThumbnail(vPath);
 					Toast.makeText(this, "User selected "+videoUri, Toast.LENGTH_LONG).show();
+					Log.i("upload", "User selected "+videoUri);
+
 				} else if (resultCode == RESULT_CANCELED) {
 					// User cancelled the video selection
 //					if (DEBUG_MODE) {
@@ -311,13 +316,48 @@ public class IntroActivity extends Activity {
 				}
 				break;
 		}
+		Log.i("upload", "after switch");
+
 		if (videoUri != null){
+			Toast.makeText(this, "uri not null", Toast.LENGTH_LONG)
+			.show();
+
+			//FIXME
+			hash = "0000000000000000000000000000000000000000";
+			tracker = "192.16.127.98:20050";
+			destination = "/sdcard/swift/video.ts";
+			
+ 			Toast.makeText(this, "URI: "+videoUri, Toast.LENGTH_LONG)
+			.show();
+ 			String filename = getRealPathFromURI(videoUri);
+			Toast.makeText(this, "filename: "+filename, Toast.LENGTH_LONG)
+			.show();
+			Log.i("upload", "filename: "+filename);
+
+			nativelib =  new NativeLib();		
+			hash = nativelib.roothash(filename);
+			nativelib.stop();
+			Toast.makeText(this, "HASH: "+hash, Toast.LENGTH_LONG)
+			.show();
+			Log.i("upload", "HASH: "+hash);
 			Intent intent = new Intent(getBaseContext(), UploadActivity.class);
-			intent.putExtra("videoUri", videoUri);
+			intent.putExtra("hash", hash);
+			intent.putExtra("destination", filename);
 			startActivity(intent);
 		}
+		
 		// Done, exit application
 		//TODO: seed on background until one full copy is out
 //        finish();
 	}
+	//Snipet from http://stackoverflow.com/questions/3401579/get-filename-and-path-from-uri-from-mediastore
+	private String getRealPathFromURI(Uri contentUri) {
+		String[] proj = { MediaStore.Images.Media.DATA };
+		CursorLoader loader = new CursorLoader(getBaseContext(), contentUri, proj, null, null, null);
+		Cursor cursor = loader.loadInBackground();
+		int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		cursor.moveToFirst();
+		return cursor.getString(column_index);
+	}
+
 }
