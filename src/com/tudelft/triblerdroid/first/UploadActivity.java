@@ -1,35 +1,23 @@
 //Skeleton example from Alexey Reznichenko
 package com.tudelft.triblerdroid.first;
 
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.Toast;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import me.ppsp.test.R;
-
-import se.kth.pymdht.Id;
-import se.kth.pymdht.Id.IdError;
 
 public class UploadActivity extends Activity {
     private static final int SELECT_VIDEO_FILE_REQUEST_CODE = 200;
@@ -38,11 +26,19 @@ public class UploadActivity extends Activity {
 
 	private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 100;
 //    CheckBox cb_showIntro;
-    String hash = null;
     boolean user_set_default_now = false;
     public int INVALID_ID_DIALOG = 0;
     public int SET_DEFAULT_DIALOG = 1;
     public int MOBILE_WARNING_DIALOG = 2;
+
+    String hash = null;
+    String destination;
+	String tracker;
+	boolean inmainloop = false;
+
+	private SwiftMainThread _swiftMainThread;
+
+	private NativeLib nativelib;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,18 +48,23 @@ public class UploadActivity extends Activity {
 		//generate roothash
 		
 		//FIXME
-		String hash = "0000000000000000000000000000000000000000";
-		String tracker = "192.16.127.98:20050";
-		String destination = "/sdcard/swift/video.ts";
+		hash = "0000000000000000000000000000000000000000";
+		tracker = "192.16.127.98:20050";
+		destination = "/sdcard/swift/video.ts";
 
-		NativeLib nativelib =  new NativeLib();		
+		nativelib =  new NativeLib();		
 		String ret = nativelib.start(hash, tracker, destination);
-		String rootHash = hash;//nativelib.roothash(0);
-
+		hash = nativelib.roothash(0);
+		Toast.makeText(this, "HASH1: "+hash, Toast.LENGTH_LONG)
+		.show();
+		_swiftMainThread = new SwiftMainThread();
+		_swiftMainThread.start();
+		Toast.makeText(this, "HASH2: "+hash, Toast.LENGTH_LONG)
+		.show();
 		
-		Intent i = new Intent(Intent.ACTION_VIEW);
-		i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=I+just+uploaded+a+video.+Check+it+out!+&url=http://ppsp.me/"+rootHash));
-		startActivity(i);
+//		Intent i = new Intent(Intent.ACTION_VIEW);
+//		i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=I+just+uploaded+a+video.+Check+it+out!+&url=http://ppsp.me/"+rootHash));
+//		startActivity(i);
 		//int progr = nativelib.mainloop();
 
 		
@@ -254,26 +255,54 @@ public class UploadActivity extends Activity {
 				}
 				break;
 		}
+		Toast.makeText(this, "after switch", Toast.LENGTH_LONG)
+		.show();
+
 		if (videoUri != null){
 			//generate roothash
-			
-			//FIXME
-			String hash = "0000000000000000000000000000000000000000";
-			String tracker = "192.16.127.98:20050";
-			String destination = "/sdcard/swift/video.ts";
+			Toast.makeText(this, "uri not null", Toast.LENGTH_LONG)
+			.show();
 
-			NativeLib nativelib =  new NativeLib();		
+			//FIXME
+			hash = "0000000000000000000000000000000000000000";
+			tracker = "192.16.127.98:20050";
+			destination = "/sdcard/swift/video.ts";
+
+			nativelib =  new NativeLib();		
 			String ret = nativelib.start(hash, tracker, destination);
 			String rootHash = hash;//nativelib.roothash(0);
+			_swiftMainThread = new SwiftMainThread();
+			_swiftMainThread.start();
+			Toast.makeText(this, "HASH: "+hash, Toast.LENGTH_LONG)
+			.show();
+
 			
 			Intent i = new Intent(Intent.ACTION_VIEW);
 			i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=I+just+uploaded+a+video.+Check+it+out!+&url=http://ppsp.me/"+rootHash));
 			startActivity(i);
-			int progr = nativelib.mainloop();
+//			int progr = nativelib.mainloop();
 
 		}
 		// Done, exit application
 		//TODO: seed on background until one full copy is out
 //        finish();
 	}
+	
+	private class SwiftMainThread extends Thread{
+
+		public void run(){
+			try{
+				if (!inmainloop){
+					inmainloop = true;
+					Log.w("Swift","Entering libevent2 mainloop");
+					int progr = nativelib.mainloop();
+					Log.w("Swift","LEFT MAINLOOP!");
+				}
+			}
+			catch (Exception e ){
+				e.printStackTrace();
+			}
+		}
+	}
+
 }
