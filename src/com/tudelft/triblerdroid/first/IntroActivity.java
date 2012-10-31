@@ -352,6 +352,8 @@ public class IntroActivity extends Activity {
 	}
 	//Snipet from http://stackoverflow.com/questions/3401579/get-filename-and-path-from-uri-from-mediastore
 	private String getRealPathFromURI(Uri contentUri) {
+		//NOTE: CursorLoader requires API11.
+		//TODO: Find out an alternative that works on API10 
 		String[] proj = { MediaStore.Images.Media.DATA };
 		CursorLoader loader = new CursorLoader(getBaseContext(), contentUri, proj, null, null, null);
 		Cursor cursor = loader.loadInBackground();
