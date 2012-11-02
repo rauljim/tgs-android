@@ -7,8 +7,8 @@ public class Pymdht{
 	private Controller controller;
 	private Reactor reactor;
 
-	public Pymdht(int port, BufferedReader unstable, BufferedReader stable){
-		this.controller = new Controller(unstable, stable);
+	public Pymdht(int port, BufferedReader unstable, BufferedReader stable, String hash, boolean checkBooster){
+		this.controller = new Controller(unstable, stable, hash, checkBooster);
 		try {
 			this.reactor = new Reactor(port, controller);
 		} catch (SocketException e) {

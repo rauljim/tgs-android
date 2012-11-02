@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import se.kth.pymdht.Id.IdError;
 import se.kth.pymdht.IncomingMsg.MsgError;
 
 public class Controller {
@@ -17,15 +18,26 @@ public class Controller {
 	}
 
 	private static final int MAX_EMPTY_HEARTBEATS = 5;
+	private static final int CHECK_BOOSTER_EACH = 20000; //milliseconds
 	private Id _my_id;
 	private SwiftTracker swift_tracker = new SwiftTracker();
 	private GetPeersLookup lookup;
 	private OverlayBootstrapper bootstrapper;
 	private int empty_heartbeats_in_a_row;
+	private Id hash;
+	private long lastGetPeers = 0;
+	private boolean checkBooster;
 	
-	public Controller(BufferedReader unstable, BufferedReader stable){
+	public Controller(BufferedReader unstable, BufferedReader stable, String hash, boolean checkBooster){
+		this.checkBooster = checkBooster;
 		this._my_id = new RandomId();
 		this.bootstrapper = new OverlayBootstrapper(unstable, stable);
+		try {
+			this.hash = new Id(hash);
+		} catch (IdError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.lookup = null;
 		empty_heartbeats_in_a_row = 0;
 	}
@@ -36,6 +48,14 @@ public class Controller {
 	
 	public List<DatagramPacket> on_heartbeat() throws LookupDone{
 		List<DatagramPacket> datagrams_to_send;
+		if (this.lastGetPeers != 0 && this.checkBooster && System.currentTimeMillis() > this.lastGetPeers + CHECK_BOOSTER_EACH){
+			Log.d("controller", "re-lookup (waiting for booster)");
+			this.lastGetPeers = System.currentTimeMillis();
+			lookup = new GetPeersLookup(hash, bootstrapper);
+			datagrams_to_send = lookup.get_datagrams();
+
+		}
+		
 		if (this.lookup == null){
 			datagrams_to_send = new ArrayList<DatagramPacket>(0);
 		}
@@ -71,6 +91,7 @@ public class Controller {
 			if (swift_tracker.on_handshake(datagram)){
 				Log.w("pymdht.controller", "got HANDSHAKE from Swift");
 				datagrams_to_send.add(swift_tracker.handshake_reply_datagram);
+				this.lastGetPeers = System.currentTimeMillis();
 				lookup = new GetPeersLookup(swift_tracker.hash, bootstrapper);
 				datagrams_to_send = lookup.get_datagrams();
 				datagrams_to_send.add(swift_tracker.handshake_reply_datagram);
