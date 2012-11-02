@@ -51,7 +51,7 @@ public class IntroActivity extends Activity {
 
 	private String destination;
 
-	private NativeLib nativelib;
+//	private NativeLib nativelib;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -324,7 +324,7 @@ public class IntroActivity extends Activity {
 
 			//FIXME
 			hash = "0000000000000000000000000000000000000000";
-			tracker = "192.16.127.98:20050";
+			tracker = "192.16.125.213:7758";//"192.16.127.98:20050";
 			destination = "/sdcard/swift/video.ts";
 			
  			Toast.makeText(this, "URI: "+videoUri, Toast.LENGTH_LONG)
@@ -332,16 +332,19 @@ public class IntroActivity extends Activity {
  			String filename = getRealPathFromURI(videoUri);
 			Toast.makeText(this, "filename: "+filename, Toast.LENGTH_LONG)
 			.show();
-			Log.i("upload", "filename: "+filename);
+			Log.i("intro", "filename: "+filename);
 
-			nativelib =  new NativeLib();		
-			hash = nativelib.roothash(filename);
-			nativelib.stop();
-			Toast.makeText(this, "HASH: "+hash, Toast.LENGTH_LONG)
-			.show();
-			Log.i("upload", "HASH: "+hash);
+//			nativelib =  new NativeLib();		
+//			hash = nativelib.roothash(filename);
+//			nativelib.start(hash, tracker, destination);
+//			nativelib.mainloop();
+//			Log.d("intro", "done");
+//			nativelib.stop();
+//			Toast.makeText(this, "HASH: "+hash, Toast.LENGTH_LONG)
+//			.show();
+//			Log.i("upload", "HASH: "+hash);
 			Intent intent = new Intent(getBaseContext(), UploadActivity.class);
-			intent.putExtra("hash", hash);
+//			intent.putExtra("hash", hash);
 			intent.putExtra("destination", filename);
 			startActivity(intent);
 		}

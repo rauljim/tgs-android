@@ -67,7 +67,7 @@ public class VideoPlayerActivity extends Activity {
 			return;
 		}
 		Log.w("final hash", hash);
-		startDHT();
+		startDHT(hash);
 		// Start the background process
 		_swiftMainThread = new SwiftMainThread();
 		_swiftMainThread.start();
@@ -161,10 +161,10 @@ public class VideoPlayerActivity extends Activity {
 		//I think it's because there is not time to execute it onDestroy
 	}
 
-	protected void startDHT(){
+	protected void startDHT(String hash){
 		BufferedReader unstable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(R.raw.bootstrap_unstable)));
 		BufferedReader stable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(R.raw.bootstrap_stable)));
-		final Pymdht dht = new Pymdht(9999, unstable, stable);
+		final Pymdht dht = new Pymdht(9999, unstable, stable, hash, false);
 		Runnable runnable_dht = new Runnable(){
 			@Override
 			public void run() {
