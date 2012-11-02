@@ -55,7 +55,7 @@ public class IncomingMsg {
 			ByteBuffer cnodes = (ByteBuffer) this.r_dict.get(MsgConst.NODES);
 			if (cnodes != null){
 				this.nodes = uncompact_nodes(cnodes);
-				System.out.println(nodes.size() + " nodes");
+//				System.out.println(nodes.size() + " nodes");
 			}
 			else{
 				this.nodes = new Vector<Node>();

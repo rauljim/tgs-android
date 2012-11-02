@@ -17,7 +17,7 @@ public class Controller {
 		private static final long serialVersionUID = 1L;
 	}
 
-	private static final int MAX_EMPTY_HEARTBEATS = 5;
+	private static final int MAX_EMPTY_HEARTBEATS = 10000;
 	private static final int CHECK_BOOSTER_EACH = 20000; //milliseconds
 	private Id _my_id;
 	private SwiftTracker swift_tracker = new SwiftTracker();
@@ -49,7 +49,7 @@ public class Controller {
 	public List<DatagramPacket> on_heartbeat() throws LookupDone{
 		List<DatagramPacket> datagrams_to_send;
 		if (this.lastGetPeers != 0 && this.checkBooster && System.currentTimeMillis() > this.lastGetPeers + CHECK_BOOSTER_EACH){
-			Log.d("controller", "re-lookup (waiting for booster)");
+			Log.d("controller", ">>>>>>>>>re-lookup (waiting for booster)<<<<<<<<<<<");
 			this.lastGetPeers = System.currentTimeMillis();
 			lookup = new GetPeersLookup(hash, bootstrapper);
 			datagrams_to_send = lookup.get_datagrams();
@@ -72,7 +72,9 @@ public class Controller {
 				this.empty_heartbeats_in_a_row = 0;
 			}
 		}
-		System.out.println(System.currentTimeMillis() + " heartbeat sends " + datagrams_to_send.size());
+		if (datagrams_to_send.size() > 0){
+			System.out.println(System.currentTimeMillis() + " heartbeat sends " + datagrams_to_send.size());
+		}
 		return datagrams_to_send;
 	}
 	

@@ -34,7 +34,7 @@ public class NativeLib {
    */
   public native String hello();
   /**
-   * Returns stats String DEPRECATED
+   * Returns stats String 
    */
   public native String stats();
   

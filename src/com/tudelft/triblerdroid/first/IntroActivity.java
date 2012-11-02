@@ -321,11 +321,6 @@ public class IntroActivity extends Activity {
 		if (videoUri != null){
 			Toast.makeText(this, "uri not null", Toast.LENGTH_LONG)
 			.show();
-
-			//FIXME
-			hash = "0000000000000000000000000000000000000000";
-			tracker = "192.16.125.213:7758";//"192.16.127.98:20050";
-			destination = "/sdcard/swift/video.ts";
 			
  			Toast.makeText(this, "URI: "+videoUri, Toast.LENGTH_LONG)
 			.show();
@@ -334,25 +329,12 @@ public class IntroActivity extends Activity {
 			.show();
 			Log.i("intro", "filename: "+filename);
 
-//			nativelib =  new NativeLib();		
-//			hash = nativelib.roothash(filename);
-//			nativelib.start(hash, tracker, destination);
-//			nativelib.mainloop();
-//			Log.d("intro", "done");
-//			nativelib.stop();
-//			Toast.makeText(this, "HASH: "+hash, Toast.LENGTH_LONG)
-//			.show();
-//			Log.i("upload", "HASH: "+hash);
 			Intent intent = new Intent(getBaseContext(), UploadActivity.class);
-//			intent.putExtra("hash", hash);
 			intent.putExtra("destination", filename);
 			startActivity(intent);
 		}
-		
-		// Done, exit application
-		//TODO: seed on background until one full copy is out
-//        finish();
 	}
+	
 	//Snipet from http://stackoverflow.com/questions/3401579/get-filename-and-path-from-uri-from-mediastore
 	private String getRealPathFromURI(Uri contentUri) {
 		//NOTE: CursorLoader requires API11.
