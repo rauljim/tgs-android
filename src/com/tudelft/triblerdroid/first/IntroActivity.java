@@ -50,11 +50,12 @@ import se.kth.pymdht.Id.IdError;
 
 public class IntroActivity extends FragmentActivity implements LiveIPDialogFragment.LiveIPDialogListener 
 {
+    private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 100;
     private static final int SELECT_VIDEO_FILE_REQUEST_CODE = 200;
+    private static final int BACK_FROM_PLAYER_CODE = 300;
 
     public static final String PREFS_NAME = "settings.dat";
 
-	private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 100;
 //    CheckBox cb_showIntro;
     String hash = null;
     boolean user_set_default_now = false;
@@ -198,7 +199,7 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 		if (!showWarning){
 			Log.w("intro", "don't show warning: go to P2P directly");
 			Intent intent = getPlayerIntent(hash,"",false);
-			startActivityForResult(intent, 0);
+			startActivityForResult(intent, BACK_FROM_PLAYER_CODE);
 		}
 	}
 	
@@ -400,8 +401,12 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 					.show();
 				}
 				break;
+			case BACK_FROM_PLAYER_CODE:
+				Log.d("intro", "DONE");
+				finish(); //User exited player. We're done.
+				break;
 		}
-		Log.i("upload", "after switch");
+		Log.d("intro", "after switch, code: " + requestCode );
 
 		if (videoUri != null){
 			Toast.makeText(this, "uri not null", Toast.LENGTH_LONG)

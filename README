@@ -26,6 +26,12 @@ Get jni (P2P C++ library) and compile:
 git submodule init
 git submodule update
 cd jni
+
+Get libevent2:
+svn checkout http://svn.tribler.org/libevent2/tags/libevent-2.0.15-arno-http-android-14-binary/
+mv libevent-2.0.15-arno-http-android-14-binary libevent2
+
+Compile:
 ~/android/android-ndk-r8b/ndk-build
 
 Import project into Eclipse
