@@ -48,7 +48,7 @@ public class UploadActivity extends Activity {
 
 		}
 		Log.d("upload.destination", destination);
-		tracker = "192.16.127.98:20050";
+		tracker = "127.0.0.1:9999";//"192.16.127.98:20050";
 
 		// Arno: Announce to DHT and post to Twitter done in SeedTask
 		_seedTask = new SeedTask();
