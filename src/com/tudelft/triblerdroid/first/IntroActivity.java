@@ -4,6 +4,7 @@ package com.tudelft.triblerdroid.first;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.DialogFragment;
 import android.content.CursorLoader;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,8 +17,6 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -25,11 +24,21 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Parcelable;
 
 import me.ppsp.test.R;
 import com.tudelft.triblerdroid.swift.NativeLib;
@@ -39,7 +48,7 @@ import com.tudelft.triblerdroid.first.SourceActivity;
 import se.kth.pymdht.Id;
 import se.kth.pymdht.Id.IdError;
 
-public class IntroActivity extends FragmentActivity implements LiveIPDialogFragment.LiveIPDialogListener
+public class IntroActivity extends FragmentActivity implements LiveIPDialogFragment.LiveIPDialogListener 
 {
     private static final int SELECT_VIDEO_FILE_REQUEST_CODE = 200;
 
@@ -56,6 +65,9 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 	// Arno, 2012-11-27: Swift mainloop run here.
 	private SwiftMainThread _swiftMainThread = null;
     private boolean _inmainloop = false;
+    
+    // Arno, 2012-11-28: NFC + Beam
+    protected NfcAdapter _nfcadapter = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +87,44 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 		_swiftMainThread = new SwiftMainThread();
 		_swiftMainThread.start();
 
+
+		// Arno: Only configure when full Beam support. NFC is already in API 9.
+		if (Integer.valueOf(android.os.Build.VERSION.SDK) >= 16)
+		{
+	        // Check for available NFC Adapter
+	        _nfcadapter = NfcAdapter.getDefaultAdapter(this);
+	        if (_nfcadapter == null) 
+	        {
+	        	Log.w("Swift","Error when trying to invoke Beam API: getDefaultAdapter");
+	            return;
+	        }
+	        
+            String text = "PPSPBeam: Sent latest video";
+            NdefMessage msg = new NdefMessage(
+	                    new NdefRecord[] { createMimeRecord(
+	                            "application/com.tudelft.android.beam", text.getBytes())  });
+	        
+	        // Use reflection to detect if API 16 method is avail.
+	        try
+	        {
+	        	Method method = NfcAdapter.class.getMethod("setNdefPushMessage", NdefMessage.class, Activity.class, Activity[].class);
+	        	// http://stackoverflow.com/questions/5454249/java-reflection-getmethodstring-method-object-class-not-working
+	        	method.invoke(_nfcadapter, msg, this, new Activity[]{});
+	        }
+	        catch(Exception e)
+	        {
+	        	Log.w("Swift","Error when trying to invoke Beam API: setNdefPushMessage",e);
+	        }
+	        
+	        Log.w("Swift","Configured app for Beam API");
+		}
+		else
+			Log.w("Swift","Beam API: Android version too old " + android.os.Build.VERSION.SDK );
+		
+
+		
+		
+		
 		
 		hash = getHash();
 		
@@ -151,6 +201,8 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 			startActivityForResult(intent, 0);
 		}
 	}
+	
+	
 	
     /** Open phone's gallery when user clicks the button 'Select a video' */
     public void selectVideo(View view) {
@@ -362,6 +414,30 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 			.show();
 			Log.i("intro", "filename: "+filename);
 
+			
+			// Arno, 2012-11-28: Register video for bump transfer
+			if (Integer.valueOf(android.os.Build.VERSION.SDK) >= 16 && _nfcadapter != null )
+			{
+		        String s = "file://"+filename; // /system/media/video/AndroidInSpace.240p.mp4";
+		        Uri offeruri = Uri.parse(s);
+		        
+		        // Use reflection to detect if API 16 method is avail.
+		        try
+		        {
+		        	Method method = NfcAdapter.class.getMethod("setBeamPushUris", Uri[].class, Activity.class);
+		        	// Offer for transfer when bumping
+		        	method.invoke(_nfcadapter, new Uri[] {offeruri}, this);
+		        }
+		        catch(Exception e)
+		        {
+		        	Log.w("Swift","Error when trying to invoke Beam API: setBeamPushUris",e);
+		        }
+		        
+		        Log.w("Swift","Beam API: registered " + filename );
+			}	
+			else
+				Log.w("Swift","Error registering with Beam API: " + filename + " adapter " + _nfcadapter + "API " + android.os.Build.VERSION.SDK);
+
 			Intent intent = new Intent(getBaseContext(), UploadActivity.class);
 			intent.putExtra("destination", filename);
 			startActivity(intent);
@@ -422,4 +498,50 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 	public void onDialogNegativeClick(DialogFragment dialog) 
 	{
 	}
+	
+
+	
+	/*
+	 * NFC + Beam
+	 */
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Check to see that the Activity started due to an Android Beam
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
+            processIntent(getIntent());
+        }
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        // onResume gets called after this to handle the intent
+        setIntent(intent);
+    }
+
+    /**
+     * Parses the NDEF Message from the intent and prints to the TextView
+     */
+    void processIntent(Intent intent) {
+        //textView = (TextView) findViewById(R.id.text);
+    	
+        Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
+                NfcAdapter.EXTRA_NDEF_MESSAGES);
+        // only one message sent during the beam
+        NdefMessage msg = (NdefMessage) rawMsgs[0];
+        // record 0 contains the MIME type, record 1 is the AAR, if present
+        //textView.setText(new String(msg.getRecords()[0].getPayload()));
+    }
+
+    /**
+     * Creates a custom MIME type encapsulated in an NDEF record
+     */
+    public NdefRecord createMimeRecord(String mimeType, byte[] payload) {
+        byte[] mimeBytes = mimeType.getBytes(Charset.forName("US-ASCII"));
+        NdefRecord mimeRecord = new NdefRecord(
+                NdefRecord.TNF_MIME_MEDIA, mimeBytes, new byte[0], payload);
+        return mimeRecord;
+    }
+
 }

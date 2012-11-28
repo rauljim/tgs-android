@@ -107,7 +107,7 @@ public class UploadActivity extends Activity {
 						resstr = nativelib.asyncGetResult(callid);
 						try
 						{
-							Thread.sleep( 100 );
+							Thread.sleep( 500 );
 						}
 						catch (InterruptedException e)
 						{
