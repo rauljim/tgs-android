@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="42dp"
+        android:layout_marginTop="12dp"
         android:text="This application streams video via P2P. You can find PPSP links on the web and social networks."
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/textView1"
-        android:layout_marginTop="21dp"
+        android:layout_marginTop="12dp"
         android:text="Just click on a ppsp.me/... link and choose the &apos;ppsp_player&apos; app to open it"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -48,19 +48,8 @@
         android:layout_below="@+id/TextView01"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
-        android:text="Choose a video and share it with PPSP.me"
-        android:onClick="selectVideo" />
-    
-
-    <Button
-        android:id="@+id/b_record"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/b_choose"
-        android:layout_below="@+id/b_choose"
-        android:layout_marginTop="20dp"
-        android:text="Record a video and share it with PPSP.me" 
-        android:onClick="startCamera" />
+        android:onClick="selectVideo"
+        android:text="Choose a video and share it with PPSP.me" />
 
     <Button
         android:id="@+id/b_twitter"
@@ -69,17 +58,25 @@
         android:layout_above="@+id/imageView1"
         android:layout_centerHorizontal="true"
         android:text="PPSP links on Twitter (open browser)" />
+
+    <Button
+        android:id="@+id/b_record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/b_choose"
+        android:layout_below="@+id/b_choose"
+        android:onClick="startCamera"
+        android:text="Record a video and share it with PPSP.me" />
 
     <Button
         android:id="@+id/b_bcast_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/b_choose"
+        android:layout_alignLeft="@+id/b_record"
         android:layout_alignRight="@+id/b_record"
         android:layout_below="@+id/b_record"
-        android:layout_marginTop="27dp"
         android:onClick="startLive"
-        android:text="Start Live" />
+        android:text="Start live broadcast" />
 
     <Button
         android:id="@+id/b_bcast_watch"
@@ -88,8 +85,7 @@
         android:layout_alignLeft="@+id/b_bcast_start"
         android:layout_alignRight="@+id/b_bcast_start"
         android:layout_below="@+id/b_bcast_start"
-        android:layout_marginTop="32dp"
         android:onClick="watchLive"
-        android:text="Watch Live" />
+        android:text="Watch live broadcast" />
 
 </RelativeLayout>

@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.CAMERA" /> 
     <uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.NFC" />
     
     <application
         android:icon="@drawable/swift_icon"
@@ -26,7 +27,7 @@
             android:name="com.tudelft.triblerdroid.first.IntroActivity"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
-				<action android:name="android.intent.action.MAIN" />
+		<action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
              <intent-filter>
@@ -48,7 +49,12 @@
 		    <intent-filter >
 				<action android:name="jp.r246.twicca.ACTION_SHOW_TWEET" />
 				<category android:name="android.intent.category.DEFAULT" />
-		    </intent-filter>
+	    </intent-filter>
+    	    <intent-filter>
+                 <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
+                 <category android:name="android.intent.category.DEFAULT"/>
+                 <data android:mimeType="application/com.tudelft.android.beam"/>
+            </intent-filter>	    
         </activity>
         <activity
             android:name="com.tudelft.triblerdroid.first.VideoPlayerActivity"
