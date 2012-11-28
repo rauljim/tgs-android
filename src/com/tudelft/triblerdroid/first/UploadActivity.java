@@ -2,9 +2,12 @@
 package com.tudelft.triblerdroid.first;
 
 
+import com.tudelft.triblerdroid.swift.NativeLib;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -27,14 +30,10 @@ public class UploadActivity extends Activity {
     public int SET_DEFAULT_DIALOG = 1;
     public int MOBILE_WARNING_DIALOG = 2;
 
-	String zeroHash = "0000000000000000000000000000000000000000";
-    String hash = null;
     String destination;
 	String tracker;
-	boolean inmainloop = false;
-	NativeLib nativelib;
 
-	private SwiftMainThread _swiftMainThread;
+	private SeedTask _seedTask = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,40 +50,11 @@ public class UploadActivity extends Activity {
 		Log.d("upload.destination", destination);
 		tracker = "192.16.127.98:20050";
 
-		nativelib =  new NativeLib();		
-		nativelib.start(zeroHash, tracker, destination);
-		hash = nativelib.roothash(destination);
-		startDHT(hash); //make sure this is called after roothash()
-		_swiftMainThread = new SwiftMainThread();
-		_swiftMainThread.start();
-
-		Intent i = new Intent(Intent.ACTION_VIEW);
-		i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=I+just+uploaded+a+video.+Check+it+out!+&url=http://ppsp.me/"+hash));
-		startActivity(i);
-		//TODO: seed on background until one full copy is out
-//        finish();
+		// Arno: Announce to DHT and post to Twitter done in SeedTask
+		_seedTask = new SeedTask();
+		_seedTask.execute( tracker, destination );
 	}
-	
 
-	private class SwiftMainThread extends Thread{
-
-		public void run(){
-			try{
-				//Raul: moved up. We need the roothash (to post on Twitter) before entering this thread
-				NativeLib nativelib =  new NativeLib();
-				String ret = nativelib.start(zeroHash, tracker, destination);
-				if (!inmainloop){
-					inmainloop = true;
-					Log.w("upload-Swift","Entering libevent2 mainloop");
-					int progr = nativelib.mainloop();
-					Log.w("upload-Swift","LEFT MAINLOOP!");
-				}
-			}
-			catch (Exception e ){
-				e.printStackTrace();
-			}
-		}
-	}
 	protected void startDHT(String hash){
 		BufferedReader unstable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(R.raw.bootstrap_unstable)));
 		BufferedReader stable = new BufferedReader(new InputStreamReader(this.getResources().openRawResource(R.raw.bootstrap_stable)));
@@ -97,5 +67,75 @@ public class UploadActivity extends Activity {
 		};
 		Thread dht_thread = new Thread(runnable_dht);
 		dht_thread.start();
+	}
+
+
+	/**
+	 * sub-class of AsyncTask. Starts seed of file, exits when hash checked.
+	 */
+	private class SeedTask extends AsyncTask<String, Integer, String> {
+	
+		protected String doInBackground(String... args) {
+	
+			String ret = "hello";
+			if (args.length != 2) {
+				ret = "Received wrong number of parameters during initialization!";
+			}
+			else {
+				String t = args[0];
+				String f = args[1];
+				Log.w("SwiftSeed", "Args " + " " + t + " " + f );
+				try {//TODO: catch InterruptedException (onDestroy)
+	
+					NativeLib nativelib = new NativeLib();
+					
+					// Create checkpoint without using Mainloop thread, will
+					// speed up asyncOpen.
+					String newhash = nativelib.hashCheckOffline(f);
+					if (newhash.length() != 40)
+					{
+						Log.e("SwiftSeed", newhash );
+						return newhash;
+					}
+					
+					// Actually open and seed file
+					int callid = nativelib.asyncOpen(newhash,t,f);
+					String resstr = "n/a";
+					while (resstr.equals("n/a"))
+					{
+						Log.w("SwiftSeed", "Poll " + callid );
+						resstr = nativelib.asyncGetResult(callid);
+						try
+						{
+							Thread.sleep( 100 );
+						}
+						catch (InterruptedException e)
+						{
+							System.out.println("ppsp VideoPlayerActivity: SeedTask: async sleep interrupted");
+						}
+					}
+					Log.w("SwiftSeed", "Result   " + resstr );
+					
+					// Announce to DHT
+					startDHT(newhash); //make sure this is called after hashCheckOffline()
+
+					// Announce to Twitter
+					Intent i = new Intent(Intent.ACTION_VIEW);
+					i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=I+just+uploaded+a+video.+Check+it+out!+&url=http://ppsp.me/"+newhash));
+					startActivity(i);
+					//TODO: seed on background until one full copy is out
+//			        finish();
+
+					
+				}
+				catch (Exception e ) {
+					//System.out.println("Stacktrace "+e.toString());
+					e.printStackTrace();
+					ret = "error occurred during initialization!";
+				}
+			}
+			return ret;
+		}
+		
 	}
 }

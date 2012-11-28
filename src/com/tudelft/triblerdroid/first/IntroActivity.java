@@ -1,10 +1,11 @@
 //Skeleton example from Alexey Reznichenko
 package com.tudelft.triblerdroid.first;
 
-import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.DialogFragment;
 import android.content.CursorLoader;
-import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -30,11 +32,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import me.ppsp.test.R;
+import com.tudelft.triblerdroid.swift.NativeLib;
+import com.tudelft.triblerdroid.first.SourceActivity;
+
 
 import se.kth.pymdht.Id;
 import se.kth.pymdht.Id.IdError;
 
-public class IntroActivity extends Activity {
+public class IntroActivity extends FragmentActivity implements LiveIPDialogFragment.LiveIPDialogListener
+{
     private static final int SELECT_VIDEO_FILE_REQUEST_CODE = 200;
 
     public static final String PREFS_NAME = "settings.dat";
@@ -47,20 +53,31 @@ public class IntroActivity extends Activity {
     public int SET_DEFAULT_DIALOG = 1;
     public int MOBILE_WARNING_DIALOG = 2;
 
-	private String tracker;
-
-	private String destination;
-
-//	private NativeLib nativelib;
-
+	// Arno, 2012-11-27: Swift mainloop run here.
+	private SwiftMainThread _swiftMainThread = null;
+    private boolean _inmainloop = false;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);	  
 		final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		boolean showIntro = settings.getBoolean("showIntro", true);
+
+		// Arno, 2012-11-26: Init single swift thread 
+		
+        // create dir for swift
+        String swiftFolder = "/swift";
+        String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
+        File mySwiftFolder = new File(extStorageDirectory + swiftFolder);
+        mySwiftFolder.mkdir();
+
+		// Start the swift engine
+		_swiftMainThread = new SwiftMainThread();
+		_swiftMainThread.start();
+
 		
 		hash = getHash();
-
+		
 		// Check whether this app is the default for http://ppsp.me links
 		//Raul, 120920: Disable this for now (it's a bit annoying)
 //		Intent ppspme_intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://ppsp.me"));
@@ -121,7 +138,7 @@ public class IntroActivity extends Activity {
 //							editor.commit(); //Raul: don't forget to commit edits!!
 //							Log.w("intro", "Don't show Intro next time");
 //						}
-//						Intent intent = getPlayerIntent(hash);
+//						Intent intent = getPlayerIntent(hash,"",false);
 //						startActivityForResult(intent, 0);
 //
 //					}  	
@@ -130,7 +147,7 @@ public class IntroActivity extends Activity {
 		}
 		if (!showWarning){
 			Log.w("intro", "don't show warning: go to P2P directly");
-			Intent intent = getPlayerIntent(hash);
+			Intent intent = getPlayerIntent(hash,"",false);
 			startActivityForResult(intent, 0);
 		}
 	}
@@ -150,6 +167,20 @@ public class IntroActivity extends Activity {
 //        setTextFields();
     }
 
+    
+	
+    /** Arno: Start live broadcast when user clicks 'Start Live' */
+    public void startLive(View view) {
+		Intent intent = new Intent(this, SourceActivity.class);
+		startActivity(intent);
+	}
+
+    /** Arno: Watch live broadcast when user clicks 'Watch Live' */
+    public void watchLive(View view) 
+    {
+		DialogFragment dialog = new LiveIPDialogFragment();
+		dialog.show(getSupportFragmentManager(), "LiveIPDialogFragment");
+	}
 	
 	protected Dialog onCreateDialog(int id) {
 		if (id == INVALID_ID_DIALOG){
@@ -193,7 +224,7 @@ public class IntroActivity extends Activity {
 			.setCancelable(false)
 			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
-					Intent intent = getPlayerIntent(hash);
+					Intent intent = getPlayerIntent(hash,"",false);
 					startActivityForResult(intent, 0);
 					IntroActivity.this.finish();
 				}
@@ -208,18 +239,21 @@ public class IntroActivity extends Activity {
 		return null;
 	}
 	
-	private Intent getPlayerIntent(String hash){
+	private Intent getPlayerIntent(String hash, String tracker, boolean live){
 		Intent intent = null;
 		//found hash: play video
 		intent = new Intent(getBaseContext(), VideoPlayerActivity.class);
 		intent.putExtra("hash", hash);
+		if (tracker == "")
+			tracker = "192.16.127.98:20050"; //TODO
+		intent.putExtra("tracker", tracker);
+		intent.putExtra("live", live);
 		return intent;
 	}
 	
 	private String getHash(){
 		Log.d("hhhh","getHash");
 		String hash = null;
-		String tracker = "192.16.127.98:20050"; //TODO
 		Uri data = getIntent().getData(); 
 		Uri datas = getIntent().getData(); 
 		if (datas != null) { 
@@ -255,7 +289,6 @@ public class IntroActivity extends Activity {
 					hash = null;
 					Log.w("video twicca", "no ppsp link found");
 				}
-				tracker = "192.16.127.98:20050"; //TODO
 				return hash;
 			}
 			hash = extras.getString("hash");
@@ -347,4 +380,46 @@ public class IntroActivity extends Activity {
 		return cursor.getString(column_index);
 	}
 
+	
+
+	/*
+	 * Arno: Thread to execute swift Mainloop
+	 */
+	private class SwiftMainThread extends Thread{
+		public void run(){
+			try{
+				NativeLib nativelib =  new NativeLib();
+				String ret = nativelib.Init( "0.0.0.0:6778", "127.0.0.1:8082" );
+				Log.w("Swift", "Startup returned " + ret + "END");
+				// Arno: Never returns, calls libevent2 mainloop
+				if (!_inmainloop){
+					_inmainloop = true;
+					Log.w("Swift","Entering libevent2 mainloop");
+					nativelib.Mainloop();
+					Log.w("Swift","LEFT MAINLOOP!");
+				}
+			}
+			catch (Exception e ){
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/** User clicks OK in LiveIP dialog */
+	@Override
+	public void onDialogPositiveClick(DialogFragment dialog) 
+	{
+		hash = "e5a12c7ad2d8fab33c699d1e198d66f79fa610c3";
+		LiveIPDialogFragment d = (LiveIPDialogFragment)dialog;
+		String tracker = d.getTracker();
+		
+		Intent intent = getPlayerIntent(hash, tracker, true);
+		startActivity(intent);
+	}
+
+	/** User clicks Cancel in LiveIP dialog */
+	@Override
+	public void onDialogNegativeClick(DialogFragment dialog) 
+	{
+	}
 }

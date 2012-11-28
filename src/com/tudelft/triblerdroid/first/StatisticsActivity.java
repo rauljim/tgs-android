@@ -13,6 +13,8 @@ import android.widget.Toast;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
+import com.tudelft.triblerdroid.swift.NativeLib;
 import me.ppsp.test.R;
 
 public class StatisticsActivity extends Activity{
@@ -36,9 +38,9 @@ public class StatisticsActivity extends Activity{
 		setContentView(R.layout.stats);
 		_updateTask = new UpdateTask();
 		Bundle extras = getIntent().getExtras();
-		hash = extras.getString("com.tudelft.triblerdroid.first.VideoPlayerActivity.hash");
-		tracker = extras.getString("com.tudelft.triblerdroid.first.VideoPlayerActivity.tracker");
-		destination = extras.getString("com.tudelft.triblerdroid.first.VideoPlayerActivity.destination");
+		hash = extras.getString("hash");
+		tracker = extras.getString("tracker");
+		destination = extras.getString("destination");
 		txtDownSpeed = (TextView) findViewById(R.id.down_speed);
 		txtUpSpeed = (TextView) findViewById(R.id.up_speed);
 		txtLeechers = (TextView) findViewById(R.id.nbr_leech);
@@ -70,13 +72,13 @@ public class StatisticsActivity extends Activity{
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		switch (item.getItemId())
+		if (item.getItemId() == R.id.menu_hide_stats)
 		{
-		case R.id.menu_hide_stats:
 			finish();
-		default:
-			return super.onOptionsItemSelected(item);
+			return true;
 		}
+		else
+			return super.onOptionsItemSelected(item);
 	}    
 
 	
@@ -88,19 +90,44 @@ public class StatisticsActivity extends Activity{
 			try {
 
 				NativeLib nativelib = new NativeLib();
-
 				while (running) {
-					progstr = nativelib.httpprogress(hash);
+					int callid = nativelib.asyncGetHTTPProgress(hash);
+					String progstr = "n/a";
+					while (progstr.equals("n/a"))
+					{
+						progstr = nativelib.asyncGetResult(callid);
+						try
+						{
+							Thread.sleep( 100 );
+						}
+						catch (InterruptedException e)
+						{
+							System.out.println("ppsp StatisticsActivity: UpdateTask: async sleep interrupted");
+						}
+					}
 					String[] elems = progstr.split("/");
 					seqcomp = Long.parseLong(elems[0]);
 
 					_seqCompInt = new Integer((int) (seqcomp / 1024));
 
 					txtDownSpeed = (TextView) findViewById(R.id.down_speed);
-					progstr = "";
-					progstr = nativelib.stats();
+
+					callid = nativelib.asyncGetStats(hash);
+					progstr = "n/a";
+					while (progstr.equals("n/a"))
+					{
+						progstr = nativelib.asyncGetResult(callid);
+						try
+						{
+							Thread.sleep( 100 );
+						}
+						catch (InterruptedException e)
+						{
+							System.out.println("ppsp StatisticsActivity: UpdateTask: async sleep interrupted");
+						}
+					}
 					String[] items = progstr.split("/");
-					Log.i("stats", progstr);
+					Log.i("SwiftStats", progstr);
 					dspeed = Integer.parseInt(items[0]);
 					uspeed = Integer.parseInt(items[1]);
 					nleech = Integer.parseInt(items[2]);

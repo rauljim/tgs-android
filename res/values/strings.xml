@@ -11,6 +11,9 @@
     <string name="seed_str">Seeders:</string>
     
     <string name="pref_stats">Show P2P info</string>
+    <!-- For Arno'sSourceActivity -->
+    <string name="streaming">Streaming !</string>
+    <string name="warning">Wifi should be enabled !</string>
     
   <!--   <style name="ButtonText">
         <item name="android:layout_width">100dp</item>
@@ -31,4 +34,7 @@
         <item name="android:shadowRadius">2</item>
     </style>
  -->
+    <string name="enterip">192.168.0.102</string>
+    <string name="enteripprompt">Enter IP address of source</string>
+    
 </resources>
