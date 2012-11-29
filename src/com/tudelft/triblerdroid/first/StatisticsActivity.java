@@ -35,6 +35,11 @@ public class StatisticsActivity extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// Enable beaming of last recorded video via Android Beam, if avail
+		// Must be called for each Activity in the app.
+		IntroActivity.ConfigureNFCBeam(this);
+		
 		setContentView(R.layout.stats);
 		_updateTask = new UpdateTask();
 		Bundle extras = getIntent().getExtras();

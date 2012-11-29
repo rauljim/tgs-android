@@ -1,4 +1,3 @@
-//Skeleton example from Alexey Reznichenko
 package com.tudelft.triblerdroid.first;
 
 import android.support.v4.app.FragmentActivity;
@@ -28,6 +27,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
@@ -36,6 +39,7 @@ import java.util.regex.Pattern;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -64,11 +68,11 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
     public int MOBILE_WARNING_DIALOG = 2;
 
 	// Arno, 2012-11-27: Swift mainloop run here.
-	private SwiftMainThread _swiftMainThread = null;
-    private boolean _inmainloop = false;
+	protected SwiftMainThread _swiftMainThread = null;
+    protected boolean _inmainloop = false;
     
     // Arno, 2012-11-28: NFC + Beam
-    protected NfcAdapter _nfcadapter = null;
+    protected static final String     _beamdefaultfilename = "/sdcard/swift/capture.mp4";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -88,44 +92,13 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 		_swiftMainThread = new SwiftMainThread();
 		_swiftMainThread.start();
 
+		// Enable beaming of last recorded video via Android Beam, if avail
+		// Must be called for each Activity in the app.
+		IntroActivity.ConfigureNFCBeam(this);
 
-		// Arno: Only configure when full Beam support. NFC is already in API 9.
-		if (Integer.valueOf(android.os.Build.VERSION.SDK) >= 16)
-		{
-	        // Check for available NFC Adapter
-	        _nfcadapter = NfcAdapter.getDefaultAdapter(this);
-	        if (_nfcadapter == null) 
-	        {
-	        	Log.w("Swift","Error when trying to invoke Beam API: getDefaultAdapter");
-	            return;
-	        }
-	        
-            String text = "PPSPBeam: Sent latest video";
-            NdefMessage msg = new NdefMessage(
-	                    new NdefRecord[] { createMimeRecord(
-	                            "application/com.tudelft.android.beam", text.getBytes())  });
-	        
-	        // Use reflection to detect if API 16 method is avail.
-	        try
-	        {
-	        	Method method = NfcAdapter.class.getMethod("setNdefPushMessage", NdefMessage.class, Activity.class, Activity[].class);
-	        	// http://stackoverflow.com/questions/5454249/java-reflection-getmethodstring-method-object-class-not-working
-	        	method.invoke(_nfcadapter, msg, this, new Activity[]{});
-	        }
-	        catch(Exception e)
-	        {
-	        	Log.w("Swift","Error when trying to invoke Beam API: setNdefPushMessage",e);
-	        }
-	        
-	        Log.w("Swift","Configured app for Beam API");
-		}
-		else
-			Log.w("Swift","Beam API: Android version too old " + android.os.Build.VERSION.SDK );
-		
-
-		
-		
-		
+		/*
+		 * Handle Intent 
+		 */
 		
 		hash = getHash();
 		
@@ -220,7 +193,7 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 //        setTextFields();
     }
 
-    
+
 	
     /** Arno: Start live broadcast when user clicks 'Start Live' */
     public void startLive(View view) {
@@ -419,29 +392,9 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 			.show();
 			Log.i("intro", "filename: "+filename);
 
-			
-			// Arno, 2012-11-28: Register video for bump transfer
-			if (Integer.valueOf(android.os.Build.VERSION.SDK) >= 16 && _nfcadapter != null )
-			{
-		        String s = "file://"+filename; // /system/media/video/AndroidInSpace.240p.mp4";
-		        Uri offeruri = Uri.parse(s);
-		        
-		        // Use reflection to detect if API 16 method is avail.
-		        try
-		        {
-		        	Method method = NfcAdapter.class.getMethod("setBeamPushUris", Uri[].class, Activity.class);
-		        	// Offer for transfer when bumping
-		        	method.invoke(_nfcadapter, new Uri[] {offeruri}, this);
-		        }
-		        catch(Exception e)
-		        {
-		        	Log.w("Swift","Error when trying to invoke Beam API: setBeamPushUris",e);
-		        }
-		        
-		        Log.w("Swift","Beam API: registered " + filename );
-			}	
-			else
-				Log.w("Swift","Error registering with Beam API: " + filename + " adapter " + _nfcadapter + "API " + android.os.Build.VERSION.SDK);
+			// Arno, 2012-11-28: Copy video to default beam location
+			Copy4BeamTask beamtask = new Copy4BeamTask();
+			beamtask.execute( filename );
 
 			Intent intent = new Intent(getBaseContext(), UploadActivity.class);
 			intent.putExtra("destination", filename);
@@ -505,48 +458,132 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 	}
 	
 
-	
 	/*
 	 * NFC + Beam
 	 */
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Check to see that the Activity started due to an Android Beam
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
-            processIntent(getIntent());
-        }
-    }
-
-    @Override
-    public void onNewIntent(Intent intent) {
-        // onResume gets called after this to handle the intent
-        setIntent(intent);
-    }
-
-    /**
-     * Parses the NDEF Message from the intent and prints to the TextView
+    /*
+     * Should be called by all activities of this app.
      */
-    void processIntent(Intent intent) {
-        //textView = (TextView) findViewById(R.id.text);
-    	
-        Parcelable[] rawMsgs = intent.getParcelableArrayExtra(
-                NfcAdapter.EXTRA_NDEF_MESSAGES);
-        // only one message sent during the beam
-        NdefMessage msg = (NdefMessage) rawMsgs[0];
-        // record 0 contains the MIME type, record 1 is the AAR, if present
-        //textView.setText(new String(msg.getRecords()[0].getPayload()));
-    }
+    
+    public static void ConfigureNFCBeam(Activity act)
+    {
+		// Arno: Only configure when full Beam support. NFC is already in API 9.
+		if (Integer.valueOf(android.os.Build.VERSION.SDK) >= 16)
+		{
+	        // Check for available NFC Adapter
+			NfcAdapter nfcadapter = NfcAdapter.getDefaultAdapter(act);
+	        if (nfcadapter == null) 
+	        {
+	        	Log.w("Swift","Error when trying to invoke Beam API: getDefaultAdapter");
+	            return;
+	        }
+	        
+            String text = ("Beam me up, Android!\n\n" +
+                    "Beam Time: " + System.currentTimeMillis());
+            NdefMessage msg = new NdefMessage(
+                    new NdefRecord[] { createMimeRecord(
+                            "application/com.example.android.beam", text.getBytes())
+              //,NdefRecord.createApplicationRecord("com.example.android.beam")
+            });
+	        
+	        // Use reflection to detect if API 16 method is avail.
+	        try
+	        {
+	        	Method method = NfcAdapter.class.getMethod("setNdefPushMessage", NdefMessage.class, Activity.class, Activity[].class);
+	        	// http://stackoverflow.com/questions/5454249/java-reflection-getmethodstring-method-object-class-not-working
+	        	method.invoke(nfcadapter, msg, act, new Activity[]{});
+	        }
+	        catch(Exception e)
+	        {
+	        	Log.w("Swift","Error when trying to invoke Beam API: setNdefPushMessage",e);
+	        }
 
+	        // Ideally this should be done dynamically when the Record video
+	        // feature is used. However, then we have to call setBeamPushUris
+	        // for all Activities that make up the application. Hence, we
+	        // make this class the base class for all our activities and 
+	        // announce a static file: URL to which the latest video is copied
+	        // after Record is done.
+	        
+	        String urlstr = "file://"+IntroActivity.getDefaultBeamFilename();
+	        Uri offeruri = Uri.parse(urlstr);
+	        
+	        // Use reflection to detect if API 16 method is avail.
+	        try
+	        {
+	        	Method method = NfcAdapter.class.getMethod("setBeamPushUris", Uri[].class, Activity.class);
+	        	// Offer for transfer when bumping
+	        	method.invoke(nfcadapter, new Uri[] {offeruri}, act);
+	        }
+	        catch(Exception e)
+	        {
+	        	Log.w("Swift","Error when trying to invoke Beam API: setBeamPushUris",e);
+	        }
+	        
+	        Log.w("Swift","Beam API: registered " + urlstr );
+		}
+		else
+			Log.w("Swift","Beam API: Android version too old " + android.os.Build.VERSION.SDK );
+
+	}
+    
+    
     /**
      * Creates a custom MIME type encapsulated in an NDEF record
      */
-    public NdefRecord createMimeRecord(String mimeType, byte[] payload) {
+    public static NdefRecord createMimeRecord(String mimeType, byte[] payload) {
         byte[] mimeBytes = mimeType.getBytes(Charset.forName("US-ASCII"));
         NdefRecord mimeRecord = new NdefRecord(
                 NdefRecord.TNF_MIME_MEDIA, mimeBytes, new byte[0], payload);
         return mimeRecord;
     }
 
+    
+    public static String getDefaultBeamFilename()
+    {
+    	return IntroActivity._beamdefaultfilename;
+    }
+    
+    
+	/**
+	 * sub-class of AsyncTask. Copies file to default beam location.
+	 */
+	private class Copy4BeamTask extends AsyncTask<String, Integer, String> {
+	
+		protected String doInBackground(String... args) {
+	
+			String ret = "hello";
+			if (args.length != 1) {
+				ret = "Received wrong number of parameters during initialization!";
+			}
+			else 
+			{
+				String sourcefilename = args[0];
+				String destfilename = IntroActivity.getDefaultBeamFilename();
+				
+				Log.w("SwiftBeam", "Copy "+sourcefilename+" to "+destfilename );
+				try 
+				{
+					InputStream in = new FileInputStream(sourcefilename);
+				    OutputStream out = new FileOutputStream(destfilename);
+				    byte[] buf = new byte[1024];
+				    int len;
+				    while ((len = in.read(buf)) > 0) {
+				        out.write(buf, 0, len);
+				    }
+				    in.close();
+				    out.close();
+				    
+				    Log.w("SwiftBeam", "Copy succesful" );
+				}
+				catch (Exception e ) 
+				{
+					e.printStackTrace();
+					ret = e.toString();
+				}
+			}
+			return ret;
+		}
+	}
 }
