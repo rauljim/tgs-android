@@ -271,7 +271,7 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 		intent = new Intent(getBaseContext(), VideoPlayerActivity.class);
 		intent.putExtra("hash", hash);
 		if (tracker == "")
-			tracker = "192.16.127.98:20050"; //TODO
+			tracker = "127.0.0.1:9999";//"192.16.127.98:20050"; //TODO
 		intent.putExtra("tracker", tracker);
 		intent.putExtra("live", live);
 		return intent;
@@ -424,13 +424,13 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 			try{
 				NativeLib nativelib =  new NativeLib();
 				String ret = nativelib.Init( "0.0.0.0:6778", "127.0.0.1:8082" );
-				Log.w("Swift", "Startup returned " + ret + "END");
+				Log.w("introSwift", "Startup returned " + ret + "END");
 				// Arno: Never returns, calls libevent2 mainloop
 				if (!_inmainloop){
 					_inmainloop = true;
-					Log.w("Swift","Entering libevent2 mainloop");
+					Log.w("introSwift","Entering libevent2 mainloop");
 					nativelib.Mainloop();
-					Log.w("Swift","LEFT MAINLOOP!");
+					Log.w("introSwift","LEFT MAINLOOP!");
 				}
 			}
 			catch (Exception e ){
