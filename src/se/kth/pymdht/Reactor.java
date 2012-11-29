@@ -1,5 +1,7 @@
 package se.kth.pymdht;
 
+import android.util.Log;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
@@ -25,6 +27,7 @@ public class Reactor {
 		this._s.setSoTimeout(timeout_delay);
 	}
 	public void start(){
+		Log.d("reactor", "start");
 		assert !this._running;
 		this._running = true;
 		try{

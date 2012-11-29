@@ -1,5 +1,7 @@
 package se.kth.pymdht;
 
+import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -113,6 +115,7 @@ public class SwiftTracker{
 				e.printStackTrace();
 				return null;
 			}
+			Log.d("dhttracker", "Got peer: ");
 		}
 		DatagramPacket datagram;
 		try {

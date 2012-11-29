@@ -38,6 +38,7 @@ public class Controller {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Log.d("controller", "init hash "+hash);
 		this.lookup = null;
 		empty_heartbeats_in_a_row = 0;
 	}
@@ -109,6 +110,7 @@ public class Controller {
 			datagrams_to_send = lookup.get_datagrams();
 			//peers
 			List<ByteBuffer> cpeers = lookup.get_cpeers();
+			Log.d("controller", "cpeers.size: "+cpeers.size());
 			if (cpeers.size() > 0){
 				Log.w("pymdht.controller", System.currentTimeMillis() + " peers " + cpeers.size());
 				DatagramPacket pex_datagram = swift_tracker.get_swift_pex_datagram(cpeers);
