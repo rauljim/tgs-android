@@ -50,11 +50,6 @@
 				<action android:name="jp.r246.twicca.ACTION_SHOW_TWEET" />
 				<category android:name="android.intent.category.DEFAULT" />
 	    </intent-filter>
-    	    <intent-filter>
-                 <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
-                 <category android:name="android.intent.category.DEFAULT"/>
-                 <data android:mimeType="application/com.tudelft.android.beam"/>
-            </intent-filter>	    
         </activity>
         <activity
             android:name="com.tudelft.triblerdroid.first.VideoPlayerActivity"
