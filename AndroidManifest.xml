@@ -83,6 +83,9 @@
         <activity android:name="com.tudelft.majorkernelpanic.spydroid.OptionsActivity"
                   android:label="@string/app_name">
         </activity>
+    
+        <!--  Arno: don't deliver NFC events to this app, we only send them -->
+        <meta-data android:name="android.nfc.disable_beam_default" android:value="true" />
         
     </application>
 
