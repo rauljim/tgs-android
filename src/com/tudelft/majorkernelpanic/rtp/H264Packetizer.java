@@ -118,7 +118,7 @@ public class H264Packetizer extends AbstractPacketizer {
 		}
 		
 		public void run() {
-			int length = 0, sum;
+			int sum,nwrite;
 			long oldtime, duration;
 			try {
 				while (running) {
@@ -128,17 +128,25 @@ public class H264Packetizer extends AbstractPacketizer {
 					// But some cameras have this annoying habit of delivering more than one NAL unit at once: 
 					// for example if 10 NAL units are delivered every 10 sec we have to guess the duration of each nal unit
 					// And BECAUSE InputStream.read blocks, another thread is necessary to send the stuff :/
-					oldtime = SystemClock.elapsedRealtime(); sum = 0;
+					oldtime = SystemClock.elapsedRealtime(); 
+					sum = 0;
 					try {
 						Thread.sleep(2*sleep[0]/3);
 					} catch (InterruptedException e) {
 						break;
 					} 
 					
-					sum = fifo.write(is,100000);
+					// Arno: Consumer bit broken, ensure we have enough bytes 
+					// for NAL unit length (4 bytes) and NAL unit header (1 byte)
 					duration = SystemClock.elapsedRealtime() - oldtime;
-					
-					//Log.d(TAG,"New chunk -> sleep: "+sleep[0]+" duration: "+duration+" sum: "+sum+" length: "+length+" chunks: "+chunks.size());
+					while (sum < 5)  
+					{
+						nwrite = fifo.write(is,100000);
+						sum += nwrite;
+						//if (sum < 5)
+						//	Log.d(TAG,"New chunk -> TOO SMALL!");
+					}
+					//Log.d(TAG,"New chunk -> sleep: "+sleep[0]+" duration: "+duration+" sum: "+sum+" chunks: "+chunks.size());
 					chunks.add(new Chunk(sum,duration));
 					sync.release();
 				}
