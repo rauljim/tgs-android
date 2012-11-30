@@ -53,6 +53,7 @@ public class UploadActivity extends Activity {
 
 		}
 		Log.d("upload.destination", destination);
+		// Point to swift<->DHT interface
 		tracker = "127.0.0.1:9999";//"192.16.127.98:20050";
 
 		// Arno: Announce to DHT and post to Twitter done in SeedTask

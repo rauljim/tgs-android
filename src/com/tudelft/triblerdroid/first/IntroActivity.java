@@ -270,6 +270,7 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 		//found hash: play video
 		intent = new Intent(getBaseContext(), VideoPlayerActivity.class);
 		intent.putExtra("hash", hash);
+		// Point to swift<->DHT interface
 		if (tracker == "")
 			tracker = "127.0.0.1:9999";//"192.16.127.98:20050"; //TODO
 		intent.putExtra("tracker", tracker);
