@@ -4,9 +4,13 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 
 class Util{
@@ -70,5 +74,22 @@ class Util{
 		catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	static public void sendKillToDHT(){
+		//Do not call from main thread. Call from Swift thread.
+		Log.d("intro", "Send KILL message to DHT thread");
+		byte[] killMsg = "KILL".getBytes();
+		try {
+			DatagramSocket dhtSocket;
+			dhtSocket = new DatagramSocket();
+			InetAddress localIP = InetAddress.getByName("127.0.0.1");
+			DatagramPacket sendPacket = new DatagramPacket(killMsg, killMsg.length, localIP, 9999);
+			dhtSocket.send(sendPacket);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }

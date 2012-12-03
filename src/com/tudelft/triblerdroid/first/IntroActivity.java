@@ -1,54 +1,43 @@
 package com.tudelft.triblerdroid.first;
 
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.DialogFragment;
-import android.content.CursorLoader;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.AlertDialog;
-import android.content.Context;
+import android.app.Dialog;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.preference.PreferenceManager;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.lang.reflect.Method;
-import java.nio.charset.Charset;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcelable;
+import android.preference.PreferenceManager;
+import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.Toast;
+
+import com.tudelft.triblerdroid.swift.NativeLib;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import me.ppsp.test.R;
-import com.tudelft.triblerdroid.swift.NativeLib;
-import com.tudelft.triblerdroid.first.SourceActivity;
-
-
 import se.kth.pymdht.Id;
 import se.kth.pymdht.Id.IdError;
 
