@@ -35,7 +35,8 @@ public class UploadActivity extends Activity {
 	String tracker;
 
 	private SeedTask _seedTask = null;
-
+	protected String statstr;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);	
@@ -116,16 +117,16 @@ public class UploadActivity extends Activity {
 					
 					
 					// Actually open and seed file
-					int callid = nativelib.asyncOpen(newhash,t,f);
+					int openCallid = nativelib.asyncOpen(newhash,t,f);
+					int statsCallid = nativelib.asyncGetStats(newhash);
 					String resstr = "n/a";
-					String statstr;
+//					String statstr;
 					while (1==1)//resstr.equals("n/a"))
 					{
-						Log.w("SwiftSeed", "Poll " + callid );
-						resstr = nativelib.asyncGetResult(callid);
+						Log.w("SwiftSeed", "Poll " + openCallid );
+						resstr = nativelib.asyncGetResult(openCallid);
 						Log.w("SwiftSeed", "Progress   " + resstr );
-						callid = nativelib.asyncGetStats(newhash);
-						statstr = nativelib.asyncGetResult(callid);
+						statstr = nativelib.asyncGetResult(statsCallid);
 						Log.w("SwiftSeed", "Stats   " + statstr);
 						try
 						{
@@ -135,8 +136,12 @@ public class UploadActivity extends Activity {
 						{
 							System.out.println("ppsp VideoPlayerActivity: SeedTask: async sleep interrupted");
 						}
-//						TextView progressTV = (TextView) findViewById(R.id.upload_progress);
-//						progressTV.setText("Data uploaded so far (KBs): " + 0);
+						runOnUiThread(new Runnable(){
+							public void run() {
+								TextView progressTV = (TextView) findViewById(R.id.upload_progress);
+								progressTV.setText("Data uploaded so far (KBs): " + statstr);	
+							}
+						});
 
 					}
 //					Log.w("SwiftSeed", "Result   " + resstr );
