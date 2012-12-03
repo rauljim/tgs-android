@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -104,13 +105,28 @@ public class UploadActivity extends Activity {
 						return newhash;
 					}
 					
+					// Announce to DHT
+					startDHT(newhash); //make sure this is called after hashCheckOffline()
+
+					// Announce to Twitter
+					Intent i = new Intent(Intent.ACTION_VIEW);
+					i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=I+just+uploaded+a+video.+Check+it+out!+&url=http://ppsp.me/"+newhash));
+					startActivity(i);
+					
+					
+					
 					// Actually open and seed file
 					int callid = nativelib.asyncOpen(newhash,t,f);
 					String resstr = "n/a";
-					while (resstr.equals("n/a"))
+					String statstr;
+					while (1==1)//resstr.equals("n/a"))
 					{
 						Log.w("SwiftSeed", "Poll " + callid );
 						resstr = nativelib.asyncGetResult(callid);
+						Log.w("SwiftSeed", "Progress   " + resstr );
+						callid = nativelib.asyncGetStats(newhash);
+						statstr = nativelib.asyncGetResult(callid);
+						Log.w("SwiftSeed", "Stats   " + statstr);
 						try
 						{
 							Thread.sleep( 500 );
@@ -119,18 +135,13 @@ public class UploadActivity extends Activity {
 						{
 							System.out.println("ppsp VideoPlayerActivity: SeedTask: async sleep interrupted");
 						}
-					}
-					Log.w("SwiftSeed", "Result   " + resstr );
-					
-					// Announce to DHT
-					startDHT(newhash); //make sure this is called after hashCheckOffline()
+//						TextView progressTV = (TextView) findViewById(R.id.upload_progress);
+//						progressTV.setText("Data uploaded so far (KBs): " + 0);
 
-					// Announce to Twitter
-					Intent i = new Intent(Intent.ACTION_VIEW);
-					i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=I+just+uploaded+a+video.+Check+it+out!+&url=http://ppsp.me/"+newhash));
-					startActivity(i);
+					}
+//					Log.w("SwiftSeed", "Result   " + resstr );
+					
 					//TODO: seed on background until one full copy is out
-					//TODO: sendKillToDHT when we're done.
 //			        finish();
 
 					
