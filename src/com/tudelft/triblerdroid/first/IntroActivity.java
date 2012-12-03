@@ -46,6 +46,7 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
     private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 100;
     private static final int SELECT_VIDEO_FILE_REQUEST_CODE = 200;
     private static final int BACK_FROM_PLAYER_CODE = 300;
+    private static final int BACK_FROM_UPLOAD_CODE = 400;
 
     public static final String PREFS_NAME = "settings.dat";
 
@@ -65,7 +66,8 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);	  
+		super.onCreate(savedInstanceState);
+		Util.sendKillToDHT(); //just in case
 		final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		boolean showIntro = settings.getBoolean("showIntro", true);
 
@@ -169,6 +171,7 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 	
     /** Open phone's gallery when user clicks the button 'Select a video' */
     public void selectVideo(View view) {
+    	Util.sendKillToDHT(); //just in case
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("video/*"); // Only show videos
         startActivityForResult(intent, SELECT_VIDEO_FILE_REQUEST_CODE);
@@ -177,6 +180,7 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
     
     /** Start phone's camera when user clicks the button 'Record a video' */
     public void startCamera(View view) {
+    	Util.sendKillToDHT(); //just in case
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
 //        setTextFields();
@@ -365,9 +369,14 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 				}
 				break;
 			case BACK_FROM_PLAYER_CODE:
-				Log.d("intro", "DONE");
+				Util.sendKillToDHT();
+				Log.d("intro", "watching DONE");
 				finish(); //User exited player. We're done.
 				break;
+			case BACK_FROM_UPLOAD_CODE:
+				Util.sendKillToDHT();
+				Log.d("intro", "upload DONE");
+				
 		}
 		Log.d("intro", "after switch, code: " + requestCode );
 
@@ -388,7 +397,7 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 
 			Intent intent = new Intent(getBaseContext(), UploadActivity.class);
 			intent.putExtra("destination", filename);
-			startActivity(intent);
+			startActivityForResult(intent, BACK_FROM_UPLOAD_CODE);
 		}
 	}
 	

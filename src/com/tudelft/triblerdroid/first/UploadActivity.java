@@ -130,6 +130,7 @@ public class UploadActivity extends Activity {
 					i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=I+just+uploaded+a+video.+Check+it+out!+&url=http://ppsp.me/"+newhash));
 					startActivity(i);
 					//TODO: seed on background until one full copy is out
+					//TODO: sendKillToDHT when we're done.
 //			        finish();
 
 					
