@@ -52,7 +52,7 @@ public class Reactor {
 			byte[] killMsg = "KILL".getBytes();
 			Log.d("pymdht.reactor", "got data(" + data.length + "): " + data);
 			if (data[0]==killMsg[0]
-					//&& data[1]==killMsg[1] && data[2]==killMsg[2] && data[3]==killMsg[3]
+					&& data[1]==killMsg[1] && data[2]==killMsg[2] && data[3]==killMsg[3]
 					){
 				Log.i("pymdht.reactor", "Got KILL message. Stop!");
 				return false;
