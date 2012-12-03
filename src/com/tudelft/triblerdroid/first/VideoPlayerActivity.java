@@ -401,7 +401,7 @@ public class VideoPlayerActivity extends Activity {
 						}
 					}
 					System.out.println("ppsp VideoPlayerActivity: >>>>>>>>>>>>> LEFT LOOP <<<<<<");
-	
+					Util.sendKillToDHT();
 				}
 				catch (Exception e ) {
 					//System.out.println("Stacktrace "+e.toString());

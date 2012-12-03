@@ -3,14 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <Button
-        android:id="@+id/b_cancel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:text="Cancel" />
-
     <TextView
         android:id="@+id/t_uploading"
         android:layout_width="wrap_content"
@@ -39,5 +31,14 @@
         android:layout_below="@+id/t_uploading"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="42dp" />
+
+    <TextView
+        android:id="@+id/upload_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/progressBar1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="41dp"
+        android:text="Preparing upload..." />
 
 </RelativeLayout>

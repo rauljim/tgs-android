@@ -1,5 +1,7 @@
 package se.kth.pymdht;
 
+import android.util.Log;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
@@ -46,6 +48,15 @@ public class Reactor {
 		DatagramPacket datagram = new DatagramPacket(buf, buf.length);
 		try{
 			this._s.receive(datagram);
+			byte[] data = datagram.getData();
+			byte[] killMsg = "KILL".getBytes();
+			Log.d("pymdht.reactor", "got data(" + data.length + "): " + data);
+			if (data[0]==killMsg[0]
+					&& data[1]==killMsg[1] && data[2]==killMsg[2] && data[3]==killMsg[3]
+					){
+				Log.i("pymdht.reactor", "Got KILL message. Stop!");
+				return false;
+			}
 			datagrams_to_send =  _controller.on_datagram_received(datagram);
 		}
 		catch (SocketTimeoutException e){

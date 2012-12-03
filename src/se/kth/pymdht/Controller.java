@@ -63,7 +63,7 @@ public class Controller {
 			datagrams_to_send = lookup.get_datagrams();
 			if (datagrams_to_send.size() == 0){
 				this.empty_heartbeats_in_a_row += 1;
-				System.out.println(this.empty_heartbeats_in_a_row);
+				Log.d("pymdht.controller", "empty heartbeats; " + this.empty_heartbeats_in_a_row);
 				if (this.empty_heartbeats_in_a_row > MAX_EMPTY_HEARTBEATS){
 					throw new LookupDone();
 				}
@@ -73,7 +73,7 @@ public class Controller {
 			}
 		}
 		if (datagrams_to_send.size() > 0){
-			System.out.println(System.currentTimeMillis() + " heartbeat sends " + datagrams_to_send.size());
+			Log.w("pymdht.controller", System.currentTimeMillis() + " heartbeat sends " + datagrams_to_send.size());
 		}
 		return datagrams_to_send;
 	}
@@ -116,7 +116,7 @@ public class Controller {
 			}
 			
 		}
-		System.out.println(System.currentTimeMillis() + " on_datagram sends " + datagrams_to_send.size());
+		Log.d("pymdht.controller", System.currentTimeMillis() + " on_datagram sends " + datagrams_to_send.size());
 		return datagrams_to_send;
 	}
 }

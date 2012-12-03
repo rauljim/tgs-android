@@ -1,54 +1,43 @@
 package com.tudelft.triblerdroid.first;
 
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.DialogFragment;
-import android.content.CursorLoader;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.AlertDialog;
-import android.content.Context;
+import android.app.Dialog;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.preference.PreferenceManager;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.lang.reflect.Method;
-import java.nio.charset.Charset;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcelable;
+import android.preference.PreferenceManager;
+import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.Toast;
+
+import com.tudelft.triblerdroid.swift.NativeLib;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import me.ppsp.test.R;
-import com.tudelft.triblerdroid.swift.NativeLib;
-import com.tudelft.triblerdroid.first.SourceActivity;
-
-
 import se.kth.pymdht.Id;
 import se.kth.pymdht.Id.IdError;
 
@@ -57,6 +46,7 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
     private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 100;
     private static final int SELECT_VIDEO_FILE_REQUEST_CODE = 200;
     private static final int BACK_FROM_PLAYER_CODE = 300;
+    private static final int BACK_FROM_UPLOAD_CODE = 400;
 
     public static final String PREFS_NAME = "settings.dat";
 
@@ -76,7 +66,8 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);	  
+		super.onCreate(savedInstanceState);
+		Util.sendKillToDHT(); //just in case
 		final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		boolean showIntro = settings.getBoolean("showIntro", true);
 
@@ -180,6 +171,7 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 	
     /** Open phone's gallery when user clicks the button 'Select a video' */
     public void selectVideo(View view) {
+    	Util.sendKillToDHT(); //just in case
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("video/*"); // Only show videos
         startActivityForResult(intent, SELECT_VIDEO_FILE_REQUEST_CODE);
@@ -188,6 +180,7 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
     
     /** Start phone's camera when user clicks the button 'Record a video' */
     public void startCamera(View view) {
+    	Util.sendKillToDHT(); //just in case
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
 //        setTextFields();
@@ -376,9 +369,14 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 				}
 				break;
 			case BACK_FROM_PLAYER_CODE:
-				Log.d("intro", "DONE");
+				Util.sendKillToDHT();
+				Log.d("intro", "watching DONE");
 				finish(); //User exited player. We're done.
 				break;
+			case BACK_FROM_UPLOAD_CODE:
+				Util.sendKillToDHT();
+				Log.d("intro", "upload DONE");
+				
 		}
 		Log.d("intro", "after switch, code: " + requestCode );
 
@@ -399,7 +397,7 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 
 			Intent intent = new Intent(getBaseContext(), UploadActivity.class);
 			intent.putExtra("destination", filename);
-			startActivity(intent);
+			startActivityForResult(intent, BACK_FROM_UPLOAD_CODE);
 		}
 	}
 	
