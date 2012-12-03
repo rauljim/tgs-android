@@ -99,7 +99,7 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 //		PackageManager pm = getBaseContext().getPackageManager();
 //		final ResolveInfo mInfo = pm.resolveActivity(ppspme_intent, 0);
 //		if (!pm.getApplicationLabel(mInfo.activityInfo.applicationInfo).equals("ppsp_player")){
-////			Toast.makeText(getBaseContext(), "ppsp_player is not default app for ppsp.me links", Toast.LENGTH_LONG).show();
+////			st.makeText(getBaseContext(), "ppsp_player is not default app for ppsp.me links", Toast.LENGTH_LONG).show();
 //			// Show dialog to set myself as default
 //			if (hash == null || !hash.equals("null")){
 //				// avoids infinite loop (null comes from setting default dialog)
@@ -328,8 +328,8 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 			case CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE:
 				if (resultCode == RESULT_OK && data.getDataString() != null) {
 					videoUri = data.getData();
-					Toast.makeText(this, "Video saved to:\n" + videoUri, Toast.LENGTH_LONG)
-					.show();
+//					Toast.makeText(this, "Video saved to:\n" + videoUri, Toast.LENGTH_LONG)
+//					.show();
 				} else if (resultCode == RESULT_OK && data.getDataString() == null) {
 //					if (DEBUG_MODE) {
 //						Log.i(Log_Tag, "Problem in saving the video");
@@ -349,8 +349,8 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 //					setVideoURI(vUri);
 //					String vPath = getRealPathFromURI(vUri);
 //					setVideoThumbnail(vPath);
-					Toast.makeText(this, "User selected "+videoUri, Toast.LENGTH_LONG).show();
-					Log.i("upload", "User selected "+videoUri);
+//					Toast.makeText(this, "User selected "+videoUri, Toast.LENGTH_LONG).show();
+//					Log.i("upload", "User selected "+videoUri);
 
 				} else if (resultCode == RESULT_CANCELED) {
 					// User cancelled the video selection
@@ -381,14 +381,14 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 		Log.d("intro", "after switch, code: " + requestCode );
 
 		if (videoUri != null){
-			Toast.makeText(this, "uri not null", Toast.LENGTH_LONG)
-			.show();
-			
- 			Toast.makeText(this, "URI: "+videoUri, Toast.LENGTH_LONG)
-			.show();
+//			Toast.makeText(this, "uri not null", Toast.LENGTH_LONG)
+//			.show();
+//			
+// 			Toast.makeText(this, "URI: "+videoUri, Toast.LENGTH_LONG)
+//			.show();
  			String filename = getRealPathFromURI(videoUri);
-			Toast.makeText(this, "filename: "+filename, Toast.LENGTH_LONG)
-			.show();
+//			Toast.makeText(this, "filename: "+filename, Toast.LENGTH_LONG)
+//			.show();
 			Log.i("intro", "filename: "+filename);
 
 			// Arno, 2012-11-28: Copy video to default beam location
