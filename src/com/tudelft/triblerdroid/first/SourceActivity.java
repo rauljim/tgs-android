@@ -184,6 +184,8 @@ public class SourceActivity extends Activity implements OnSharedPreferenceChange
 
         	public void onClick(View v) {
         		
+        		NativeLib nativelib = new NativeLib();
+        		nativelib.asyncClose(_swarmid,true,true);
         		//finish();
         		System.exit(0);
             }
