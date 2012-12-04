@@ -118,15 +118,13 @@ public class UploadActivity extends Activity {
 					
 					// Actually open and seed file
 					int openCallid = nativelib.asyncOpen(newhash,t,f);
-					int statsCallid = nativelib.asyncGetStats(newhash);
 					String resstr = "n/a";
-//					String statstr;
 					while (1==1)//resstr.equals("n/a"))
 					{
 						Log.w("SwiftSeed", "Poll " + openCallid );
 						resstr = nativelib.asyncGetResult(openCallid);
 						Log.w("SwiftSeed", "Progress   " + resstr );
-						statstr = nativelib.asyncGetResult(statsCallid);
+						int statsCallid = nativelib.asyncGetStats(newhash);
 						Log.w("SwiftSeed", "Stats   " + statstr);
 						try
 						{
@@ -136,6 +134,7 @@ public class UploadActivity extends Activity {
 						{
 							System.out.println("ppsp VideoPlayerActivity: SeedTask: async sleep interrupted");
 						}
+						statstr = nativelib.asyncGetResult(statsCallid);
 						runOnUiThread(new Runnable(){
 							public void run() {
 								TextView progressTV = (TextView) findViewById(R.id.upload_progress);
