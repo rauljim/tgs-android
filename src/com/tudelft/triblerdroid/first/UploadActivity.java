@@ -36,6 +36,8 @@ public class UploadActivity extends Activity {
 
 	private SeedTask _seedTask = null;
 	protected String statstr;
+
+	public int numConnections;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +85,10 @@ public class UploadActivity extends Activity {
 	 */
 	private class SeedTask extends AsyncTask<String, Integer, String> {
 	
+		private int upSpeed;
+		private String upSpeedStr;
+		private String numConnectionsStr;
+
 		protected String doInBackground(String... args) {
 	
 			String ret = "hello";
@@ -119,26 +125,43 @@ public class UploadActivity extends Activity {
 					// Actually open and seed file
 					int openCallid = nativelib.asyncOpen(newhash,t,f);
 					String resstr = "n/a";
+					String [] splittedStat;
+					runOnUiThread(new Runnable(){
+						public void run() {
+							TextView progressTV = (TextView) findViewById(R.id.upload_progress);
+							progressTV.setText("Waiting for boosters..." );	
+						}
+					});
+					int statsCallid;
 					while (1==1)//resstr.equals("n/a"))
 					{
 						Log.w("SwiftSeed", "Poll " + openCallid );
 						resstr = nativelib.asyncGetResult(openCallid);
 						Log.w("SwiftSeed", "Progress   " + resstr );
-						int statsCallid = nativelib.asyncGetStats(newhash);
 						Log.w("SwiftSeed", "Stats   " + statstr);
-						try
-						{
-							Thread.sleep( 500 );
+						statstr = "n/a";
+						statsCallid = nativelib.asyncGetStats(newhash);
+						try{
+							Thread.sleep(500);
 						}
-						catch (InterruptedException e)
-						{
+						catch (InterruptedException e){
 							System.out.println("ppsp VideoPlayerActivity: SeedTask: async sleep interrupted");
 						}
 						statstr = nativelib.asyncGetResult(statsCallid);
+						Log.w("SwiftSeed", "statstr "+statstr);
+						splittedStat = statstr.split("/");
+						Log.w("SwiftSeed", "split length "+splittedStat.length);
+						if (splittedStat.length != 6){
+							continue;
+						}
+						Log.w("SwiftSeed", "statstr OK "+statstr);
+						upSpeedStr = splittedStat[1];
+						numConnectionsStr = splittedStat[2];
+						numConnections = Integer.parseInt(numConnectionsStr) - 1; //remove connection to DHT tracker
 						runOnUiThread(new Runnable(){
 							public void run() {
 								TextView progressTV = (TextView) findViewById(R.id.upload_progress);
-								progressTV.setText("Data uploaded so far (KBs): " + statstr);	
+								progressTV.setText("Connected to "+numConnections+" peers\nUpload speed: "+upSpeedStr+" KB/s" );	
 							}
 						});
 
