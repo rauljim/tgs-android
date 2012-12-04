@@ -63,7 +63,7 @@ public class Controller {
 			datagrams_to_send = lookup.get_datagrams();
 			if (datagrams_to_send.size() == 0){
 				this.empty_heartbeats_in_a_row += 1;
-				Log.d("pymdht.controller", "empty heartbeats; " + this.empty_heartbeats_in_a_row);
+//				.d("pymdht.controller", "empty heartbeats; " + this.empty_heartbeats_in_a_row);
 				if (this.empty_heartbeats_in_a_row > MAX_EMPTY_HEARTBEATS){
 					throw new LookupDone();
 				}
