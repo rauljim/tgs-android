@@ -88,6 +88,7 @@ public class UploadActivity extends Activity {
 		private int upSpeed;
 		private String upSpeedStr;
 		private String numConnectionsStr;
+		private int numSeeders;
 
 		protected String doInBackground(String... args) {
 	
@@ -156,12 +157,22 @@ public class UploadActivity extends Activity {
 						}
 						Log.w("SwiftSeed", "statstr OK "+statstr);
 						upSpeedStr = splittedStat[1];
-						numConnectionsStr = splittedStat[2];
-						numConnections = Integer.parseInt(numConnectionsStr) - 1; //remove connection to DHT tracker
+						numConnections = Integer.parseInt(splittedStat[2]) - 1; //remove connection to DHT tracker
+						numSeeders = Integer.parseInt(splittedStat[3]);
 						runOnUiThread(new Runnable(){
 							public void run() {
+								String statusStr = null;
+								if (numSeeders > 0){
+									statusStr = "Upload DONE";
+								}
+								if (statusStr == null && numConnections == 0){
+									statusStr = "Waiting for peers...";
+								}
+								if (statusStr == null){
+									statusStr = "Connected to "+numConnections+" peers\nUpload speed: "+upSpeedStr+" KB/s";
+								}
 								TextView progressTV = (TextView) findViewById(R.id.upload_progress);
-								progressTV.setText("Connected to "+numConnections+" peers\nUpload speed: "+upSpeedStr+" KB/s" );	
+								progressTV.setText(statusStr);	
 							}
 						});
 
