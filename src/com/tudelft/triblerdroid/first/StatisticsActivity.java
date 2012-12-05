@@ -20,8 +20,8 @@ import me.ppsp.test.R;
 public class StatisticsActivity extends Activity{
 	protected Integer _seqCompInt;
 	private TextView txtDownSpeed = null; 
-	private TextView txtUpSpeed = null; 
-	private TextView txtLeechers = null;
+//	private TextView txtUpSpeed = null; 
+//	private TextView txtLeechers = null;
 	private TextView txtSeeders = null;
 	protected UpdateTask _updateTask;
 
@@ -47,8 +47,8 @@ public class StatisticsActivity extends Activity{
 		tracker = extras.getString("tracker");
 		destination = extras.getString("destination");
 		txtDownSpeed = (TextView) findViewById(R.id.down_speed);
-		txtUpSpeed = (TextView) findViewById(R.id.up_speed);
-		txtLeechers = (TextView) findViewById(R.id.nbr_leech);
+//		txtUpSpeed = (TextView) findViewById(R.id.up_speed);
+//		txtLeechers = (TextView) findViewById(R.id.nbr_leech);
 		txtSeeders = (TextView) findViewById(R.id.nbr_seed);
 		System.out.println("creating thread pool");
 		exec = Executors.newCachedThreadPool();
@@ -140,8 +140,8 @@ public class StatisticsActivity extends Activity{
 					runOnUiThread(new Runnable() {
 						public void run() {
 							txtDownSpeed.setText(dspeed + " kb/s");
-							txtUpSpeed.setText(uspeed + " kb/s");
-							txtLeechers.setText(nleech + " ");
+//							txtUpSpeed.setText(uspeed + " kb/s");
+//							txtLeechers.setText(nleech + " ");
 							txtSeeders.setText(nseed + " ");
 						}
 					});
