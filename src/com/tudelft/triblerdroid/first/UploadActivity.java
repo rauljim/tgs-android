@@ -38,6 +38,12 @@ public class UploadActivity extends Activity {
 	protected String statstr;
 
 	public int numConnections;
+
+	public String newhash;
+
+	public NativeLib nativelib;
+
+	public boolean gotBackPressed = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -102,11 +108,11 @@ public class UploadActivity extends Activity {
 				Log.w("SwiftSeed", "Args " + " " + t + " " + f );
 				try {//TODO: catch InterruptedException (onDestroy)
 	
-					NativeLib nativelib = new NativeLib();
+					nativelib = new NativeLib();
 					
 					// Create checkpoint without using Mainloop thread, will
 					// speed up asyncOpen.
-					String newhash = nativelib.hashCheckOffline(f);
+					newhash = nativelib.hashCheckOffline(f);
 					if (newhash.length() != 40)
 					{
 						Log.e("SwiftSeed", newhash );
@@ -134,7 +140,7 @@ public class UploadActivity extends Activity {
 						}
 					});
 					int statsCallid;
-					while (1==1)//resstr.equals("n/a"))
+					while (!gotBackPressed)//resstr.equals("n/a"))
 					{
 						Log.w("SwiftSeed", "Poll " + openCallid );
 						resstr = nativelib.asyncGetResult(openCallid);
@@ -163,13 +169,14 @@ public class UploadActivity extends Activity {
 							public void run() {
 								String statusStr = null;
 								if (numSeeders > 0){
-									statusStr = "Upload DONE";
+									statusStr = "Upload DONE\nPress BACK to stop uploading.";
+									return;
 								}
 								if (statusStr == null && numConnections == 0){
-									statusStr = "Waiting for peers...";
+									statusStr = "Waiting for peers...\nPress BACK to cancel upload.";
 								}
 								if (statusStr == null){
-									statusStr = "Connected to "+numConnections+" peers\nUpload speed: "+upSpeedStr+" KB/s";
+									statusStr = "Connected to "+numConnections+" peers\nUpload speed: "+upSpeedStr+" KB/s\nPress BACK to cancel upload";
 								}
 								TextView progressTV = (TextView) findViewById(R.id.upload_progress);
 								progressTV.setText(statusStr);	
@@ -194,4 +201,11 @@ public class UploadActivity extends Activity {
 		}
 		
 	}
+	@Override
+	public void onBackPressed() {
+		gotBackPressed = true;
+		nativelib.asyncClose(newhash, false, false); 
+		super.onBackPressed();
+	}
+
 }
