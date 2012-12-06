@@ -170,7 +170,6 @@ public class UploadActivity extends Activity {
 								String statusStr = null;
 								if (numSeeders > 0){
 									statusStr = "Upload DONE\nPress BACK to stop uploading.";
-									return;
 								}
 								if (statusStr == null && numConnections == 0){
 									statusStr = "Waiting for peers...\nPress BACK to cancel upload.";
