@@ -3,34 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/t_uploading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="116dp"
-        android:text="Uploading..."
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/t_finding"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/t_uploading"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="45dp"
-        android:text="Finding boosters..."
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
     <ProgressBar
         android:id="@+id/progressBar1"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/t_uploading"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp" />
+        android:layout_marginTop="18dp" />
 
     <TextView
         android:id="@+id/upload_progress"
@@ -38,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/progressBar1"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="41dp"
+        android:layout_marginTop="19dp"
         android:text="Preparing upload..." />
 
 </RelativeLayout>
