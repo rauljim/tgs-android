@@ -11,69 +11,73 @@
         android:orientation="vertical" >
          
        <TextView style="@style/MyDefaultTextAppearance"
-         android:id="@+id/textView1"
-         android:text="@string/welcome_txt1" /> 
+         android:id="@+id/t_welcome"
+         android:text="@string/welcome_info" /> 
       
-       <TextView     style="@style/MyDefaultTextAppearance.Grey"
-          android:id="@+id/textView2"  
-          android:layout_below="@+id/textView1"  
-          android:text="@string/welcome_txt2"/>
-   
-       
-       
-       <TextView     style="@style/MyDefaultTextAppearance.Grey"
-          android:id="@+id/textView3"  
-          android:layout_below="@+id/textView2"  
-          android:text="SHARE VIDEO Toolkit:"/>
+
+        
+       <TextView     style="@style/MyDefaultTextAppearance.Heading"
+          android:id="@+id/t_share_heading"  
+          android:layout_below="@+id/t_welcome"  
+          android:text="@string/share_heading"/>
        
       <Button  style="@style/MyDefaultButtonAppearance"
          android:id="@+id/b_record"         
-         android:layout_below="@+id/textView3"
+         android:layout_below="@+id/t_share_heading"
          android:onClick="startCamera"
-         android:text="Record Video"/>
+         android:text="@string/bt_record_txt"/>
       
       <Button  style="@style/MyDefaultButtonAppearance"
          android:id="@+id/b_choose"
-         android:layout_below="@+id/b_record"
+         android:layout_below="@+id/t_share_heading"
+         android:layout_toRightOf="@+id/b_record"
          android:onClick="selectVideo"
-         android:text="Select Video" />
+         android:text="@string/bt_select_txt" />
 
       <Button  style="@style/MyDefaultButtonAppearance"
          android:id="@+id/b_bcast_start"
          android:layout_below="@+id/b_choose"
          android:onClick="startLive"
-         android:text="Start Live Broadcast" />
+         android:text="@string/bt_startBroadcast_bcast_txt" />
       
       <TextView     style="@style/MyDefaultTextAppearance.InfoText"
-          android:id="@+id/textView4"  
+          android:id="@+id/t_nfc"  
           android:layout_below="@+id/b_bcast_start"  
           android:text="@string/nfc_info"/> 
 
       
       
-      <TextView     style="@style/MyDefaultTextAppearance.Grey"
-          android:id="@+id/textView5"  
-          android:layout_below="@+id/textView4"  
-          android:text="RECIEVE VIDEO Toolkit:"/>  
+      <TextView     style="@style/MyDefaultTextAppearance.Heading"
+          android:id="@+id/t_receive_heading"  
+          android:layout_below="@+id/t_nfc"  
+          android:text="@string/receive_heading"/> 
+       
+       <TextView     style="@style/MyDefaultTextAppearance.InfoText"
+          android:id="@+id/t_search"  
+          android:layout_below="@+id/t_receive_heading"  
+          android:text="@string/search_info"/>
+      
+      <Button  style="@style/MyDefaultButtonAppearance"
+         android:id="@+id/b_twitter"                 
+         android:layout_below="@+id/t_search"
+         android:text="@string/bt_search_txt" />
       
       <Button  style="@style/MyDefaultButtonAppearance"
          android:id="@+id/b_bcast_watch"             
-         android:layout_below="@+id/textView5"
+         android:layout_below="@+id/b_twitter"
          android:onClick="watchLive"
-         android:text="Join Live Broadcast" />
+         android:text="@string/bt_joinBroadcast_txt" />
     
-      <Button  style="@style/MyDefaultButtonAppearance"
-         android:id="@+id/b_twitter"                 
-         android:layout_below="@+id/b_bcast_watch"
-         android:text="Search PPSP links on Twitter" />
+
        
      <ImageView
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="60dp"    
+        android:layout_marginTop="20dp"    
         android:adjustViewBounds="true"
         android:layout_alignLeft="@+id/b_twitter"
-        android:layout_below="@+id/b_twitter"
+        android:layout_below="@+id/b_bcast_watch"        
         android:src="@drawable/all_logos" />
 
 </RelativeLayout>

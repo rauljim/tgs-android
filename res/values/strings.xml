@@ -10,13 +10,29 @@
     <string name="leech_str">Leechers:</string>
     <string name="seed_str">Seeders:</string>
     
+    <!--  Static TextView Texts -->
+    <string name="welcome_info">Share videos with the world or just nearby friends,\n\"No Internet Needed\" style. Use P2P technology to beat censorship using on-demand &amp; live video streaming. </string>        
+    <string name="nfc_info">Tip: Bump any Android phone for video transfer (Requires NFC \+ Bluetooth)</string>
+    <string name="search_info">Search videos on Twitter (open browser, find ppsp.me/&#8230; links)</string>
+    <string name="share_video_info">Info: The following tweets with PPSP.me</string>
+    <string name="start_broadcast_info"></string>
+    <string name="join_broadcast_info"></string>
+    <string name="share_heading">Share Video Toolkit:</string>
+    <string name="receive_heading">Receive Video Toolkit:</string>
     
-    <string name="welcome_txt1">SHARE VIDEOS and FIGHT CENSORSHIP by using P2P technology </string>
+       
+    <!--  Button Texts -->
+    <string name="bt_record_txt">Record video &amp; tweet</string>
+    <string name="bt_select_txt">Select video &amp; tweet</string>
+    <string name="bt_startBroadcast_bcast_txt">Start live video broadcast from your phone</string>
+    <string name="bt_search_txt">Search PPSP links on Twitter</string>
+    <string name="bt_joinBroadcast_txt">View ongoing video broadcast on your phone</string>
+    
+     <!--   strings not needed any more
+    <string name="record_video">Record a video and share it with ppsp.me</string>
     <string name="welcome_txt2">Click on a ppsp.me/&#8230; link and choose the ppsp_player app to open it</string>
     <string name="sponsors">Project Sponsors/:</string>
-    <string name="nfc_info">info: Use NFC + Bluetooth to transfer videos to any other Android phone</string>
-     
-    <string name="record_video">Record a video and share it with ppsp.me</string>
+     -->
     
     <string name="pref_stats">Show P2P info</string>
     <!-- For Arno'sSourceActivity -->
