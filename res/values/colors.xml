@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="welcome_bgcolor">#F1F1F1</color>
+    <color name="default_text_color">#D6D6D6</color>
+    <color name="heading_text_color">#CBC8C8</color>
+    <color name="info_text_color">#C6C6C6</color>
+    <color name="button_text_color">#413F3F</color>
+</resources>

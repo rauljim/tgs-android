@@ -13,7 +13,8 @@
     
     <string name="welcome_txt1">SHARE VIDEOS and FIGHT CENSORSHIP by using P2P technology </string>
     <string name="welcome_txt2">Click on a ppsp.me/&#8230; link and choose the ppsp_player app to open it</string>
-    
+    <string name="sponsors">Project Sponsors/:</string>
+    <string name="nfc_info">info: Use NFC + Bluetooth to transfer videos to any other Android phone</string>
      
     <string name="record_video">Record a video and share it with ppsp.me</string>
     
