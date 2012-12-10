@@ -2,13 +2,20 @@
 <resources>
 
     <string name="hello">App with swift and Python</string>
-    <string name="app_name">ppsp_player</string>
+    <string name="app_name">Anti-Censorship Toolkit</string>
     <string name="loading">P2P Engine UP</string>
     <string name="show_message">P2P info</string>
     <string name="down_str">Download speed:</string>
     <string name="up_str">Upload speed:</string>
     <string name="leech_str">Leechers:</string>
     <string name="seed_str">Seeders:</string>
+    
+    
+    <string name="welcome_txt1">SHARE VIDEOS and FIGHT CENSORSHIP by using P2P technology </string>
+    <string name="welcome_txt2">Click on a ppsp.me/&#8230; link and choose the ppsp_player app to open it</string>
+    
+     
+    <string name="record_video">Record a video and share it with ppsp.me</string>
     
     <string name="pref_stats">Show P2P info</string>
     <!-- For Arno'sSourceActivity -->

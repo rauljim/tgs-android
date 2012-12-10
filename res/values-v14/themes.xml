@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="PPSPTheme" parent="@android:style/Theme.Holo">
+        <!-- Any customizations for PPSP app running on 4.0+ devices here -->
+        <item name="android:textAppearance">@style/MyDefaultTextAppearance</item>  
+        <item name="android:buttonStyle">@style/MyDefaultButtonAppearance</item>
+    </style>
+    
+    <style name="MyDefaultTextAppearance" parent="@android:style/TextAppearance">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>   
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#CBC8C8</item>         
+    </style>
+    
+    <style name="MyDefaultTextAppearance.Grey">
+          <item name="android:textColor">#CBC8C8</item>
+          <item name="android:textSize">14sp</item>       
+    </style>
+    
+    <style name="MyDefaultButtonAppearance" parent="@android:style/Widget.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">30dp</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+</resources>
