@@ -10,7 +10,7 @@ Here, I describe my development environment. You may use any other tools.
 (K)Ubuntu 12.04 64-bits
 Eclipse
 
-sudo apt-get install lib32ncurses5 lib32stdc++6 # need 32-bit libraries
+sudo apt-get install ia32-libs lib32ncurses5 lib32stdc++6 # need 32-bit libraries
 http://stackoverflow.com/questions/10005907/eclipse-android-plugin-libncurses-so-5
 
 Install Android SDK (Eclipse plug-in): http://developer.android.com/sdk/installing/installing-adt.html
