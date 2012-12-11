@@ -28,6 +28,8 @@
     <string name="bt_search_txt">Search PPSP links on Twitter</string>
     <string name="bt_joinBroadcast_txt">View ongoing video broadcast on your phone</string>
     
+    <string name="image_desc">Project Sponsors</string>
+    
      <!--   strings not needed any more
     <string name="record_video">Record a video and share it with ppsp.me</string>
     <string name="welcome_txt2">Click on a ppsp.me/&#8230; link and choose the ppsp_player app to open it</string>

@@ -4,6 +4,8 @@
         <!-- Any customizations for PPSP app running on 4.0+ devices here -->
         <item name="android:textAppearance">@style/MyDefaultTextAppearance</item>  
         <item name="android:buttonStyle">@style/MyDefaultButtonAppearance</item>
+        <item name="android:windowBackground">@color/my_custom_background_color</item>
+        <item name="android:colorBackgroundCacheHint">@color/my_custom_background_color</item>
     </style>
     
     <style name="MyDefaultTextAppearance" parent="@android:style/TextAppearance">

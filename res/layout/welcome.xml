@@ -4,7 +4,7 @@
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content">
     
-   <RelativeLayout
+  <RelativeLayout
        android:id="@+id/RelativeLayout1"
        android:layout_width="fill_parent"
        android:layout_height="wrap_content"
@@ -12,18 +12,16 @@
        android:layout_marginRight="10dp"
        android:orientation="vertical" >
          
-       <TextView style="@style/MyDefaultTextAppearance"
-         android:id="@+id/t_welcome"
-         android:text="@string/welcome_info" /> 
+     <TextView style="@style/MyDefaultTextAppearance"
+        android:id="@+id/t_welcome"
+        android:text="@string/welcome_info" /> 
+              
+     <TextView     style="@style/MyDefaultTextAppearance.Heading"
+         android:id="@+id/t_share_heading"  
+         android:layout_below="@+id/t_welcome"  
+         android:text="@string/share_heading"/>
       
-
-        
-       <TextView     style="@style/MyDefaultTextAppearance.Heading"
-          android:id="@+id/t_share_heading"  
-          android:layout_below="@+id/t_welcome"  
-          android:text="@string/share_heading"/>
-      
-    <LinearLayout
+   <LinearLayout
         android:id="@+id/LinearLayout1"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
@@ -43,7 +41,7 @@
          android:layout_width="0dp"
          android:layout_weight="1"
          android:text="@string/bt_select_txt" />
-    </LinearLayout>  
+   </LinearLayout>  
 
       <Button  style="@style/MyDefaultButtonAppearance"
          android:id="@+id/b_bcast_start"
@@ -56,9 +54,7 @@
           android:id="@+id/t_nfc"  
           android:layout_below="@+id/b_bcast_start"  
           android:text="@string/nfc_info"/> 
-
-      
-      
+     
       <TextView     style="@style/MyDefaultTextAppearance.Heading"
           android:id="@+id/t_receive_heading"  
           android:layout_below="@+id/t_nfc"  
@@ -81,18 +77,18 @@
          android:layout_width="fill_parent"
          android:onClick="watchLive"
          android:text="@string/bt_joinBroadcast_txt" />
-    
-
-       
+          
      <ImageView
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
         android:layout_height="60dp"    
         android:layout_marginTop="20dp"    
         android:adjustViewBounds="true"
-        android:layout_alignLeft="@+id/b_twitter"
-        android:layout_below="@+id/b_bcast_watch"        
-        android:src="@drawable/all_logos" />
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"             
+        android:layout_below="@+id/b_bcast_watch" 
+        android:contentDescription="@string/image_desc"       
+        android:src="@drawable/all_logos_transparent" />
 
 </RelativeLayout>
 </ScrollView> 
