@@ -26,6 +26,7 @@
         
         <activity
             android:name="com.tudelft.triblerdroid.first.IntroActivity"
+            android:screenOrientation="portrait"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
 		<action android:name="android.intent.action.MAIN" />

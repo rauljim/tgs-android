@@ -8,8 +8,8 @@
     
     <style name="MyDefaultTextAppearance" parent="@android:style/TextAppearance">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>   
-        <item name="android:paddingLeft">20dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignLeft">@+id/RelativeLayout1</item>   
         <item name="android:paddingTop">10dp</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/default_text_color</item>         
@@ -24,15 +24,14 @@
     <style name="MyDefaultTextAppearance.InfoText">
           <item name="android:textColor">@color/info_text_color</item>
           <item name="android:textSize">12sp</item>      
-          <item name="android:paddingTop">2dp</item>   
+          <item name="android:paddingTop">1dp</item>   
     </style>
     
     <style name="MyDefaultButtonAppearance" parent="@android:style/Widget.Button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_alignLeft">@+id/RelativeLayout1</item>           
         <item name="android:layout_marginTop">5dp</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">14sp</item>
     </style>
 </resources>

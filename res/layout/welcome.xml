@@ -4,11 +4,13 @@
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content">
     
-   <RelativeLayout 
-        android:id="@+id/RelativeLayout1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+   <RelativeLayout
+       android:id="@+id/RelativeLayout1"
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:layout_marginLeft="10dp"
+       android:layout_marginRight="10dp"
+       android:orientation="vertical" >
          
        <TextView style="@style/MyDefaultTextAppearance"
          android:id="@+id/t_welcome"
@@ -20,23 +22,29 @@
           android:id="@+id/t_share_heading"  
           android:layout_below="@+id/t_welcome"  
           android:text="@string/share_heading"/>
-       
+      
+    <LinearLayout
+        android:id="@+id/LinearLayout1"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/t_share_heading">
+      
       <Button  style="@style/MyDefaultButtonAppearance"
-         android:id="@+id/b_record"         
-         android:layout_below="@+id/t_share_heading"
+         android:id="@+id/b_record"                  
          android:onClick="startCamera"
          android:text="@string/bt_record_txt"/>
       
       <Button  style="@style/MyDefaultButtonAppearance"
-         android:id="@+id/b_choose"
-         android:layout_below="@+id/t_share_heading"
-         android:layout_toRightOf="@+id/b_record"
+         android:id="@+id/b_choose"     
          android:onClick="selectVideo"
          android:text="@string/bt_select_txt" />
+    </LinearLayout>  
 
       <Button  style="@style/MyDefaultButtonAppearance"
          android:id="@+id/b_bcast_start"
-         android:layout_below="@+id/b_choose"
+         android:layout_below="@+id/LinearLayout1"
+         android:layout_width="fill_parent"
          android:onClick="startLive"
          android:text="@string/bt_startBroadcast_bcast_txt" />
       
@@ -60,11 +68,13 @@
       <Button  style="@style/MyDefaultButtonAppearance"
          android:id="@+id/b_twitter"                 
          android:layout_below="@+id/t_search"
+         android:layout_width="fill_parent"
          android:text="@string/bt_search_txt" />
       
       <Button  style="@style/MyDefaultButtonAppearance"
          android:id="@+id/b_bcast_watch"             
          android:layout_below="@+id/b_twitter"
+         android:layout_width="fill_parent"
          android:onClick="watchLive"
          android:text="@string/bt_joinBroadcast_txt" />
     
