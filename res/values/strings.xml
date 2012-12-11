@@ -11,7 +11,7 @@
     <string name="seed_str">Seeders:</string>
     
     <!--  Static TextView Texts -->
-    <string name="welcome_info">Share videos with the world or just nearby friends,\n\"No Internet Needed\" style. Use P2P technology to beat censorship using on-demand &amp; live video streaming. </string>        
+    <string name="welcome_info"><b>Share videos</b> with the world or just nearby friends,\n\"No Internet Needed\" style. Use <b>P2P technology</b> to <b>beat censorship</b> using on-demand &amp; live video streaming. </string>        
     <string name="nfc_info">Tip: Bump any Android phone for video transfer (Requires NFC \+ Bluetooth)</string>
     <string name="search_info">Search videos on Twitter (open browser, find ppsp.me/&#8230; links)</string>
     <string name="share_video_info">Info: The following tweets with PPSP.me</string>

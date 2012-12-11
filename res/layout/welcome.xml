@@ -33,11 +33,15 @@
       <Button  style="@style/MyDefaultButtonAppearance"
          android:id="@+id/b_record"                  
          android:onClick="startCamera"
+         android:layout_width="0dp"
+         android:layout_weight="1"
          android:text="@string/bt_record_txt"/>
       
       <Button  style="@style/MyDefaultButtonAppearance"
          android:id="@+id/b_choose"     
          android:onClick="selectVideo"
+         android:layout_width="0dp"
+         android:layout_weight="1"
          android:text="@string/bt_select_txt" />
     </LinearLayout>  
 
