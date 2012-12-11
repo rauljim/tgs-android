@@ -2,13 +2,39 @@
 <resources>
 
     <string name="hello">App with swift and Python</string>
-    <string name="app_name">ppsp_player</string>
+    <string name="app_name">Anti-Censorship Toolkit</string>
     <string name="loading">P2P Engine UP</string>
     <string name="show_message">P2P info</string>
     <string name="down_str">Download speed:</string>
     <string name="up_str">Upload speed:</string>
     <string name="leech_str">Leechers:</string>
     <string name="seed_str">Seeders:</string>
+    
+    <!--  Static TextView Texts -->
+    <string name="welcome_info"><b>Share videos</b> with the world or just nearby friends,\n\"No Internet Needed\" style. Use <b>P2P technology</b> to <b>beat censorship</b> using on-demand &amp; live video streaming. </string>        
+    <string name="nfc_info">Tip: Bump any Android phone for video transfer (Requires NFC \+ Bluetooth)</string>
+    <string name="search_info">Search videos on Twitter (open browser, find ppsp.me/&#8230; links)</string>
+    <string name="share_video_info">Info: The following tweets with PPSP.me</string>
+    <string name="start_broadcast_info"></string>
+    <string name="join_broadcast_info"></string>
+    <string name="share_heading">Share Video Toolkit:</string>
+    <string name="receive_heading">Receive Video Toolkit:</string>
+    
+       
+    <!--  Button Texts -->
+    <string name="bt_record_txt">Record video &amp; tweet</string>
+    <string name="bt_select_txt">Select video &amp; tweet</string>
+    <string name="bt_startBroadcast_bcast_txt">Start live video broadcast from your phone</string>
+    <string name="bt_search_txt">Search PPSP links on Twitter</string>
+    <string name="bt_joinBroadcast_txt">View ongoing video broadcast on your phone</string>
+    
+    <string name="image_desc">Project Sponsors</string>
+    
+     <!--   strings not needed any more
+    <string name="record_video">Record a video and share it with ppsp.me</string>
+    <string name="welcome_txt2">Click on a ppsp.me/&#8230; link and choose the ppsp_player app to open it</string>
+    <string name="sponsors">Project Sponsors/:</string>
+     -->
     
     <string name="pref_stats">Show P2P info</string>
     <!-- For Arno'sSourceActivity -->
