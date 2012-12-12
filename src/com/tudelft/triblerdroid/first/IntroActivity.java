@@ -117,7 +117,7 @@ public class IntroActivity extends FragmentActivity implements LiveIPDialogFragm
 			b_twitter.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					Intent i = new Intent(Intent.ACTION_VIEW);
-					i.setData(Uri.parse("https://twitter.com/ppsp_test"));
+					i.setData(Uri.parse("https://twitter.com/ppsp_me"));
 					startActivity(i);
 				}
 			});

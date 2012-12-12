@@ -124,7 +124,7 @@ public class UploadActivity extends Activity {
 
 					// Announce to Twitter
 					Intent i = new Intent(Intent.ACTION_VIEW);
-					i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=I+just+uploaded+a+video.+Check+it+out!+&url=http://ppsp.me/"+newhash));
+					i.setData(Uri.parse("https://twitter.com/intent/tweet?&text=I+just+uploaded+a+video.+Check+it+out!+&url=http://ppsp.me/"+newhash+"+@ppsp_me"));
 					startActivity(i);
 					
 					
