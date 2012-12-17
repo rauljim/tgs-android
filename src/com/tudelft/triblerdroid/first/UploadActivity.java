@@ -177,6 +177,7 @@ public class UploadActivity extends Activity {
 								if (statusStr == null){
 									statusStr = "Connected to "+numConnections+" peers\nUpload speed: "+upSpeedStr+" KB/s\nPress BACK to cancel upload";
 								}
+								statusStr = statusStr + "\n\nYou can also bump an Android phone (requires NFC and Android Beam)";
 								TextView progressTV = (TextView) findViewById(R.id.upload_progress);
 								progressTV.setText(statusStr);	
 							}
