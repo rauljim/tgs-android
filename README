@@ -44,3 +44,12 @@ In Eclipse: Run as > Android Application
 Now, your phone is running the application. Open the browser (on the device) and type ppsp.me.
 Follow the links to find ppsp.me links and select the ppsp_player app to open them.
 After a (short) buffering delay, your device will start playing the video.
+
+
+
+PUBLISHING on Google Play
+
+Open bin/*apk with a zip program
+Remove META-INF directory
+ jarsigner -verbose -keystore ~/android/private.key -storepass XXXX -keypass XXXX -digestalg SHA1 -sigalg MD5withRSA -sigfile CERT -signedjar bin/signed-unaligned.apk bin/tgs-android.apk key_name
+~/android/android-sdks/tools/zipalign 4 bin/signed-unaligned.apk bin/final.apk
