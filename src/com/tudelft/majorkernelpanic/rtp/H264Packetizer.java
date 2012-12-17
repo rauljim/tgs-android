@@ -143,8 +143,6 @@ public class H264Packetizer extends AbstractPacketizer {
 					{
 						nwrite = fifo.write(is,100000);
 						sum += nwrite;
-						//if (sum < 5)
-						//	Log.d(TAG,"New chunk -> TOO SMALL!");
 					}
 					//Log.d(TAG,"New chunk -> sleep: "+sleep[0]+" duration: "+duration+" sum: "+sum+" chunks: "+chunks.size());
 					chunks.add(new Chunk(sum,duration));
@@ -173,11 +171,13 @@ public class H264Packetizer extends AbstractPacketizer {
 		private int cursor, naluLength = 0;
 		private Chunk chunk = null, tmpChunk = null;
 		private final long[] sleep;
-		private FileOutputStream arnofos;
+		
+		private boolean liveSourceContentIsRawH264=false;
+		private NativeLib arnonative = null; // Only used for raw H.264
 		// via testH264() mp4Config
 		//private byte sps[] = { 0x00, 0x00, 0x00, 0x01, 0x27, 0x42, (byte)0x80, 0x29, (byte)0x8D, (byte)0x95, 0x01, 0x40, (byte)0x7B, 0x20 };
 		//private byte pps[] = { 0x00, 0x00, 0x00, 0x01, 0x28, (byte)0xDE, 0x09, (byte)0x88 };  
-		private NativeLib arnonative;
+		private MPEG2TSWriter arnompegtswriter = null;
 		private byte[] arnobuf;
 		
 		
@@ -192,8 +192,11 @@ public class H264Packetizer extends AbstractPacketizer {
 
 			try
 			{
-				//arnofos = new FileOutputStream("/sdcard/swift/capture.h264",false);
-				arnonative = new NativeLib();
+				if (liveSourceContentIsRawH264)
+					arnonative = new NativeLib();
+				else
+					arnompegtswriter = new MPEG2TSWriter(SourceActivity._swarmid);
+				
 				arnobuf = new byte[1000000];
 				
 				byte[] startcode = { 0x00, 0x00, 0x00, 0x01 };
@@ -283,32 +286,30 @@ public class H264Packetizer extends AbstractPacketizer {
 			}*/
 			socket.updateTimestamp(ts*90);
 
-			//Log.d(TAG,"- Nal unit length: " + naluLength+" cursor: "+cursor+" delay: "+delay+" type: "+type+" newDelay: "+newDelay);
-
 			// Small NAL unit => Single NAL unit 
 			//if (naluLength<=MAXPACKETSIZE-rtphl-2) {
-			if (naluLength > 0 && naluLength < 1000000) { 
+			if (naluLength > 0 && naluLength < 1000000) 
+			{ 
 				len = fifo.read(buffer, rtphl+1,  naluLength-1  );
-
-				//arnofos.write(startcode,0,4);
-				//arnofos.write(buffer,rtphl, naluLength );
+				// assumption len == naluLength-1
 				
 				// Append NALU to startcode in arnobuf
 				System.arraycopy(buffer,rtphl,arnobuf,4,naluLength);
-				arnonative.LiveAdd(SourceActivity._swarmid,arnobuf,0,4+naluLength);
+				nalu_to_swift(arnobuf,0,4+naluLength,ts);
 
-				// Activity indicator, this procedure can stop silently
+				// Activity indicator, this procedure would stop silently due
+				// to a bug, since fixed.
 				arnoLastNALULength = naluLength;
 				
 				//socket.markNextPacket();
 				//socket.send(naluLength+rtphl);
 				
 				//Log.d(TAG,"----- Single NAL unit - len:"+len+" header:"+printBuffer(rtphl,rtphl+3)+" delay: "+delay+" newDelay: "+newDelay);
-				Log.d(TAG,"----- Single NAL unit - len:"+len + " delay: "+delay+" newDelay: "+newDelay);
+				//Log.d(TAG,"----- Single NAL unit - len:"+len + " delay: "+delay+" newDelay: "+newDelay);
 			}
 			
 			/*
-			// ARNO DISABLED, DON't SPLIT
+			// Arno: Disabled, don't split for live streaming
 			// Large NAL unit => Split nal unit 
 			else {
 
@@ -335,34 +336,16 @@ public class H264Packetizer extends AbstractPacketizer {
 			}
 			*/
 		}
+
 		
-		
-		
-		private String print_nal_unit_type(int nut)
+		private void nalu_to_swift(byte[] buf, int offset, int length, long rtpTimestamp)
 		{
-			if (nut == 0) return "Unspecified non-VCL non-VCL";
-			else if (nut == 1) return "Coded slice of a non-IDR picture slice_layer_without_partitioning_rbsp";
-			else if (nut == 2) return "Coded slice data partition A slice_data_partition_a_layer_rbsp";
-			else if (nut == 3) return "Coded slice data partition B slice_data_partition_b_layer_rbsp";
-			else if (nut == 4) return "Coded slice data partition C slice_data_partition_c_layer_rbsp";
-			else if (nut == 5) return "Coded slice of an IDR picture slice_layer_without_partitioning_rbsp";
-			else if (nut == 6) return "Supplemental enhancement information (SEI) sei_rbsp";
-			else if (nut == 7) return "Sequence parameter set seq_parameter_set_rbsp";
-			else if (nut == 8) return "Picture parameter set pic_parameter_set_rbsp";
-			else if (nut == 9) return "Access unit delimiter access_unit_delimiter_rbsp";
-			else if (nut == 10) return "End of sequence end_of_seq_rbsp";
-			else if (nut == 11) return "End of stream  end_of_stream_rbsp";
-			else if (nut == 12) return "Filler data filler_data_rbsp";
-			else if (nut == 13) return "Sequence parameter set extension seq_parameter_set_extension_rbsp";
-			else if (nut == 14) return "Prefix NAL unit prefix_nal_unit_rbsp";
-			else if (nut == 15) return "Subset sequence parameter set subset_seq_parameter_set_rbsp";
-			else if (nut >= 16 && nut <= 18) return "Reserved non-VCL non-VCL";
-			else if (nut == 19) return "Coded slice of an auxiliary coded picture without partitioning slice_layer_without_partitioning_rbsp";
-			else if (nut == 20) return " Coded slice extension slice_layer_extension_rbsp";
-			else if (nut >= 21 && nut <= 23) return "Reserved non-VCL non-VCL";
-			else if (nut >= 24 && nut <= 31) return "Unspecified";
-			return "NAL Unit Type out of range!";
+			if (liveSourceContentIsRawH264)
+				arnonative.LiveAdd(SourceActivity._swarmid,buf,offset,length);
+			else
+				arnompegtswriter.input(arnobuf,offset,length,rtpTimestamp);
 		}
+		
 	}
 	
 	/********************************************************************************/

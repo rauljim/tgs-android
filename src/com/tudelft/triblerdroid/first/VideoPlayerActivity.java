@@ -97,7 +97,7 @@ public class VideoPlayerActivity extends Activity {
 		_statsTask.execute( hash, tracker, destination );
 		Log.w("video player", "setup DONE");
 		
-		startVideoPlayback(live,true);
+		startVideoPlayback(live,false);
 	}
 	
 	protected Dialog onCreateDialog(int id) {
