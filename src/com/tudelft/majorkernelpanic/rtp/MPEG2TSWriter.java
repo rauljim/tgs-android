@@ -55,8 +55,8 @@ public class MPEG2TSWriter
     //http://stackoverflow.com/questions/6199940/generate-pcr-from-pts
     public long PTSaheadOfPCRus = 500000; // 500 ms
     
-    // Manual timing, currently unused
-    public long mTimeStampIncr = 50000; // 48000 from ffprobe?
+    // Manual timing, hardcoded 15 fps. RTP timestamp from H.264Packetizer not ideal
+    public long mTimeStampIncr = 66000; // us; 1000 ms / 15 fps = 66 ms / frame (48000 from ffprobe?)
     public long mTimeStamp = PTSaheadOfPCRus + 4000;
     
     public ByteArrayOutputStream mMpegtsBAOS; // for increasing granuality of calls to swift::LiveAdd
