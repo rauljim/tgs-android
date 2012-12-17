@@ -8,13 +8,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.tudelft.triblerdroid.swift.NativeLib;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
-import com.tudelft.triblerdroid.swift.NativeLib;
 import me.ppsp.test.R;
 
 public class StatisticsActivity extends Activity{

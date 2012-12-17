@@ -1,10 +1,5 @@
 package com.tudelft.triblerdroid.first;
 
-import java.io.IOException;
-import java.io.File;
-import java.net.URI;
-import java.util.Iterator;
-import java.util.List;
 import java.net.InetAddress;
 
 //ARNOAPI12
@@ -15,9 +10,7 @@ import com.tudelft.majorkernelpanic.spydroid.*;
 import com.tudelft.triblerdroid.swift.NativeLib;
 
 import android.app.Activity;
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -31,14 +24,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 //import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Display;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
