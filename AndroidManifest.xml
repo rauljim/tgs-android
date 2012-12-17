@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.ppsp.test"
     android:versionCode="121003"
-    android:versionName="12.10.3" >
+    android:versionName="12.12.1" >
     
     <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="11" />
     <uses-permission android:name="android.permission.INTERNET" />
