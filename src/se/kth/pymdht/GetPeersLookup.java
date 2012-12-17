@@ -1,12 +1,10 @@
 package se.kth.pymdht;
 
 import java.net.DatagramPacket;
-import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 class GetPeersLookup{
 	
