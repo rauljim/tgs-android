@@ -14,7 +14,7 @@ import com.tudelft.triblerdroid.swift.NativeLib;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import me.ppsp.test.R;
+import org.tribler.mobile.R;
 
 public class StatisticsActivity extends Activity{
 	protected Integer _seqCompInt;

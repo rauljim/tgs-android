@@ -30,7 +30,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import me.ppsp.test.R;
+import org.tribler.mobile.R;
 import se.kth.pymdht.Pymdht;
 
 public class VideoPlayerActivity extends Activity {

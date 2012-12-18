@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.ppsp.test"
-    android:versionCode="121201"
-    android:versionName="12.12.1" >
+    package="org.tribler.mobile"
+    android:versionCode="121202"
+    android:versionName="1.0" >
     
     <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="11" />
     <uses-permission android:name="android.permission.INTERNET" />

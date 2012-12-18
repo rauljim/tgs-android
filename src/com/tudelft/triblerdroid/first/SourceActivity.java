@@ -42,7 +42,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Button;
 
-import me.ppsp.test.R;
+import org.tribler.mobile.R;
 
 
 
