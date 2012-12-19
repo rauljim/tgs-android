@@ -174,7 +174,7 @@ public class H264Packetizer extends AbstractPacketizer {
 		
 		private boolean liveSourceContentIsRawH264=false;
 		private NativeLib arnonative = null; // Only used for raw H.264
-		// via testH264() mp4Config
+		// via H264Stream.testH264() / MP4Parser
 		//private byte sps[] = { 0x00, 0x00, 0x00, 0x01, 0x27, 0x42, (byte)0x80, 0x29, (byte)0x8D, (byte)0x95, 0x01, 0x40, (byte)0x7B, 0x20 };
 		//private byte pps[] = { 0x00, 0x00, 0x00, 0x01, 0x28, (byte)0xDE, 0x09, (byte)0x88 };  
 		private MPEG2TSWriter arnompegtswriter = null;
@@ -186,7 +186,7 @@ public class H264Packetizer extends AbstractPacketizer {
 			this.chunks = chunks;
 			this.sync = sync;
 			this.socket = socket;
-			this.buffer = new byte[1000000]; //socket.getBuffer();
+			this.buffer = new byte[1000000]; //socket.getBuffer(); // ARNOTODO: make smaller
 			
 			this.sleep = sleep;
 
@@ -199,10 +199,10 @@ public class H264Packetizer extends AbstractPacketizer {
 				
 				arnobuf = new byte[1000000];
 				
-				byte[] startcode = { 0x00, 0x00, 0x00, 0x01 };
+				byte[] h264startcode = { 0x00, 0x00, 0x00, 0x01 };
 				
 				// Start arnobuf with NALU startcode
-				System.arraycopy(startcode,0,arnobuf,0,4);
+				System.arraycopy(h264startcode,0,arnobuf,0,4);
 			}
 			catch(Exception e)
 			{
@@ -249,8 +249,6 @@ public class H264Packetizer extends AbstractPacketizer {
 		// If it is too big, we split it in FU-A units (RFC 3984)
 		private void send() throws IOException {
 
-			byte[] startcode = { 0x00, 0x00, 0x00, 0x01 };
-
 			int sum = 1, len = 0, type;
 
 			// Read NAL unit length (4 bytes)
@@ -295,6 +293,8 @@ public class H264Packetizer extends AbstractPacketizer {
 				
 				// Append NALU to startcode in arnobuf
 				System.arraycopy(buffer,rtphl,arnobuf,4,naluLength);
+				
+				// Put H.264 in "raw" or MPEGTS container and pass to swift for injection 
 				nalu_to_swift(arnobuf,0,4+naluLength,ts);
 
 				// Activity indicator, this procedure would stop silently due

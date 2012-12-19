@@ -517,6 +517,8 @@ public class MPEG2TSWriter
 			
 			ByteArrayOutputStream h264boas = new ByteArrayOutputStream();
 			
+			// Arno: See http://www.itu.int/rec/T-REC-H.264-201201-I/en 
+			// "7.4.1.2.3 Order of NAL units and coded pictures and association to access units"
 			// TODO: optimize, don't write on each NALU
 			h264boas.write(mH264AccessUnitDelimiter);
 			h264boas.write(mH264SequenceParamSet);

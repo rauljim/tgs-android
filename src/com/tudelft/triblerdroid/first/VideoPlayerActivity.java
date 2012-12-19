@@ -200,6 +200,16 @@ public class VideoPlayerActivity extends Activity {
 		{
 			// Do video playback via VLC as VideoView can't handle MPEG-TS
 			// or raw H.264
+			
+			// Arno, 2012-10-24: Volatile, if VLC radically changes package 
+			// name,  we doomed. But normal Intent searching won't grok
+			// VLC's hack with the demuxer in the scheme: http/h264:
+			// so we have to do it this way.
+			//
+			String pkgname = getPackageNameForVLC("org.videolan.vlc.betav7neon");
+			if (pkgname == "")
+				return;
+			
 			Intent intent = null;
 			if (liveSourceContentIsRawH264)
 			{
@@ -213,15 +223,6 @@ public class VideoPlayerActivity extends Activity {
 	
 				Uri intentUri = Uri.parse(urlstr);
 		    
-				// Arno, 2012-10-24: Volatile, if VLC radically changes package 
-				// name,  we doomed. But normal Intent searching won't grok
-				// VLC's hack with the demuxer in the scheme: http/h264:
-				// so we have to do it this way.
-				//
-				String pkgname = getPackageNameForVLC("org.videolan.vlc.betav7neon");
-				if (pkgname == "")
-					return;
-				
 				intent = new Intent();
 				ComponentName cn = new ComponentName(pkgname,pkgname+".gui.video.VideoPlayerActivity");
 				intent.setComponent(cn);

@@ -1,3 +1,25 @@
+/*
+ * Copyright (C) 2011 GUIGUI Simon, fyhertz@gmail.com
+ * 
+ * This file is part of Spydroid (http://code.google.com/p/spydroid-ipcamera/)
+ * 
+ * Spydroid is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This source code is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this source code; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * 
+ * Swift streaming additions (c) Copyright 2012 Technische Universiteit Delft.
+ */
+
 package com.tudelft.triblerdroid.first;
 
 import java.net.InetAddress;
@@ -87,13 +109,20 @@ public class SourceActivity extends Activity implements OnSharedPreferenceChange
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         H264Stream.setPreferences(settings);
         //ARNOAPI12 AACStream.setAACSupported(android.os.Build.VERSION.SDK_INT>=14);
+        /*
+         * Arno: The H.264 Sequence Picture Set (SPS) and Picture Parameter Set 
+         * (PPS) constants used in com.tudelft.majorkernelpanic.rtp.MPEG2TSWriter
+         * and/or Swift's jni/httpgw.cpp are hardcoded to 640x480@15 fps 500 
+         * kbps. If you want to change the below params, you should change 
+         * these constants (and mTimeStampIncr).
+         * See com.tudelft.majorkernelpanic.streaming.H264Stream.testH264() on
+         * how to let Android create the new constants (to be prefixed with
+         * 00 00 00 01) for you. 
+         */
         defaultVideoQuality.resX = settings.getInt("video_resX", 640);
         defaultVideoQuality.resY = settings.getInt("video_resY", 480);
         defaultVideoQuality.frameRate = Integer.parseInt(settings.getString("video_framerate", "15"));
         defaultVideoQuality.bitRate = Integer.parseInt(settings.getString("video_bitrate", "500"))*1000; // 500 kb/s
-        
-        String s = "QUALITY" + defaultVideoQuality.resX + " " + defaultVideoQuality.resY + " " + defaultVideoQuality.frameRate + " " + defaultVideoQuality.bitRate + " " + defaultVideoQuality.orientation;
-        Log.w("Swift", s );
         
         settings.registerOnSharedPreferenceChangeListener(this);
        	
@@ -103,13 +132,6 @@ public class SourceActivity extends Activity implements OnSharedPreferenceChange
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "net.majorkernelpanic.spydroid.wakelock");
     
-    	// Print version number
-        /*try {
-			log("<b>Spydroid v"+this.getPackageManager().getPackageInfo(this.getPackageName(), 0 ).versionName+"</b>");
-		} catch (NameNotFoundException e) {
-			log("<b>Spydroid</b>");
-		}*/
-        
         Session.setSurfaceHolder(holder);
         Session.setDefaultVideoQuality(defaultVideoQuality);
         // Arno: No audio
@@ -121,7 +143,7 @@ public class SourceActivity extends Activity implements OnSharedPreferenceChange
         
         
         /*
-         * ARNO
+         * ARNO: Swift live streaming changes
          */
         _oldNALULength = -1;
         
