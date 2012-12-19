@@ -15,7 +15,7 @@ import android.widget.TextView;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import me.ppsp.test.R;
+import org.tribler.mobile.R;
 import se.kth.pymdht.Pymdht;
 
 

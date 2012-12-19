@@ -37,7 +37,7 @@ import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import me.ppsp.test.R;
+import org.tribler.mobile.R;
 import se.kth.pymdht.Id;
 import se.kth.pymdht.Id.IdError;
 

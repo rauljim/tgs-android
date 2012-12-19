@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.widget.Toast;
-import me.ppsp.test.R;
+import org.tribler.mobile.R;
 
 public class Preferences extends PreferenceActivity {
 	@Override

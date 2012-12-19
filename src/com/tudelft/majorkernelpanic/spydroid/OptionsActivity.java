@@ -30,7 +30,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-import me.ppsp.test.R;
+import org.tribler.mobile.R;
 
 public class OptionsActivity extends PreferenceActivity {
 
